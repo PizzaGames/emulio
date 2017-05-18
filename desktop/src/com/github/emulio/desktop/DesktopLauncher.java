@@ -6,7 +6,12 @@ import com.github.emulio.Emulio;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+
+		//detect current resolution and stick with it
+
+
+		config.fullscreen = true;
 		new LwjglApplication(new Emulio(), config);
 	}
 }
