@@ -1,5 +1,7 @@
 package esrunner;
 
+import com.github.emulio.yaml.YamlReaderHelper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,7 +59,7 @@ public class ESRunner {
 	private Map<Object, Object> readConfig() {
 		final File esRunnerYaml = new File("esrunner.yaml");
 		
-		return ConfigHelper.readConfigFile(esRunnerYaml);
+		return YamlReaderHelper.parse(esRunnerYaml);
 	}
 
 	

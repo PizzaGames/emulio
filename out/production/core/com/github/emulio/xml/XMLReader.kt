@@ -10,6 +10,7 @@ import javax.xml.parsers.SAXParserFactory
 
 
 class XMLReader {
+
     fun parseGameList(xmlFile: File): List<GameInfo> {
 
         val factory = SAXParserFactory.newInstance()
@@ -24,6 +25,7 @@ class XMLReader {
 }
 
 class XMLInvalidException(override val message: String) : Exception(message)
+
 
 private class GameInfoSAXHandler(val gamelist: MutableList<GameInfo>) : DefaultHandler() {
 
@@ -94,8 +96,8 @@ private class GameInfoSAXHandler(val gamelist: MutableList<GameInfo>) : DefaultH
             }
 
             gamelist.add(
-                    GameInfo(id!!, source, File(path!!),
-                            name, description, if (image != null) File(image) else null,
+                    GameInfo(id!!, source, path!!,
+                            name, description, image,
                             releaseDate, developer,
                             publisher, genre,
                             players))
@@ -147,17 +149,13 @@ private class GameInfoSAXHandler(val gamelist: MutableList<GameInfo>) : DefaultH
 
 
 fun main(args: Array<String>) {
-    for (i in 0..10) stressTest()
-}
-
-private fun stressTest() {
     val start = System.currentTimeMillis()
     val gamelist = XMLReader().parseGameList(File("sample-files/Atari 2600/gamelist.xml"))
     val elapsed = System.currentTimeMillis() - start
 
-//    gamelist.forEach {
-//        println(it)
-//    }
-    
+    gamelist.forEach {
+        println(it)
+    }
+
     println("document parsed in: ${elapsed}ms")
 }

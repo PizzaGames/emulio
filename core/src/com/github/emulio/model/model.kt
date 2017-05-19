@@ -1,20 +1,21 @@
 package com.github.emulio.model
 
+import java.io.File
 import java.util.*
 
 
 data class GameInfo(
-    val id: String,
-    val source: String?,
-    val path: String,
-    val name: String?,
-    val description: String?,
-    val image: String?,
-    val releaseDate: Date?,
-    val developer: String?,
-    val publisher: String?,
-    val genre: String?,
-    val players: String?
+	val id: String,
+	val source: String?,
+	val path: File,
+	val name: String?,
+	val description: String?,
+	val image: File?,
+	val releaseDate: Date?,
+	val developer: String?,
+	val publisher: String?,
+	val genre: String?,
+	val players: String?
 )
 
 data class Config(
@@ -25,8 +26,8 @@ data class Config(
     val theme: String
 )
 
-data class Platform(
-    val romsPath: String,
+data class PlatformConfig(
+    val romsPath: File,
     val runCommand: List<String >,
     val romsExtensions: List<String>,
     val platformName: String

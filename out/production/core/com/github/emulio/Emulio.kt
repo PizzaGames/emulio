@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import java.io.File
 
 class Emulio : ApplicationAdapter() {
 
@@ -14,6 +15,9 @@ class Emulio : ApplicationAdapter() {
     override fun create() {
         batch = SpriteBatch()
         img = Texture("badlogic.jpg")
+        
+        val f = File("")
+        f.lastModified()
 
         //Gdx.graphics.setFullscreenMode()
     }

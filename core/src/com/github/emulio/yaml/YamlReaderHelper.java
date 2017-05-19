@@ -1,4 +1,4 @@
-package esrunner;
+package com.github.emulio.yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,16 +11,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import esrunner.ESRunner;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.yaml.snakeyaml.Yaml;
 
-public final class ConfigHelper {
+public final class YamlReaderHelper {
 	
 	private static void createConfigFromClasspath(final File esconfig) {
-		System.out.printf("Config file not found in initial dir. Creating from template. [%s]\n",
-				esconfig.getAbsolutePath());
+//		System.out.printf("Config file not found in initial dir. Creating from template. [%s]\n",
+//				esconfig.getAbsolutePath());
 		try (final InputStream esTemplateStream = ESRunner.class.getResourceAsStream("/esrunner_template.yaml");
-				final FileOutputStream fos = new FileOutputStream(esconfig)) {
+			 final FileOutputStream fos = new FileOutputStream(esconfig)) {
 
 			final byte[] buff = new byte[4096]; // 4kb
 			int bytesRead = 0;
@@ -32,27 +33,26 @@ public final class ConfigHelper {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		System.out.println("Config file created.");
+//		System.out.println("Config file created.");
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static Map<Object, Object> readConfigFile(final File configFile) {
+
+	public static Map<Object, Object> parse(final File configFile) {
 		if (!configFile.exists()) {
 			createConfigFromClasspath(configFile);
 		}
 
-		System.out.printf("Reading configuration file [%s]\n", configFile.getAbsolutePath());
+//		System.out.printf("Reading configuration file [%s]\n", configFile.getAbsolutePath());
 
 		final Yaml yaml = new Yaml();
 		final Map<Object, Object> esConfig;
 		try (final FileInputStream fis = new FileInputStream(configFile)) {
 			esConfig = (Map<Object, Object>) yaml.load(fis);
-			System.out.println("Config file loaded");
+//			System.out.println("Config file loaded");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		
-		ConfigHelper.prepareConfig(esConfig, configFile);
+		YamlReaderHelper.prepareConfig(esConfig, configFile);
 
 		return esConfig;
 	}
@@ -76,12 +76,12 @@ public final class ConfigHelper {
 		esConfig.put("rom", "\"%ROM%\"");
 		esConfig.put("basename", "\"%BASENAME%\"");
 
-		ConfigHelper.expandVars(esConfig);
+		YamlReaderHelper.expandVars(esConfig);
 	}
 	
 	public static void expandVars(Map<Object, Object> esConfig) {
 		final HashMap<String, Object> flatenedConfig = new HashMap<>();
-		flatenProperties(esConfig, flatenedConfig, null);
+		flattenProperties(esConfig, flatenedConfig, null);
 		expand(flatenedConfig);
 		deflatenProperties(esConfig, flatenedConfig, null);
 	}
@@ -103,15 +103,14 @@ public final class ConfigHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void flatenProperties(Map<Object, Object> esConfig, HashMap<String, Object> flatenedConfig,
-			final String prefix) {
+	private static void flattenProperties(Map<Object, Object> esConfig, HashMap<String, Object> flatenedConfig,
+										  final String prefix) {
 		final Set<Entry<Object, Object>> entries = esConfig.entrySet();
 		for (Entry<Object, Object> entry : entries) {
 			String key = (String) entry.getKey();
 			final Object value = entry.getValue();
 			if (value instanceof Map) {
-				flatenProperties(((Map<Object, Object>) value), flatenedConfig, key);
+				flattenProperties(((Map<Object, Object>) value), flatenedConfig, key);
 			} else {
 				if (prefix != null) {
 					flatenedConfig.put(prefix + "." + key, value);
@@ -122,7 +121,6 @@ public final class ConfigHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void deflatenProperties(Map<Object, Object> esConfig, HashMap<String, Object> flatenedConfig,
 			final String prefix) {
 		
