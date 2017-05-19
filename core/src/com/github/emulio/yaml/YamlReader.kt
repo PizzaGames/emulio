@@ -45,7 +45,7 @@ class YamlReader {
 }
 
 fun main(args: Array<String>) {
-	for (i in 0..100000) stressTest()
+	for (i in 0..10) stressTest()
 }
 
 private fun stressTest() {

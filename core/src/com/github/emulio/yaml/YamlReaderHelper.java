@@ -16,7 +16,7 @@ import org.springframework.util.PropertyPlaceholderHelper;
 import org.yaml.snakeyaml.Yaml;
 
 public final class YamlReaderHelper {
-	
+
 	private static void createConfigFromClasspath(final File esconfig) {
 //		System.out.printf("Config file not found in initial dir. Creating from template. [%s]\n",
 //				esconfig.getAbsolutePath());
@@ -51,17 +51,17 @@ public final class YamlReaderHelper {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		YamlReaderHelper.prepareConfig(esConfig, configFile);
 
 		return esConfig;
 	}
-	
+
 	public static void prepareConfig(final Map<Object, Object> esConfig, final File configFile) {
 		if (!esConfig.containsKey("esrunner.home")) {
-			
+
 			//String esRunnerHome = configFile.getParentFile().getAbsolutePath();
-			
+
 			final String classPathProperty = System.getProperty("java.class.path");
 			final String[] paths = classPathProperty.split(File.pathSeparator);
 			for (String path : paths) {
@@ -78,7 +78,7 @@ public final class YamlReaderHelper {
 
 		YamlReaderHelper.expandVars(esConfig);
 	}
-	
+
 	public static void expandVars(Map<Object, Object> esConfig) {
 		final HashMap<String, Object> flatenedConfig = new HashMap<>();
 		flattenProperties(esConfig, flatenedConfig, null);
@@ -123,7 +123,7 @@ public final class YamlReaderHelper {
 
 	private static void deflatenProperties(Map<Object, Object> esConfig, HashMap<String, Object> flatenedConfig,
 			final String prefix) {
-		
+
 		final Set<Entry<Object, Object>> entries = esConfig.entrySet();
 		for (Entry<Object, Object> entry : entries) {
 			String key = (String) entry.getKey();
@@ -137,7 +137,7 @@ public final class YamlReaderHelper {
 				} else {
 					entry.setValue(flatenedConfig.get(key));
 				}
-				
+
 			}
 		}
 	}
