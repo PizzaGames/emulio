@@ -89,24 +89,26 @@ private class GameInfoSAXHandler(val gamelist: MutableList<GameInfo>) : DefaultH
 
 
     override fun endElement(uri: String?, localName: String?, qName: String?) {
+        if (qName.equals(Tag.GAME.value, true)) {
+            //TODO throw exception?
+            check(id != null)
+            check(path != null)
+
+            gamelist.add(
+                    GameInfo(id!!,
+                            source,
+                            path!!,
+                            name,
+                            description,
+                            image,
+                            releaseDate,
+                            developer,
+                            publisher,
+                            genre,
+                            players))
+        }
+
         tag = Tag.NO_STATE
-
-        //TODO throw exception?
-        check(id != null)
-        check(path != null)
-
-        gamelist.add(
-                GameInfo(id!!,
-                        source,
-                        path!!,
-                        name,
-                        description,
-                        image,
-                        releaseDate,
-                        developer,
-                        publisher,
-                        genre,
-                        players))
     }
 
     override fun characters(ch: CharArray, start: Int, length: Int) {
