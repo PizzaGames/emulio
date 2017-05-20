@@ -4,105 +4,64 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.github.emulio.model.Game
-import com.github.emulio.xml.XMLReader
-import com.github.emulio.yaml.YamlReader
-import io.reactivex.Flowable
-import java.io.File
-import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
+
+
 
 
 class Emulio : ApplicationAdapter() {
 
 	val logger = KotlinLogging.logger { }
 
-    lateinit var batch: SpriteBatch
+	val FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>"
+
+	lateinit var batch: SpriteBatch
+
     lateinit var img: Texture
+	lateinit var font: BitmapFont
 
     override fun create() {
         batch = SpriteBatch()
         img = Texture("badlogic.jpg")
-        
-        val f = File("")
-        f.lastModified()
-
-		val source = Flowable.fromCallable {
-
-			val startAll = System.currentTimeMillis()
-
-			logger.info { "Reading platform file" }
-			val platforms = YamlReader().parsePlatforms(File("emulio-platforms.yaml"))
-
-			platforms.forEach { platform ->
-				logger.info { "Analysing platform ${platform.platformName}" }
-
-				val xmlReader = XMLReader()
-
-				val romsPath = platform.romsPath
-				if (romsPath.isDirectory) {
-					val gameList = File(romsPath, "gamelist.xml")
-					if (gameList.isFile) {
-						logger.info { "reading [${gameList.absolutePath}]" }
-						val games = xmlReader.parseGameList(gameList, romsPath)
-
-						logger.debug { "gamelist read, scanning for new games"  }
-
-						val foundPaths = games.map { it.path.absolutePath }.toHashSet()
-
-						val start = System.currentTimeMillis()
-						val scannedGames = scanGames(romsPath, foundPaths)
 
 
-						logger.info { "scannedGames: ${scannedGames.size} / ${games.size}, time to scan: ${System.currentTimeMillis() - start}ms" }
-
-
-					}
-				}
-
-			}
-
-			logger.info { "time to scan all: ${System.currentTimeMillis() - startAll}ms" }
-
-			"Done"
-		}
-
-
-		val runBackground = source.subscribeOn(Schedulers.io())
-
-		val showForeground = runBackground.observeOn(Schedulers.single())
-
-		showForeground.subscribe({ println(it) }, { it.printStackTrace() })
-
-		//Thread.sleep(2000)
 
         //Gdx.graphics.setFullscreenMode()
     }
 
-	private fun scanGames(root: File, foundPaths: HashSet<String>, scannedGames: MutableList<Game> = mutableListOf()): List<Game> {
 
-		if (root.isDirectory) {
-			root.listFiles().forEach { scanGames(it, foundPaths, scannedGames) }
-		} else {
-			if (root.isFile && !foundPaths.contains(root.absolutePath)) {
-				scannedGames += Game(null, null, root.absoluteFile, root.name, null, null, null, null, null, null, null)
-			}
-		}
-
-		return scannedGames
-	}
 
 	override fun render() {
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
+
+        Gdx.gl.glClearColor(0xFF.toGLColor(), 0xFF.toGLColor(), 0xFF.toGLColor(), 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         batch.begin()
-        batch.draw(img, 0f, 0f)
+        batch.draw(img, 50f, 50f)
         batch.end()
+
+
     }
 
     override fun dispose() {
         batch.dispose()
         img.dispose()
     }
+}
+
+//private fun GL20.glClearColor(argb: Int) {
+//
+//	val alpha = (argb >> 24) and 0xFF
+//	val r =  (argb >> 16) and 0xFF
+//	val g =  (argb >> 8) and 0xFF
+//	val b =  (argb) and 0xFF
+//
+//	this.glClearColor(r.toGLColor(), g.toGLColor(), b.toGLColor(), alpha.toGLColor())
+//}
+private fun GL20.glClearColor(r: Int, g: Int, b: Int, alpha: Int) {
+	this.glClearColor(r.toGLColor(), g.toGLColor(), b.toGLColor(), alpha.toGLColor())
+}
+private fun Int.toGLColor(): Float {
+	return this / 255.0f
 }

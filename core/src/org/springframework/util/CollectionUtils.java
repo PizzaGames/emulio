@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * Emulio
+ */
+
 package org.springframework.util;
 
 import java.util.Arrays;
