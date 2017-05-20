@@ -1,9 +1,15 @@
 apply plugin: "kotlin"
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets {
+    main {
+        java.srcDirs = [ "src/" ]
+        resources.srcDirs = [ "resources/" ]
+    }
+}
+
 
 
 eclipse.project {
@@ -18,5 +24,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.slf4j:jul-to-slf4j:1.7.7'
     compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'ch.qos.logback:logback-core:1.1.2'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
 }
 

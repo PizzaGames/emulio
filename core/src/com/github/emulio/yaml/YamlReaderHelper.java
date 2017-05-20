@@ -1,26 +1,25 @@
 package com.github.emulio.yaml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.PropertyPlaceholderHelper;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import esrunner.ESRunner;
-import org.springframework.util.PropertyPlaceholderHelper;
-import org.yaml.snakeyaml.Yaml;
-
 public final class YamlReaderHelper {
 
+	private static final Logger logger = LoggerFactory.getLogger(YamlReaderHelper.class);
+
 	private static void createConfigFromClasspath(final File esconfig) {
-//		System.out.printf("Config file not found in initial dir. Creating from template. [%s]\n",
-//				esconfig.getAbsolutePath());
-		try (final InputStream esTemplateStream = ESRunner.class.getResourceAsStream("/esrunner_template.yaml");
+		logger.info("Creating emulio-platforms.yaml blank file.");
+
+		try (final InputStream esTemplateStream = YamlReaderHelper.class.getResourceAsStream("/emulio-platforms.yaml");
 			 final FileOutputStream fos = new FileOutputStream(esconfig)) {
 
 			final byte[] buff = new byte[4096]; // 4kb
@@ -33,7 +32,8 @@ public final class YamlReaderHelper {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-//		System.out.println("Config file created.");
+
+		logger.info("Sample ");
 	}
 
 	public static Map<Object, Object> parse(final File configFile) {

@@ -1,15 +1,20 @@
 package com.github.emulio.yaml
 
-import com.github.emulio.model.PlatformConfig
-import com.github.emulio.xml.XMLReader
+import com.github.emulio.model.Platform
+import mu.KotlinLogging
 import java.io.File
 
 class YamlReader {
+
+	val logger = KotlinLogging.logger { }
 	
-	fun parsePlatforms(yamlFile: File): List<PlatformConfig> {
-		
+	fun parsePlatforms(yamlFile: File): List<Platform> {
+
+		val start = System.currentTimeMillis()
+		logger.info { "Parsing '${yamlFile.absolutePath}'" }
+
 		val yaml = YamlReaderHelper.parse(yamlFile)
-		val platforms = mutableListOf<PlatformConfig>()
+		val platforms = mutableListOf<Platform>()
 
 		
 		val systems: Map<String, Map<String, *>> = yaml["systems"] as Map<String, Map<String, *>>
@@ -20,8 +25,10 @@ class YamlReader {
 			val romsPath = File(platform["roms.path"] as String)
 			val runCommand = expandList(platform["run.command"])
 			
-			platforms += PlatformConfig(romsPath, runCommand, romsExtensions, platformName)
+			platforms += Platform(romsPath, runCommand, romsExtensions, platformName)
 		}
+
+		logger.info { "Platform configuration file read in ${System.currentTimeMillis() - start}ms" }
 		
 		return platforms
 	}
@@ -43,20 +50,3 @@ class YamlReader {
 	}
 	
 }
-
-fun main(args: Array<String>) {
-	for (i in 0..10) stressTest()
-}
-
-private fun stressTest() {
-	val start = System.currentTimeMillis()
-	val platforms = YamlReader().parsePlatforms(File("sample-files/emulio-platforms.yaml"))
-	val elapsed = System.currentTimeMillis() - start
-
-//	platforms.forEach {
-//		println(it)
-//	}
-	
-	println("document parsed in: ${elapsed}ms")
-}
-
