@@ -1,64 +1,80 @@
 package com.github.emulio
 
+
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
+import io.reactivex.Observable
+import javafx.application.Platform
 import mu.KotlinLogging
-
-
-
 
 class Emulio : ApplicationAdapter() {
 
 	val logger = KotlinLogging.logger { }
 
-	val FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>"
+	lateinit var stage: Stage
 
-	lateinit var batch: SpriteBatch
+	override fun create() {
+		logger.debug { "create()" }
 
-    lateinit var img: Texture
-	lateinit var font: BitmapFont
+		stage = Stage()
+		Gdx.input.inputProcessor = stage
 
-    override fun create() {
-        batch = SpriteBatch()
-        img = Texture("badlogic.jpg")
+		val table = Table()
+		table.setFillParent(true)
+
+		val imgLogo = Image(Texture("images/logo.png"))
+		table.add(imgLogo)
 
 
+		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
+		val francoisFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+			size = 30
+			color = Color(0x37424AFF)
+		})
 
-        //Gdx.graphics.setFullscreenMode()
-    }
+		val lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
+			font = francoisFont
+		})
+		lbLoading.setPosition(10f, 2f)
+
+		stage.addActor(table)
+		stage.addActor(lbLoading)
+
+
+		val platform: Observable<Platform> = Observable.create({
+
+		})
+
+
+	}
 
 
 
 	override fun render() {
+		Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
+		stage.draw()
+	}
 
-        Gdx.gl.glClearColor(0xFF.toGLColor(), 0xFF.toGLColor(), 0xFF.toGLColor(), 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        batch.begin()
-        batch.draw(img, 50f, 50f)
-        batch.end()
+	override fun resize(width: Int, height: Int) {
+		stage.viewport.update(width, height, true)
+	}
 
+	override fun dispose() {
+		stage.dispose()
+	}
 
-    }
-
-    override fun dispose() {
-        batch.dispose()
-        img.dispose()
-    }
 }
 
-//private fun GL20.glClearColor(argb: Int) {
-//
-//	val alpha = (argb >> 24) and 0xFF
-//	val r =  (argb >> 16) and 0xFF
-//	val g =  (argb >> 8) and 0xFF
-//	val b =  (argb) and 0xFF
-//
-//	this.glClearColor(r.toGLColor(), g.toGLColor(), b.toGLColor(), alpha.toGLColor())
-//}
 private fun GL20.glClearColor(r: Int, g: Int, b: Int, alpha: Int) {
 	this.glClearColor(r.toGLColor(), g.toGLColor(), b.toGLColor(), alpha.toGLColor())
 }
