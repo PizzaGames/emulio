@@ -1,3 +1,5 @@
+[logo]: (https://s8.postimg.org/oa36alnad/logo.png)
+
 # emulio
 Emulators frontend inspired by EmulationStation but written in a better platform to support better usability and eye candy.
 
