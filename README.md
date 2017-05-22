@@ -1,3 +1,4 @@
+
 ![logo](https://s1.postimg.org/mrtbd0yhr/emulio.png)
 
 # emulio
@@ -27,6 +28,7 @@ Emulators frontend inspired by EmulationStation but written in a better platform
   - [ ] Annimations
   - [ ] Keyboard Input
   - [ ] Gamepad Input
+  - [ ] Multithreading messages (see rxjava) - TODO
 - [x] Launch external process and control it
 - [ ] RxJava to control threads/subscribers - WIP
 - [x] Model data structures
