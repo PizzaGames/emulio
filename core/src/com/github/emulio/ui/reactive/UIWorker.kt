@@ -1,8 +1,10 @@
 package com.github.emulio.ui.reactive
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.utils.Timer
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
+import javafx.concurrent.Task
 import java.util.concurrent.TimeUnit
 
 class UIWorker : Scheduler.Worker() {
@@ -37,7 +39,9 @@ class UIWorker : Scheduler.Worker() {
 				}
 			} else {
 				if (delay != 0L) {
-				
+//					Timer.schedule(object : Task {
+//
+//					}, delay)
 				} else if (unit != null) {
 				
 				}
