@@ -26,5 +26,6 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
     compile 'ch.qos.logback:logback-core:1.1.2'
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+
 }
 

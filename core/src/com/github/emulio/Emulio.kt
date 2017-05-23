@@ -11,8 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.github.emulio.runners.PlatformReader
 import io.reactivex.Observable
-import javafx.application.Platform
+import com.github.emulio.model.Platform
+import com.github.emulio.ui.reactive.UIScheduler
+import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 class Emulio : ApplicationAdapter() {
@@ -47,11 +50,31 @@ class Emulio : ApplicationAdapter() {
 
 		stage.addActor(table)
 		stage.addActor(lbLoading)
-
-
-		val platform: Observable<Platform> = Observable.create({
-
+		
+		/*
+		
+		val platforms: Observable<List<Platform>> = Observable.create({ subscriber ->
+			val platforms = PlatformReader().invoke()
+			
+			subscriber.onNext(platforms)
+			subscriber.onComplete()
 		})
+		
+		val platformsList = platforms.subscribeOn(Schedulers.computation()).observeOn(UIScheduler())
+		
+		val lista = listOf<Platform>()
+		platformsList.subscribe(
+			{ platforms ->
+			
+				lista.addAll(platforms)
+			}, { error ->
+			
+			}, {
+			
+			}
+		)
+
+		*/
 
 
 	}
