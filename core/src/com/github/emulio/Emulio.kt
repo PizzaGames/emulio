@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.github.emulio.model.Platform
+import com.github.emulio.runners.GameScanner
 import com.github.emulio.runners.PlatformReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import io.reactivex.Observable
@@ -23,8 +24,8 @@ class Emulio : ApplicationAdapter() {
 	val logger = KotlinLogging.logger { }
 
 	lateinit var platforms: List<Platform>
-
 	lateinit var stage: Stage
+	lateinit var lbLoading: Label
 
 	override fun create() {
 		logger.debug { "create()" }
@@ -45,7 +46,7 @@ class Emulio : ApplicationAdapter() {
 			color = Color(0x37424AFF)
 		})
 
-		val lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
+		lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
 			font = francoisFont
 		})
 		lbLoading.setPosition(10f, 5f)
@@ -55,35 +56,48 @@ class Emulio : ApplicationAdapter() {
 		
 
 		lbLoading.setText("Loading platforms")
-		
-		val platforms: Observable<List<Platform>> = Observable.create({ subscriber ->
+
+		observePlatforms()
+	}
+
+	private fun observePlatforms() {
+		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
 			val platforms = PlatformReader().invoke()
 
 			subscriber.onNext(platforms)
 			Thread.sleep(1000)
 			subscriber.onComplete()
 		})
-		
-		val platformsList = platforms.subscribeOn(Schedulers.computation()).observeOn(GdxScheduler)
 
-		platformsList.subscribe(
-			{ platforms ->
-				this.platforms = platforms
+		platformsObservable
+				.subscribeOn(Schedulers.computation())
+				.observeOn(GdxScheduler)
+				.subscribe({ onPlatformsLoaded(it) }, { onPlatformsError(it) })
+	}
 
-			},
-			{ error ->
-				lbLoading.setText("Error loading platforms. Please check your \"emulio-platforms.yaml\" file\nPress any key to continue...")
-				lbLoading.setPosition(10f, 20f)
+	private fun onPlatformsError(exception: Throwable) {
+		lbLoading.setText("Error loading platforms. Please check your \"emulio-platforms.yaml\" file\nPress any key to continue...")
+		lbLoading.setPosition(10f, 20f)
 
-				
-			},
-			{
+		logger.error(exception, { "Error ocurred parsing emulio-platforms.yaml, please check your configuration files." })
+		// Exit app on keypress
+	}
 
-			}
-		)
+	fun onPlatformsLoaded(platforms: List<Platform>) {
+		this.platforms = platforms
 
+		val gamelistObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
+			val platforms = PlatformReader().invoke()
 
+			subscriber.onNext(platforms)
+			Thread.sleep(1000)
+			subscriber.onComplete()
+		})
 
+		gamelistObservable
+				.subscribeOn(Schedulers.computation())
+				.observeOn(GdxScheduler)
+				.subscribe({ onPlatformsLoaded(it) }, { onPlatformsError(it) })
 
 	}
 

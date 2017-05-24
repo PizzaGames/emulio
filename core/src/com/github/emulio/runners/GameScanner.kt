@@ -9,6 +9,8 @@ import java.io.File
 class GameScanner(val platforms: List<Platform>) : Runnable {
 	val logger = KotlinLogging.logger { }
 
+	
+	//Convert all this to an iterable/observable/iterable/fluentiterable
 	override fun run() {
 		platforms.forEach { platform ->
 			logger.info { "Analysing platform ${platform.platformName}" }
@@ -28,6 +30,7 @@ class GameScanner(val platforms: List<Platform>) : Runnable {
 
 					val start = System.currentTimeMillis()
 					val scannedGames = scanGames(romsPath, foundPaths)
+
 
 					logger.info { "scannedGames: ${scannedGames.size} / ${games.size}, time to scan: ${System.currentTimeMillis() - start}ms" }
 				}
