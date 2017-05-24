@@ -11,16 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.github.emulio.runners.PlatformReader
-import io.reactivex.Observable
 import com.github.emulio.model.Platform
-import com.github.emulio.ui.reactive.UIScheduler
+import com.github.emulio.runners.PlatformReader
+import com.github.emulio.ui.reactive.GdxScheduler
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 class Emulio : ApplicationAdapter() {
 
 	val logger = KotlinLogging.logger { }
+
+	lateinit var platforms: List<Platform>
 
 	lateinit var stage: Stage
 
@@ -39,47 +41,51 @@ class Emulio : ApplicationAdapter() {
 
 		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
 		val francoisFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-			size = 30
+			size = 20
 			color = Color(0x37424AFF)
 		})
 
 		val lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
 			font = francoisFont
 		})
-		lbLoading.setPosition(10f, 2f)
+		lbLoading.setPosition(10f, 5f)
 
 		stage.addActor(table)
 		stage.addActor(lbLoading)
 		
-		/*
+
+		lbLoading.setText("Loading platforms")
 		
 		val platforms: Observable<List<Platform>> = Observable.create({ subscriber ->
 			val platforms = PlatformReader().invoke()
-			
+
 			subscriber.onNext(platforms)
+			Thread.sleep(1000)
 			subscriber.onComplete()
 		})
 		
-		val platformsList = platforms.subscribeOn(Schedulers.computation()).observeOn(UIScheduler())
-		
-		val lista = listOf<Platform>()
+		val platformsList = platforms.subscribeOn(Schedulers.computation()).observeOn(GdxScheduler)
+
 		platformsList.subscribe(
 			{ platforms ->
-			
-				lista.addAll(platforms)
-			}, { error ->
-			
-			}, {
-			
+				this.platforms = platforms
+
+			},
+			{ error ->
+				lbLoading.setText("Error loading platforms. Please check your \"emulio-platforms.yaml\" file\nPress any key to continue...")
+				lbLoading.setPosition(10f, 20f)
+
+				
+			},
+			{
+
 			}
 		)
 
-		*/
+
 
 
 	}
-
-
 
 	override fun render() {
 		Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)

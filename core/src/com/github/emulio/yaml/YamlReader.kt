@@ -16,7 +16,6 @@ class YamlReader {
 		val yaml = YamlReaderHelper.parse(yamlFile)
 		val platforms = mutableListOf<Platform>()
 
-		
 		val systems: Map<String, Map<String, *>> = yaml["systems"] as Map<String, Map<String, *>>
 		
 		for ((platformName, platform) in systems) {
