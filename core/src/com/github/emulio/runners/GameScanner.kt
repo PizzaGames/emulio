@@ -3,15 +3,18 @@ package com.github.emulio.runners
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.xml.XMLReader
+import io.reactivex.*
 import mu.KotlinLogging
 import java.io.File
 
-class GameScanner(val platforms: List<Platform>) : Runnable {
-	val logger = KotlinLogging.logger { }
-
+class GameScanner(val platforms: List<Platform>) : Function0<Observable<Game>> {
 	
-	//Convert all this to an iterable/observable/iterable/fluentiterable
-	override fun run() {
+	val logger = KotlinLogging.logger { }
+	
+	override fun invoke(): Observable<Game> {
+		
+		var games = Observable.empty<Game>()
+		
 		platforms.forEach { platform ->
 			logger.info { "Analysing platform ${platform.platformName}" }
 
@@ -22,34 +25,48 @@ class GameScanner(val platforms: List<Platform>) : Runnable {
 				val gameList = File(romsPath, "gamelist.xml")
 				if (gameList.isFile) {
 					logger.info { "reading [${gameList.absolutePath}]" }
-					val games = xmlReader.parseGameList(gameList, romsPath)
+					val gamesObservable = xmlReader.parseGameList(gameList, romsPath, platform)
 
 					logger.debug { "gamelist read, scanning for new games"  }
+					
+					val filesObservable: Flowable<File> = Flowable.create({ emitter ->
+						scanFiles(romsPath, emitter)
+					}, BackpressureStrategy.LATEST)
+					
+					
+					
+//					val files: Observable<File> = Observable.create({ emitter ->
+//						scanFiles(romsPath, emitter)
+//					})
 
-					val foundPaths = games.map { it.path.absolutePath }.toHashSet()
+					games = games.concatWith(gamesObservable.filter { game ->
+						
+						true
+					})
 
-					val start = System.currentTimeMillis()
-					val scannedGames = scanGames(romsPath, foundPaths)
-
-
-					logger.info { "scannedGames: ${scannedGames.size} / ${games.size}, time to scan: ${System.currentTimeMillis() - start}ms" }
+//					val start = System.currentTimeMillis()
+//					val scannedGames = scanGames(romsPath, foundPaths)
+//
+//
+//					logger.info { "scannedGames: ${scannedGames.size} / ${games.size}, time to scan: ${System.currentTimeMillis() - start}ms" }
 				}
 			}
-
 		}
+		
+		return games
 	}
 
-	private fun scanGames(root: File, foundPaths: HashSet<String>, scannedGames: MutableList<Game> = mutableListOf()): List<Game> {
+	private fun scanFiles(root: File, observableEmitter: FlowableEmitter<File>) {
 
 		if (root.isDirectory) {
-			root.listFiles().forEach { scanGames(it, foundPaths, scannedGames) }
+			root.listFiles().forEach {
+				scanFiles(it, observableEmitter)
+			}
 		} else {
-			if (root.isFile && !foundPaths.contains(root.absolutePath)) {
-				scannedGames += Game(null, null, root.absoluteFile, root.name, null, null, null, null, null, null, null)
+			if (root.isFile) {
+				observableEmitter.onNext(root)
 			}
 		}
-
-		return scannedGames
 	}
 
 }

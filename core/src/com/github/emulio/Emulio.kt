@@ -15,9 +15,11 @@ import com.github.emulio.model.Platform
 import com.github.emulio.runners.GameScanner
 import com.github.emulio.runners.PlatformReader
 import com.github.emulio.ui.reactive.GdxScheduler
+import com.github.emulio.xml.XMLReader
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
+import java.io.File
 
 class Emulio : ApplicationAdapter() {
 
@@ -63,7 +65,7 @@ class Emulio : ApplicationAdapter() {
 	private fun observePlatforms() {
 		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
 			val platforms = PlatformReader().invoke()
-
+			
 			subscriber.onNext(platforms)
 			Thread.sleep(1000)
 			subscriber.onComplete()
@@ -86,18 +88,16 @@ class Emulio : ApplicationAdapter() {
 	fun onPlatformsLoaded(platforms: List<Platform>) {
 		this.platforms = platforms
 
-		val gamelistObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
-			val platforms = PlatformReader().invoke()
+		val gamelistObservable = XMLReader().parseGameList(File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/gamelist.xml"), File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/"), platform)
 
-			subscriber.onNext(platforms)
-			Thread.sleep(1000)
-			subscriber.onComplete()
-		})
-
+		var count = 0
 		gamelistObservable
 				.subscribeOn(Schedulers.computation())
 				.observeOn(GdxScheduler)
-				.subscribe({ onPlatformsLoaded(it) }, { onPlatformsError(it) })
+				.subscribe({
+					lbLoading.setText("Reading game $count")
+					count++
+				}, { onPlatformsError(it) })
 
 	}
 

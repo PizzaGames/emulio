@@ -14,5 +14,6 @@ data class Game(
 		val developer: String?,
 		val publisher: String?,
 		val genre: String?,
-		val players: String?
+		val players: String?,
+		val platform: Platform
 )

@@ -1,13 +1,15 @@
 package com.github.emulio.xml
 
 import com.github.emulio.model.Game
+import com.github.emulio.model.Platform
+import io.reactivex.ObservableEmitter
 import mu.KotlinLogging
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import java.util.*
 
-class GameInfoSAXHandler(val gamelist: MutableList<Game>, val baseDir: File) : DefaultHandler() {
+class GameInfoSAXHandler(val emitter: ObservableEmitter<Game>, val baseDir: File, val platform: Platform) : DefaultHandler() {
 
 	val logger = KotlinLogging.logger { }
 
@@ -76,19 +78,23 @@ class GameInfoSAXHandler(val gamelist: MutableList<Game>, val baseDir: File) : D
 
 			if (path == null) {
 
-				if (gamelist.size > 0) {
-					logger.error { "There was a problem parsing game after the ${gamelist[gamelist.size - 1].name}"  }
-				}
+//				if (emitter.size > 0) {
+//					logger.error { "There was a problem parsing game after the ${emitter[emitter.size - 1].name}"  }
+//				}
 
-				throw XMLInvalidException("Error processing XML File. Incorrect '$qName' tag/structure (${gamelist.size})")
+				throw XMLInvalidException("Error processing XML File. Incorrect '$qName' tag/structure ")
 			}
-
-			gamelist.add(
+			
+			emitter.onNext(
 					Game(id, source, getFile(baseDir, path!!),
 							name, description, if (image != null) File(image) else null,
 							releaseDate, developer,
 							publisher, genre,
-							players))
+							players, platform))
+		}
+		
+		if (qName.equals(Tag.GAME_LIST.value, true)) {
+			emitter.onComplete()
 		}
 
 		tag = Tag.NO_STATE
