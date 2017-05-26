@@ -56,6 +56,7 @@ class Emulio : ApplicationAdapter() {
 		stage.addActor(table)
 		stage.addActor(lbLoading)
 		
+		
 
 		lbLoading.setText("Loading platforms")
 
@@ -68,6 +69,10 @@ class Emulio : ApplicationAdapter() {
 			
 			subscriber.onNext(platforms)
 			Thread.sleep(1000)
+			
+			
+			
+			
 			subscriber.onComplete()
 		})
 
@@ -137,4 +142,12 @@ private fun GL20.glClearColor(r: Int, g: Int, b: Int, alpha: Int) {
 }
 private fun Int.toGLColor(): Float {
 	return this / 255.0f
+}
+
+fun main(args: Array<String>) {
+	println("parsing random theme...")
+	val start = System.currentTimeMillis()
+	XMLReader().parseTheme(File("sample-files/theme/simple/3do/theme.xml"))
+	
+	println("theme parsed in: ${System.currentTimeMillis() - start}ms")
 }
