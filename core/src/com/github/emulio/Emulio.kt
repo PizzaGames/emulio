@@ -87,17 +87,31 @@ class Emulio : ApplicationAdapter() {
 
 	fun onPlatformsLoaded(platforms: List<Platform>) {
 		this.platforms = platforms
-
-		val gamelistObservable = XMLReader().parseGameList(File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/gamelist.xml"), File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/"), platform)
-
+		
 		var count = 0
-		gamelistObservable
-				.subscribeOn(Schedulers.computation())
-				.observeOn(GdxScheduler)
-				.subscribe({
+		val gamesFlowable = GameScanner(platforms).fullScan()
+		
+		gamesFlowable
+			.subscribeOn(Schedulers.computation())
+			.observeOn(GdxScheduler)
+			.subscribe({ game ->
 					lbLoading.setText("Reading game $count")
 					count++
-				}, { onPlatformsError(it) })
+				},
+				{ ex ->
+					onPlatformsError(ex)
+				})
+		
+//		val gamelistObservable = XMLReader().parseGameList(File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/gamelist.xml"), File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/"), platform)
+//
+//		var count = 0
+//		gamelistObservable
+//				.subscribeOn(Schedulers.computation())
+//				.observeOn(GdxScheduler)
+//				.subscribe({
+//					lbLoading.setText("Reading game $count")
+//					count++
+//				}, { onPlatformsError(it) })
 
 	}
 

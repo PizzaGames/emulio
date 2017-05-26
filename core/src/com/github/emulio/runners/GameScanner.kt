@@ -7,13 +7,17 @@ import io.reactivex.*
 import mu.KotlinLogging
 import java.io.File
 
-class GameScanner(val platforms: List<Platform>) : Function0<Observable<Game>> {
+class GameScanner(val platforms: List<Platform>) : Function0<Flowable<Game>> {
 	
 	val logger = KotlinLogging.logger { }
 	
-	override fun invoke(): Observable<Game> {
+	fun fullScan() : Flowable<Game> {
+		return invoke()
+	}
+	
+	override fun invoke(): Flowable<Game> {
 		
-		var games = Observable.empty<Game>()
+		var games = Flowable.empty<Game>()
 		
 		platforms.forEach { platform ->
 			logger.info { "Analysing platform ${platform.platformName}" }
@@ -25,29 +29,18 @@ class GameScanner(val platforms: List<Platform>) : Function0<Observable<Game>> {
 				val gameList = File(romsPath, "gamelist.xml")
 				if (gameList.isFile) {
 					logger.info { "reading [${gameList.absolutePath}]" }
-					val gamesObservable = xmlReader.parseGameList(gameList, romsPath, platform)
-
+					val pathSet = mutableSetOf<String>()
+					val gamesObservable = xmlReader.parseGameList(gameList, romsPath, pathSet, platform)
+					
 					logger.debug { "gamelist read, scanning for new games"  }
 					
-					val filesObservable: Flowable<File> = Flowable.create({ emitter ->
-						scanFiles(romsPath, emitter)
-					}, BackpressureStrategy.LATEST)
+					val filesObservable: Flowable<Game> = Flowable.create({ emitter ->
+						scanFiles(romsPath, emitter, pathSet, platform)
+					}, BackpressureStrategy.BUFFER)
 					
-					
-					
-//					val files: Observable<File> = Observable.create({ emitter ->
-//						scanFiles(romsPath, emitter)
-//					})
 
-					games = games.concatWith(gamesObservable.filter { game ->
-						
-						true
-					})
-
-//					val start = System.currentTimeMillis()
-//					val scannedGames = scanGames(romsPath, foundPaths)
-//
-//
+					games = games.concatWith(gamesObservable).concatWith(filesObservable)
+					
 //					logger.info { "scannedGames: ${scannedGames.size} / ${games.size}, time to scan: ${System.currentTimeMillis() - start}ms" }
 				}
 			}
@@ -55,16 +48,19 @@ class GameScanner(val platforms: List<Platform>) : Function0<Observable<Game>> {
 		
 		return games
 	}
+	
 
-	private fun scanFiles(root: File, observableEmitter: FlowableEmitter<File>) {
+	private fun scanFiles(root: File, observableEmitter: FlowableEmitter<Game>, pathSet: MutableSet<String>, platform: Platform) {
 
 		if (root.isDirectory) {
 			root.listFiles().forEach {
-				scanFiles(it, observableEmitter)
+				scanFiles(it, observableEmitter, pathSet, platform)
 			}
 		} else {
 			if (root.isFile) {
-				observableEmitter.onNext(root)
+				if (!pathSet.contains(root.absolutePath)) {
+					observableEmitter.onNext(Game(root, platform))
+				}
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package com.github.emulio.xml
 
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
+import io.reactivex.FlowableEmitter
 import io.reactivex.ObservableEmitter
 import mu.KotlinLogging
 import org.xml.sax.Attributes
@@ -9,7 +10,7 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import java.util.*
 
-class GameInfoSAXHandler(val emitter: ObservableEmitter<Game>, val baseDir: File, val platform: Platform) : DefaultHandler() {
+class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, val pathSet: MutableSet<String>, val platform: Platform) : DefaultHandler() {
 
 	val logger = KotlinLogging.logger { }
 
@@ -85,8 +86,12 @@ class GameInfoSAXHandler(val emitter: ObservableEmitter<Game>, val baseDir: File
 				throw XMLInvalidException("Error processing XML File. Incorrect '$qName' tag/structure ")
 			}
 			
+			
+			val path = getFile(baseDir, path!!)
+			pathSet.add(path.absolutePath)
+			
 			emitter.onNext(
-					Game(id, source, getFile(baseDir, path!!),
+					Game(id, source, path,
 							name, description, if (image != null) File(image) else null,
 							releaseDate, developer,
 							publisher, genre,

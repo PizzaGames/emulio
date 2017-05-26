@@ -16,4 +16,6 @@ data class Game(
 		val genre: String?,
 		val players: String?,
 		val platform: Platform
-)
+) {
+	constructor(path: File, platform: Platform) : this(null, null, path, path.name, null, null, null, null, null, null, null, platform)
+}
