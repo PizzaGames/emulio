@@ -11,11 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.runners.GameScanner
 import com.github.emulio.runners.PlatformReader
+import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
-import com.github.emulio.xml.XMLReader
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
@@ -55,69 +57,95 @@ class Emulio : ApplicationAdapter() {
 
 		stage.addActor(table)
 		stage.addActor(lbLoading)
-		
-		
+
+		// load main configurations/games and all stuff.. from mongo?
 
 		lbLoading.setText("Loading platforms")
 
 		observePlatforms()
 	}
 
+
 	private fun observePlatforms() {
 		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
 			val platforms = PlatformReader().invoke()
-			
 			subscriber.onNext(platforms)
-			Thread.sleep(1000)
-			
-			
-			
-			
 			subscriber.onComplete()
 		})
 
 		platformsObservable
 				.subscribeOn(Schedulers.computation())
 				.observeOn(GdxScheduler)
-				.subscribe({ onPlatformsLoaded(it) }, { onPlatformsError(it) })
+				.subscribe({
+					onPlatformsLoaded(it)
+				}, { onError(it) })
 	}
 
-	private fun onPlatformsError(exception: Throwable) {
-		lbLoading.setText("Error loading platforms. Please check your \"emulio-platforms.yaml\" file\nPress any key to continue...")
+	private fun onError(exception: Throwable) {
+
+		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.")
 		lbLoading.setPosition(10f, 20f)
 
-		logger.error(exception, { "Error ocurred parsing emulio-platforms.yaml, please check your configuration files." })
-		// Exit app on keypress
+		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
+		// Exit app on keypress?
 	}
 
 	fun onPlatformsLoaded(platforms: List<Platform>) {
 		this.platforms = platforms
-		
-		var count = 0
-		val gamesFlowable = GameScanner(platforms).fullScan()
-		
-		gamesFlowable
+
+		lbLoading.setText("Loading theme")
+
+		val start = System.currentTimeMillis()
+
+		ThemeReader()
+			.readTheme(platforms, File("G:/workspace/emulio/sample-files/theme/simple"))
 			.subscribeOn(Schedulers.computation())
 			.observeOn(GdxScheduler)
-			.subscribe({ game ->
-					lbLoading.setText("Reading game $count")
-					count++
+			.Subscribe(
+				onNext = { theme ->
+					logger.debug { "theme read! ${theme.platform!!.platformName}" }
+					logger.debug { theme }
 				},
-				{ ex ->
-					onPlatformsError(ex)
+				onError =  { ex ->
+					onError(ex)
+				},
+				onComplete = {
+					lbLoading.setText("Theme loaded in ${System.currentTimeMillis() - start}ms!")
 				})
-		
-//		val gamelistObservable = XMLReader().parseGameList(File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/gamelist.xml"), File("/home/marcelo-frau/workspace/emulio/sample-files/Atari 2600/"), platform)
-//
-//		var count = 0
-//		gamelistObservable
-//				.subscribeOn(Schedulers.computation())
-//				.observeOn(GdxScheduler)
-//				.subscribe({
-//					lbLoading.setText("Reading game $count")
-//					count++
-//				}, { onPlatformsError(it) })
 
+		observeGameScanner(platforms)
+
+	}
+
+	private fun observeGameScanner(platforms: List<Platform>) {
+		var count = 0
+
+		val start = System.currentTimeMillis()
+
+		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
+
+		GameScanner(platforms)
+			.fullScan()
+			.subscribeOn(Schedulers.computation())
+			.observeOn(GdxScheduler)
+			.Subscribe(
+				onNext = { game ->
+					lbLoading.setText("Reading game $count (${game.platform.platformName})")
+					count++
+
+					val games = gamesMap[game.platform]
+					if (games == null) {
+						gamesMap[game.platform] = mutableListOf()
+					} else {
+						games.add(game)
+					}
+				},
+				onError = { ex ->
+					onError(ex)
+				},
+				onComplete = {
+					lbLoading.setText("All games read: $count in ${System.currentTimeMillis() - start}ms")
+				})
 	}
 
 	override fun render() {
@@ -137,17 +165,13 @@ class Emulio : ApplicationAdapter() {
 
 }
 
+private fun <T> Flowable<T>.Subscribe(onNext: (T) -> Unit, onError: (Throwable) -> Unit, onComplete: () -> Unit) {
+	subscribe(onNext, onError, onComplete)
+}
+
 private fun GL20.glClearColor(r: Int, g: Int, b: Int, alpha: Int) {
 	this.glClearColor(r.toGLColor(), g.toGLColor(), b.toGLColor(), alpha.toGLColor())
 }
 private fun Int.toGLColor(): Float {
 	return this / 255.0f
-}
-
-fun main(args: Array<String>) {
-	println("parsing random theme...")
-	val start = System.currentTimeMillis()
-	XMLReader().parseTheme(File("sample-files/theme/simple/3do/theme.xml"))
-	
-	println("theme parsed in: ${System.currentTimeMillis() - start}ms")
 }

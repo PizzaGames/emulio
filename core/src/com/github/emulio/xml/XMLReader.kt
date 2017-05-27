@@ -29,16 +29,23 @@ class XMLReader {
     }
     
     fun parseTheme(xmlFile: File): Theme {
+
+		check(xmlFile.exists()) { "File ${xmlFile.absolutePath} does not exists" }
+
+		check(xmlFile.isFile)
     
 		val factory = DocumentBuilderFactory.newInstance()
 		val docBuilder = factory.newDocumentBuilder()
 		val document = docBuilder.parse(xmlFile)
 		
 		val theme = Theme()
-		theme.formatVersion = document.getElementsByTagName("formatVersion")?.item(0)?.nodeValue
-		theme.includeTheme = findIncludeTheme(document, xmlFile)
+		theme.formatVersion = document.getElementsByTagName("formatVersion")?.item(0)?.textContent
 		theme.views = readViews(document.getElementsByTagName("view"), xmlFile)
-		
+
+		theme.includeTheme = findIncludeTheme(document, xmlFile)
+
+
+
         return theme
     }
 	
@@ -50,7 +57,9 @@ class XMLReader {
 		val views = mutableListOf<View>()
 		
 		for (i in 0..viewNodes.length) {
-			val viewNode = viewNodes.item(i)
+			val viewNode = viewNodes.item(i) ?: continue
+			check(viewNode.nodeName == "view")
+
 			val view = View()
 			
 			view.name = viewNode.attributes.getNamedItem("name").nodeValue
@@ -70,16 +79,24 @@ class XMLReader {
 		val items = mutableListOf<ViewItem>()
 		
 		for (i in 0..itemNodes.length) {
-			val node = itemNodes.item(i)
+			val node = itemNodes.item(i) ?: continue
+
+			if (node.nodeName == "#text" ||
+					node.nodeName == "#comment") {
+				continue
+			}
 			
-			val viewItem = when(node.localName) {
+			val viewItem = when(node.nodeName) {
 				"image" -> { readImage(node, xmlFile) }
 				"rating" -> { readRating(node, xmlFile) }
 				"datetime" -> { readDatetime(node, xmlFile) }
 				"helpsystem" -> { readHelpSystem(node, xmlFile) }
 				"textlist" -> { readTextList(node, xmlFile) }
 				"text" -> { readText(node, xmlFile) }
-				else -> { readViewItem(node, xmlFile) }
+				"view" -> { readViewItem(node, xmlFile) }
+				else -> {
+					error("Tag not supported yet '${node.nodeName}' ")
+				}
 			}
 			
 			items.add(viewItem)
@@ -94,8 +111,8 @@ class XMLReader {
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
-				val child = childNodes.item(i)
-				when (child.localName) {
+				val child = childNodes.item(i) ?: continue
+				when (child.nodeName) {
 					"date" -> { text.text = node.nodeValue }
 					"color" -> { text.color = node.nodeValue }
 					"alignment" -> {
@@ -129,8 +146,8 @@ class XMLReader {
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
-				val child = childNodes.item(i)
-				when (child.localName) {
+				val child = childNodes.item(i) ?: continue
+				when (child.nodeName) {
 					"date" -> { dateTime.date = SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(node.nodeValue) }
 					"color" -> { dateTime.color = node.nodeValue }
 					"fontpath" -> { dateTime.fontPath = File(xmlFile.parentFile, child.nodeValue) }
@@ -147,10 +164,10 @@ class XMLReader {
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
-				val child = childNodes.item(i)
-				when (child.localName) {
-					"filledPath" -> { rating.filledPath = File(xmlFile.parentFile, child.nodeValue) }
-					"unfilledPath" -> { rating.unfilledPath = File(xmlFile.parentFile, child.nodeValue) }
+				val child = childNodes.item(i) ?: continue
+				when (child.nodeName) {
+					"filledPath" -> { rating.filledPath = File(xmlFile.parentFile, child.textContent) }
+					"unfilledPath" -> { rating.unfilledPath = File(xmlFile.parentFile, child.textContent) }
 				}
 			}
 			
@@ -163,9 +180,10 @@ class XMLReader {
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
-				val child = childNodes.item(i)
-				when (child.localName) {
-					"path" -> { image.path = File(xmlFile.parentFile, child.nodeValue) }
+				val child = childNodes.item(i) ?: continue
+
+				when (child.nodeName) {
+					"path" -> { image.path = File(xmlFile.parentFile, child.textContent) }
 				}
 			}
 			
@@ -187,7 +205,7 @@ class XMLReader {
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
-				val child = childNodes.item(i)
+				val child = childNodes.item(i) ?: continue
 				readViewItemChild(child)
 			}
 			
@@ -196,47 +214,47 @@ class XMLReader {
 	}
 	
 	private fun ViewItem.readViewItemChild(child: Node) {
-		when (child.localName) {
+		when (child.nodeName) {
 			"position" -> {
-				val position = child.nodeValue.split(" ")
+				val position = child.textContent.split(" ")
 				
 				positionX = position[0].toFloatOrNull()
 				positionY = position[1].toFloatOrNull()
 			}
 			
 			"maxsize" -> {
-				val maxSize = child.nodeValue.split(" ")
+				val maxSize = child.textContent.split(" ")
 				
 				maxSizeX = maxSize[0].toFloatOrNull()
 				maxSizeY = maxSize[1].toFloatOrNull()
 			}
 			
 			"size" -> {
-				val size = child.nodeValue.split(" ")
+				val size = child.textContent.split(" ")
 				
 				sizeX = size[0].toFloatOrNull()
 				sizeY = size[1].toFloatOrNull()
 			}
 			
 			"origin" -> {
-				val origin = child.nodeValue.split(" ")
+				val origin = child.textContent.split(" ")
 				
 				originX = origin[0].toFloatOrNull()
 				originY = origin[1].toFloatOrNull()
 			}
 			
 			"horizontalMargin" -> {
-				horizontalMargin = child.nodeValue.toFloatOrNull()
+				horizontalMargin = child.textContent.toFloatOrNull()
 			}
 			"verticalMargin" -> {
-				verticalMargin = child.nodeValue.toFloatOrNull()
+				verticalMargin = child.textContent.toFloatOrNull()
 			}
 			
 			"textColor" -> {
-				textColor = child.nodeValue
+				textColor = child.textContent
 			}
 			"iconColor" -> {
-				iconColor = child.nodeValue
+				iconColor = child.textContent
 			}
 		}
 	}
@@ -247,7 +265,7 @@ class XMLReader {
 			return null
 		}
 		
-		val includePath = includeTag.item(0).firstChild.nodeValue
+		val includePath = includeTag.item(0).firstChild.textContent
 		
 		val xmlFile = File(mainXmlFile.parentFile, includePath)
 		

@@ -6,9 +6,9 @@ import com.github.emulio.xml.XMLReader
 import io.reactivex.*
 import mu.KotlinLogging
 import java.io.File
+import java.nio.file.Files
 
 class GameScanner(val platforms: List<Platform>) : Function0<Flowable<Game>> {
-	
 	val logger = KotlinLogging.logger { }
 	
 	fun fullScan() : Flowable<Game> {
@@ -36,12 +36,10 @@ class GameScanner(val platforms: List<Platform>) : Function0<Flowable<Game>> {
 					
 					val filesObservable: Flowable<Game> = Flowable.create({ emitter ->
 						scanFiles(romsPath, emitter, pathSet, platform)
+						emitter.onComplete()
 					}, BackpressureStrategy.BUFFER)
-					
 
 					games = games.concatWith(gamesObservable).concatWith(filesObservable)
-					
-//					logger.info { "scannedGames: ${scannedGames.size} / ${games.size}, time to scan: ${System.currentTimeMillis() - start}ms" }
 				}
 			}
 		}
@@ -51,18 +49,23 @@ class GameScanner(val platforms: List<Platform>) : Function0<Flowable<Game>> {
 	
 
 	private fun scanFiles(root: File, observableEmitter: FlowableEmitter<Game>, pathSet: MutableSet<String>, platform: Platform) {
-
-		if (root.isDirectory) {
-			root.listFiles().forEach {
-				scanFiles(it, observableEmitter, pathSet, platform)
-			}
-		} else {
-			if (root.isFile) {
-				if (!pathSet.contains(root.absolutePath)) {
-					observableEmitter.onNext(Game(root, platform))
-				}
-			}
+		Files.walk(root.toPath()).filter({ path ->
+			!pathSet.contains(path.toAbsolutePath().toString())
+		}).forEach { path ->
+			observableEmitter.onNext(Game(path.toFile(), platform))
 		}
+//		if (root.isDirectory) {
+//			root.listFiles().forEach {
+//				scanFiles(it, observableEmitter, pathSet, platform)
+//			}
+//		} else {
+//			if (root.isFile) {
+//				if (!pathSet.contains(root.absolutePath)) {
+//					println(root.absolutePath)
+//					observableEmitter.onNext(Game(root, platform))
+//				}
+//			}
+//		}
 	}
 
 }
