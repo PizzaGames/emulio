@@ -20,8 +20,11 @@ class ThemeReader {
 	fun readPlatform(platform: Platform, themeDir: File): Flowable<Theme> {
 		return Flowable.create({ emitter ->
 			val xmlFile = File(File(themeDir, platform.platformName), "theme.xml")
-			val theme = XMLReader().parseTheme(xmlFile)
-			theme.platform = platform
+
+			val theme = XMLReader().parseTheme(xmlFile).apply {
+				this.platform = platform
+			}
+
 			emitter.onNext(theme)
 			emitter.onComplete()
 		}, BackpressureStrategy.BUFFER)

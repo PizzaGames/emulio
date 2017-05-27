@@ -17,6 +17,7 @@ import com.github.emulio.runners.GameScanner
 import com.github.emulio.runners.PlatformReader
 import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
+import com.sun.javafx.stage.ScreenHelper
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -104,7 +105,6 @@ class Emulio : ApplicationAdapter() {
 			.Subscribe(
 				onNext = { theme ->
 					logger.debug { "theme read! ${theme.platform!!.platformName}" }
-					logger.debug { theme }
 				},
 				onError =  { ex ->
 					onError(ex)
