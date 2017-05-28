@@ -5,19 +5,19 @@
 Emulators frontend inspired by EmulationStation but written in a better platform to support better usability and eye candy.
 
 ## Backlog/Current status
-- [ ] Import all things from emulationstation data, try to be compatible, or have an iport option. - WIP
-  - [ ] Themes - WIP
+- [x] Import all things from emulationstation data, try to be compatible, or have an iport option. - WIP
+  - [x] Themes
   - [x] Gamelist 
   - [x] Platforms
 - [x] Import gamelists from generic scrappers
 - [ ] Have a query mechanism, by publisher, by name, custom finders
-- [ ] Reduce startup latency, avoid discovery in start and run in background - WIP
+- [x] Reduce startup latency, avoid discovery in start and run in background
 - [ ] Improve deep searches/updates performance - TODO
 - [ ] Themes from emulationstation support. - WIP
-- [ ] Store all data, information, settings in a much more faster format - WIP
-- [ ] Configurations, settings, another things are stored in yaml format to better compreehension and better maintenance - WIP
+- [ ] Store all data, information, settings in a much more faster format
+- [ ] Configurations, settings, another things are stored in yaml format to better compreehension and better maintenance 
 - [ ] Always be a portable mode - WIP
-- [ ] Settings must be done all in GUI and not only in yaml files. - TODO
+- [ ] Settings must be done/configured all in GUI and not only in yaml files. - TODO
 - [ ] libGDX based
   - [ ] Scene2D items
   - [x] Splash Screen
@@ -28,10 +28,10 @@ Emulators frontend inspired by EmulationStation but written in a better platform
   - [ ] Annimations
   - [ ] Keyboard Input
   - [ ] Gamepad Input
-  - [ ] Multithreading messages (see rxjava) - TODO
+  - [x] Multithreading messages (see rxjava)
 - [x] Launch external process and control it
-- [ ] RxJava to control threads/subscribers - WIP
+- [x] RxJava to control threads/subscribers
 - [x] Model data structures
 - [ ] Add MongoDB as a faster storage
-- [ ] Fastest mechanism to detect folder changes
+- [x] Fastest mechanism to detect folder changes - nio.Files is being used
   
