@@ -2,48 +2,60 @@ package com.github.emulio.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.github.emulio.Emulio
+import com.github.emulio.model.Game
+import com.github.emulio.model.Platform
+import com.github.emulio.runners.GameScanner
+import com.github.emulio.ui.reactive.GdxScheduler
+import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.gdxutils.glClearColor
+import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 class PlatformsScreen(val emulio: Emulio): Screen {
 
 	val logger = KotlinLogging.logger { }
 
-	val stage: Stage
+	val stage: Stage = Stage()
+	val lbLoading: Label
 
 	init {
-		stage = Stage()
 		Gdx.input.inputProcessor = stage
 
+		val table = Table()
+		table.setFillParent(true)
 
-		
-//		val table = Table()
-//		table.setFillParent(true)
-//
-//		val imgLogo = Image(Texture("images/logo.png"))
-//		table.add(imgLogo)
-//
-//
-//		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
-//		val francoisFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-//			size = 20
-//			color = Color(0x37424AFF)
-//		})
-//
-//		val lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
-//			font = francoisFont
-//		})
-//		lbLoading.setPosition(10f, 5f)
-//
-//		stage.addActor(table)
-//		stage.addActor(lbLoading)
-//
-//		// load main configurations/games and all stuff.. from mongo?
-//
-//		lbLoading.setText("TOOOOOLS")
+		val imgLogo = Image(Texture("images/logo-small.png"))
+		table.add(imgLogo)
+
+
+		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
+		val francoisFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+			size = 12
+			color = Color(0x37424AFF)
+		})
+
+		lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
+			font = francoisFont
+		})
+		lbLoading.setPosition(10f, 5f)
+
+		stage.addActor(table)
+		stage.addActor(lbLoading)
+
+		// load main configurations/games and all stuff.. from mongo?
+
+		lbLoading.setText("TOOOOOLS")
+
+		observeGameScanner(emulio.platforms!!)
 
 	}
 
@@ -76,6 +88,50 @@ class PlatformsScreen(val emulio: Emulio): Screen {
 
 	override fun dispose() {
 
+	}
+
+	private fun observeGameScanner(platforms: List<Platform>) {
+		var count = 0
+
+		val start = System.currentTimeMillis()
+
+		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
+
+		GameScanner(platforms)
+				.fullScan()
+				.subscribeOn(Schedulers.computation())
+				.observeOn(GdxScheduler)
+				.Subscribe(
+						onNext = { game ->
+							lbLoading.setText("Reading game $count (${game.platform.platformName})")
+							count++
+
+							val games = gamesMap[game.platform]
+							if (games == null) {
+								gamesMap[game.platform] = mutableListOf(game)
+							} else {
+								games.add(game)
+							}
+						},
+						onError = { ex ->
+							onError(ex)
+						},
+						onComplete = {
+							lbLoading.setText("All games read: $count in ${System.currentTimeMillis() - start}ms")
+
+							emulio.games = gamesMap
+
+
+						})
+	}
+
+	private fun onError(exception: Throwable) {
+
+		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.")
+		lbLoading.setPosition(10f, 20f)
+
+		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
+		// Exit app on keypress?
 	}
 
 }

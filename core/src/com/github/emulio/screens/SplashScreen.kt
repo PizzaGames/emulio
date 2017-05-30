@@ -123,46 +123,14 @@ class SplashScreen(val emulio: Emulio) : Screen {
 				onComplete = {
 					lbLoading.setText("Theme loaded in ${System.currentTimeMillis() - start}ms!")
 					emulio.theme = themesMap
-				})
 
-		observeGameScanner(platforms)
-
-	}
-
-	private fun observeGameScanner(platforms: List<Platform>) {
-		var count = 0
-
-		val start = System.currentTimeMillis()
-
-		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
-
-		GameScanner(platforms)
-			.fullScan()
-			.subscribeOn(Schedulers.computation())
-			.observeOn(GdxScheduler)
-			.Subscribe(
-				onNext = { game ->
-					lbLoading.setText("Reading game $count (${game.platform.platformName})")
-					count++
-
-					val games = gamesMap[game.platform]
-					if (games == null) {
-						gamesMap[game.platform] = mutableListOf(game)
-					} else {
-						games.add(game)
-					}
-				},
-				onError = { ex ->
-					onError(ex)
-				},
-				onComplete = {
-					lbLoading.setText("All games read: $count in ${System.currentTimeMillis() - start}ms")
-
-					emulio.games = gamesMap
 					emulio.screen = PlatformsScreen(emulio)
-
 				})
+
+
 	}
+
+
 
 	override fun render(delta: Float) {
 		Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
