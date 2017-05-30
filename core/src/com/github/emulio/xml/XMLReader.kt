@@ -88,12 +88,15 @@ class XMLReader {
 			
 			val viewItem = when(node.nodeName) {
 				"image" -> { readImage(node, xmlFile) }
+				"ninepatch" -> { readNinepatch(node, xmlFile) }
+				"container" -> { readContainer(node, xmlFile) }
 				"rating" -> { readRating(node, xmlFile) }
 				"datetime" -> { readDatetime(node, xmlFile) }
 				"helpsystem" -> { readHelpSystem(node, xmlFile) }
 				"textlist" -> { readTextList(node, xmlFile) }
 				"text" -> { readText(node, xmlFile) }
 				"view" -> { readViewItem(node, xmlFile) }
+				
 				else -> {
 					error("Tag not supported yet '${node.nodeName}' ")
 				}
@@ -104,6 +107,14 @@ class XMLReader {
 		}
 		
 		return items
+	}
+	
+	private fun readContainer(node: Node, xmlFile: File): Container {
+		return Container().readViewItem(node)
+	}
+	
+	private fun readNinepatch(node: Node, xmlFile: File): ViewItem {
+		return NinePatch().readImage(node, xmlFile)
 	}
 	
 	private fun readText(node: Node, xmlFile: File): Text {3
@@ -175,20 +186,23 @@ class XMLReader {
 		return rating.readViewItem(node)
 	}
 	
-	private fun readImage(node: Node, xmlFile: File): Image {
-		val image = Image()
+	private fun <T : ViewImage> T.readImage(node: Node, xmlFile: File): T {
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
 				val child = childNodes.item(i) ?: continue
-
+				
 				when (child.nodeName) {
-					"path" -> { image.path = File(xmlFile.parentFile, child.textContent) }
+					"path" -> { path = File(xmlFile.parentFile, child.textContent) }
 				}
 			}
 			
 		}
-		return image.readViewItem(node)
+		return readViewItem(node)
+	}
+	
+	private fun readImage(node: Node, xmlFile: File): ViewImage {
+		return ViewImage().readImage(node, xmlFile)
 	}
 	
 	private fun readViewItem(node: Node, xmlFile: File): ViewItem {

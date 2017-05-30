@@ -14,6 +14,15 @@ class Theme {
 	override fun toString(): String {
 		return "Theme(formatVersion=$formatVersion, includeTheme=$includeTheme, views=$views)"
 	}
+	
+	fun getViewByName(name: String): View? {
+		views?.forEach { view ->
+			if (view.name == name) {
+				return view
+			}
+		}
+		return null
+	}
 
 }
 
@@ -25,6 +34,17 @@ class View {
 	override fun toString(): String {
 		return "View(name=$name, viewItems=$viewItems)"
 	}
+	
+	fun getItemByName(name: String): ViewItem? {
+		viewItems?.forEach { item ->
+			if (item.name == name) {
+				return item
+			}
+		}
+		
+		return null
+	}
+	
 }
 
 
@@ -50,7 +70,7 @@ open class ViewItem {
 
 }
 
-class Image : ViewItem() {
+open class ViewImage : ViewItem() {
 	var path: File? = null
 
 	override fun toString(): String {
@@ -102,9 +122,23 @@ class Rating : ViewItem() {
 class TextList : ViewItem()
 
 
-class HelpSystem : ViewItem()
+class HelpSystem : ViewItem() {
+	override fun toString(): String {
+		return "HelpSystem()"
+	}
+}
 
+class Container : ViewItem() {
+	override fun toString(): String {
+		return "Container()"
+	}
+}
 
+class NinePatch : ViewImage() {
+	override fun toString(): String {
+		return "NinePatch()"
+	}
+}
 
 
 

@@ -8,18 +8,23 @@ import java.io.FileOutputStream
 
 
 class PNGConverter {
+	
+	val pngTranscoder = PNGTranscoder()
 
-	fun convertFromSVG(svgFile: File, pngFile: File, width: Float, height: Float) {
-		val t = PNGTranscoder()
-
-		t.addTranscodingHint(PNGTranscoder.KEY_WIDTH, width)
-		t.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, height)
+	fun convertFromSVG(svgFile: File, pngFile: File, width: Float?, height: Float?) {
+		
+		if (width != null) {
+			pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, width)
+		}
+		if (height != null) {
+			pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, height)
+		}
 
 		val input = TranscoderInput(svgFile.toURI().toString())
 
 		FileOutputStream(pngFile).use { outputStream ->
 			val output = TranscoderOutput(outputStream)
-			t.transcode(input, output)
+			pngTranscoder.transcode(input, output)
 			outputStream.flush()
 		}
 	}

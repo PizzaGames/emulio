@@ -20,7 +20,7 @@ class GameScanner(val platforms: List<Platform>) : Function0<Flowable<Game>> {
 		var games = Flowable.empty<Game>()
 		
 		platforms.forEach { platform ->
-			logger.info { "Analysing platform ${platform.platformName}" }
+			logger.info { "Sanning games for platform ${platform.platformName}" }
 
 			val xmlReader = XMLReader()
 

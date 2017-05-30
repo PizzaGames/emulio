@@ -2,6 +2,7 @@ package com.github.emulio.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
+import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.runners.GameScanner
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
@@ -29,11 +31,21 @@ class PlatformsScreen(val emulio: Emulio): Screen {
 
 	init {
 		Gdx.input.inputProcessor = stage
+		
+		val platform = emulio.platforms[0]
+		val platformTheme = emulio.theme[platform]!!
+		
+		val systemView = checkNotNull(platformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
+		val background = systemView.getItemByName("background")!! as ViewImage
+		
+		val backgroundTexture = Texture(FileHandle(background.path!!))
+		
+		
 
 		val table = Table()
 		table.setFillParent(true)
 
-		val imgLogo = Image(Texture("images/logo-small.png"))
+		val imgLogo = Image(backgroundTexture)//Image(Texture("images/logo-small.png"))
 		table.add(imgLogo)
 
 
@@ -55,7 +67,7 @@ class PlatformsScreen(val emulio: Emulio): Screen {
 
 		lbLoading.setText("TOOOOOLS")
 
-		observeGameScanner(emulio.platforms!!)
+		observeGameScanner(emulio.platforms)
 
 	}
 

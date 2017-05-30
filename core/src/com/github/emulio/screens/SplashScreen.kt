@@ -108,26 +108,31 @@ class SplashScreen(val emulio: Emulio) : Screen {
 		val themesMap = mutableMapOf<Platform, Theme>()
 
 		ThemeReader()
-			.readTheme(platforms, File("G:/workspace/emulio/sample-files/theme/simple"))
+			.readTheme(platforms, File("../../sample-files/theme/simple"))
 			.subscribeOn(Schedulers.computation())
 			.observeOn(GdxScheduler)
 			.Subscribe(
 				onNext = { theme ->
-					logger.debug { "theme read! ${theme.platform!!.platformName}" }
-
-					themesMap.put(theme.platform!!, theme)
+					val platform = theme.platform!!
+					val platformName = platform.platformName
+					logger.debug { "theme read for platform '$platformName'" }
+					lbLoading.setText("Loading theme for platform $platformName")
+					
+					
+					
+					themesMap.put(platform, theme)
 				},
 				onError =  { ex ->
 					onError(ex)
 				},
 				onComplete = {
-					lbLoading.setText("Theme loaded in ${System.currentTimeMillis() - start}ms!")
+					logger.debug { "theme loaded in ${System.currentTimeMillis() - start}ms " }
+					
+					lbLoading.setText("Theme loaded")
 					emulio.theme = themesMap
 
 					emulio.screen = PlatformsScreen(emulio)
 				})
-
-
 	}
 
 
