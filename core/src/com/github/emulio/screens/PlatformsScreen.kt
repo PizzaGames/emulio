@@ -1,12 +1,19 @@
 package com.github.emulio.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controller
+import com.badlogic.gdx.controllers.ControllerListener
+import com.badlogic.gdx.controllers.Controllers
+import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -22,7 +29,8 @@ import com.github.emulio.utils.gdxutils.glClearColor
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
-class PlatformsScreen(val emulio: Emulio): Screen {
+class PlatformsScreen(val emulio: Emulio): Screen, InputProcessor, ControllerListener {
+
 
 	val logger = KotlinLogging.logger { }
 
@@ -30,7 +38,17 @@ class PlatformsScreen(val emulio: Emulio): Screen {
 	val lbLoading: Label
 
 	init {
+
+		Controllers.addListener(this)
+
+
+		val inputMultiplexer = InputMultiplexer()
+		inputMultiplexer.addProcessor(stage)
+		inputMultiplexer.addProcessor(this)
+
 		Gdx.input.inputProcessor = stage
+
+
 		
 		val platform = emulio.platforms[0]
 		val platformTheme = emulio.theme[platform]!!
@@ -144,6 +162,74 @@ class PlatformsScreen(val emulio: Emulio): Screen {
 
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
 		// Exit app on keypress?
+	}
+
+	override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun keyTyped(character: Char): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun scrolled(amount: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun keyUp(keycode: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun keyDown(keycode: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun connected(controller: Controller?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun disconnected(controller: Controller?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
 }

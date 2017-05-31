@@ -5,13 +5,11 @@ import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.*
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.SAXParserFactory
 
@@ -38,18 +36,19 @@ class XMLReader {
 		val docBuilder = factory.newDocumentBuilder()
 		val document = docBuilder.parse(xmlFile)
 		
-		val theme = Theme()
-		theme.formatVersion = document.getElementsByTagName("formatVersion")?.item(0)?.textContent
-		theme.views = readViews(document.getElementsByTagName("view"), xmlFile)
+		val theme = findIncludeTheme(document, xmlFile)
 
-		theme.includeTheme = findIncludeTheme(document, xmlFile)
+		theme.formatVersion = document.getElementsByTagName("formatVersion")?.item(0)?.textContent
+		theme.views = readViews(document.getElementsByTagName("view"), xmlFile, theme)
+
+
 
 
 
         return theme
     }
 	
-	private fun readViews(viewNodes: NodeList?, xmlFile: File): List<View> {
+	private fun readViews(viewNodes: NodeList?, xmlFile: File, theme: Theme): List<View> {
 		if (viewNodes == null || viewNodes.length == 0) {
 			return emptyList()
 		}
@@ -60,10 +59,12 @@ class XMLReader {
 			val viewNode = viewNodes.item(i) ?: continue
 			check(viewNode.nodeName == "view")
 
-			val view = View()
-			
-			view.name = viewNode.attributes.getNamedItem("name").nodeValue
-			view.viewItems = readViewItems(viewNode.childNodes, xmlFile)
+			val viewName = viewNode.attributes.getNamedItem("name").nodeValue
+
+			val view = theme.getViewByName(viewName) ?: View()
+
+			view.name = viewName
+			view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
 			
 			views.add(view)
 		}
@@ -71,15 +72,24 @@ class XMLReader {
 		return views
 	}
 	
-	private fun readViewItems(itemNodes: NodeList?, xmlFile: File): List<ViewItem> {
+	private fun readViewItems(itemNodes: NodeList?, xmlFile: File, view: View): MutableList<ViewItem> {
 		if (itemNodes == null || itemNodes.length == 0) {
-			return emptyList()
+			return ArrayList()
 		}
 		
-		val items = mutableListOf<ViewItem>()
-		
+		val items = view.viewItems ?: mutableListOf<ViewItem>()
+
 		for (i in 0..itemNodes.length) {
 			val node = itemNodes.item(i) ?: continue
+
+			val attributes = node.attributes
+			val viewItemName = attributes?.getNamedItem("name")?.nodeValue
+
+			val foundView = if (viewItemName != null) {
+				view.getItemByName(viewItemName)
+			} else {
+				null
+			}
 
 			if (node.nodeName == "#text" ||
 					node.nodeName == "#comment") {
@@ -87,21 +97,21 @@ class XMLReader {
 			}
 			
 			val viewItem = when(node.nodeName) {
-				"image" -> { readImage(node, xmlFile) }
-				"ninepatch" -> { readNinepatch(node, xmlFile) }
-				"container" -> { readContainer(node, xmlFile) }
-				"rating" -> { readRating(node, xmlFile) }
-				"datetime" -> { readDatetime(node, xmlFile) }
-				"helpsystem" -> { readHelpSystem(node, xmlFile) }
-				"textlist" -> { readTextList(node, xmlFile) }
-				"text" -> { readText(node, xmlFile) }
-				"view" -> { readViewItem(node, xmlFile) }
+				"image" -> { readImage(node, xmlFile, foundView) }
+				"ninepatch" -> { readNinepatch(node, xmlFile, foundView) }
+				"container" -> { readContainer(node, xmlFile, foundView) }
+				"rating" -> { readRating(node, xmlFile, foundView) }
+				"datetime" -> { readDatetime(node, xmlFile, foundView) }
+				"helpsystem" -> { readHelpSystem(node, xmlFile, foundView) }
+				"textlist" -> { readTextList(node, xmlFile, foundView) }
+				"text" -> { readText(node, xmlFile, foundView) }
+				"view" -> { readViewItem(node, xmlFile, foundView) }
 				
 				else -> {
 					error("Tag not supported yet '${node.nodeName}' ")
 				}
 			}
-			
+
 			items.add(viewItem)
 			
 		}
@@ -109,16 +119,18 @@ class XMLReader {
 		return items
 	}
 	
-	private fun readContainer(node: Node, xmlFile: File): Container {
-		return Container().readViewItem(node)
+	private fun readContainer(node: Node, xmlFile: File, foundView: ViewItem?): Container {
+		val container = if (foundView != null) { foundView as Container } else { Container() }
+		return container.readViewItem(node)
 	}
 	
-	private fun readNinepatch(node: Node, xmlFile: File): ViewItem {
-		return NinePatch().readImage(node, xmlFile)
+	private fun readNinepatch(node: Node, xmlFile: File, foundView: ViewItem?): NinePatch {
+		val ninePatch = if (foundView != null) { foundView as NinePatch } else { NinePatch() }
+		return ninePatch.readImage(node, xmlFile)
 	}
 	
-	private fun readText(node: Node, xmlFile: File): Text {3
-		val text = Text()
+	private fun readText(node: Node, xmlFile: File, foundView: ViewItem?): Text {
+		val text = if (foundView != null) { foundView as Text } else { Text() }
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
@@ -144,16 +156,18 @@ class XMLReader {
 		return text.readViewItem(node)
 	}
 	
-	private fun readTextList(node: Node, xmlFile: File): TextList {
-		return TextList().readViewItem(node)
+	private fun readTextList(node: Node, xmlFile: File, foundView: ViewItem?): TextList {
+		val textList = if (foundView != null) { foundView as TextList } else { TextList() }
+		return textList.readViewItem(node)
 	}
 	
-	private fun readHelpSystem(node: Node, xmlFile: File): HelpSystem {
-		return HelpSystem().readViewItem(node)
+	private fun readHelpSystem(node: Node, xmlFile: File, foundView: ViewItem?): HelpSystem {
+		val helpSystem = if (foundView != null) { foundView as HelpSystem } else { HelpSystem() }
+		return helpSystem.readViewItem(node)
 	}
 	
-	private fun readDatetime(node: Node, xmlFile: File): DateTime {
-		val dateTime = DateTime()
+	private fun readDatetime(node: Node, xmlFile: File, foundView: ViewItem?): DateTime {
+		val dateTime = if (foundView != null) { foundView as DateTime } else { DateTime() }
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
@@ -170,8 +184,8 @@ class XMLReader {
 		return dateTime.readViewItem(node)
 	}
 	
-	private fun  readRating(node: Node, xmlFile: File): Rating {
-		val rating = Rating()
+	private fun  readRating(node: Node, xmlFile: File, foundView: ViewItem?): Rating {
+		val rating = if (foundView != null) { foundView as Rating } else { Rating() }
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
@@ -201,12 +215,14 @@ class XMLReader {
 		return readViewItem(node)
 	}
 	
-	private fun readImage(node: Node, xmlFile: File): ViewImage {
-		return ViewImage().readImage(node, xmlFile)
+	private fun readImage(node: Node, xmlFile: File, foundView: ViewItem?): ViewImage {
+		val viewImage = if (foundView != null) { foundView as ViewImage } else { ViewImage() }
+		return viewImage.readImage(node, xmlFile)
 	}
 	
-	private fun readViewItem(node: Node, xmlFile: File): ViewItem {
-		return ViewItem().readViewItem(node)
+	private fun readViewItem(node: Node, xmlFile: File, foundView: ViewItem?): ViewItem {
+		val viewItem = foundView ?: ViewItem()
+		return viewItem.readViewItem(node)
 	}
 	
 	private fun <T : ViewItem> T.readViewItem(node: Node): T {
@@ -273,10 +289,10 @@ class XMLReader {
 		}
 	}
 	
-	private fun findIncludeTheme(document: Document, mainXmlFile: File): Theme? {
+	private fun findIncludeTheme(document: Document, mainXmlFile: File): Theme {
 		val includeTag = document.getElementsByTagName("include")
 		if (includeTag == null || includeTag.length == 0) {
-			return null
+			return Theme()
 		}
 		
 		val includePath = includeTag.item(0).firstChild.textContent
@@ -284,7 +300,7 @@ class XMLReader {
 		val xmlFile = File(mainXmlFile.parentFile, includePath)
 		
 		if (!xmlFile.isFile) {
-			return null
+			return Theme()
 		}
 		return parseTheme(xmlFile)
 	}

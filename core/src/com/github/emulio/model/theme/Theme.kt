@@ -29,7 +29,7 @@ class Theme {
 
 class View {
 	var name: String? = null
-	var viewItems: List<ViewItem>? = null
+	var viewItems: MutableList<ViewItem>? = null
 
 	override fun toString(): String {
 		return "View(name=$name, viewItems=$viewItems)"
