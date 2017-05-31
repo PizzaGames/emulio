@@ -1,12 +1,34 @@
 package com.github.emulio.yaml
 
+import com.github.emulio.Emulio
+import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import mu.KotlinLogging
+import org.yaml.snakeyaml.Yaml
 import java.io.File
+import org.yaml.snakeyaml.DumperOptions
 
-class YamlReader {
+
+
+class YamlUtils {
 
 	val logger = KotlinLogging.logger { }
+	
+	fun parseEmulioConfig(yamlFile: File): EmulioConfig {
+		return getYaml().load(yamlFile.readText()) as EmulioConfig
+	}
+	
+	fun saveEmulioConfig(yamlFile: File, config: EmulioConfig) {
+		val yaml = getYaml().dump(config)
+		yamlFile.writeText(yaml)
+	}
+	
+	private fun getYaml(): Yaml {
+		val options = DumperOptions()
+		options.defaultFlowStyle = DumperOptions.FlowStyle.FLOW
+		options.isPrettyFlow = true
+		return Yaml(options)
+	}
 	
 	fun parsePlatforms(yamlFile: File): List<Platform> {
 

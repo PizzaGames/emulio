@@ -1,6 +1,5 @@
 package com.github.emulio.ui.screens
 
-
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
@@ -12,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.github.emulio.Emulio
+import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
@@ -20,6 +20,7 @@ import com.github.emulio.runners.PlatformReader
 import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.*
+import com.github.emulio.yaml.YamlUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
@@ -63,15 +64,44 @@ class SplashScreen(val emulio: Emulio) : Screen {
 		stage.addActor(lbLoading)
 
 		// load main configurations/games and all stuff.. from mongo?
-
-		lbLoading.setText("Loading platforms")
-
-		observePlatforms()
-
+		
+		lbLoading.setText("Loading configurations")
+		observeConfig()
 
 	}
-
-
+	
+	private fun observeConfig() {
+		val observable: Observable<EmulioConfig> = Observable.create({ subscriber ->
+			val yamlUtils = YamlUtils()
+			val configFile = File("emulio-config.yaml")
+			
+			if (!configFile.exists()) {
+				yamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
+			}
+			
+			subscriber.onNext(yamlUtils.parseEmulioConfig(configFile))
+			subscriber.onComplete()
+		})
+		
+		observable
+				.subscribeOn(Schedulers.computation())
+				.observeOn(GdxScheduler)
+				.subscribe({ config ->
+					
+					emulio.config = config
+					
+					lbLoading.setText("Loading platforms")
+					observePlatforms()
+				}, { onError(it) })
+	}
+	
+	private fun initializeEmulioConfig(): EmulioConfig {
+		return EmulioConfig().apply {
+			loadDefaults()
+		}
+	}
+	
+	
 	private fun observePlatforms() {
 		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
 			val platforms = PlatformReader().invoke()
@@ -108,7 +138,7 @@ class SplashScreen(val emulio: Emulio) : Screen {
 		val themesMap = mutableMapOf<Platform, Theme>()
 
 		ThemeReader()
-			.readTheme(platforms, File("sample-files/theme/simple"))
+			.readTheme(platforms, File("../../sample-files/theme/simple"))
 			.subscribeOn(Schedulers.computation())
 			.observeOn(GdxScheduler)
 			.Subscribe(

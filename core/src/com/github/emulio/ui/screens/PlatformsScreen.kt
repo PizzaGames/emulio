@@ -2,18 +2,12 @@ package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.controllers.ControllerListener
-import com.badlogic.gdx.controllers.Controllers
-import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -23,32 +17,28 @@ import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.runners.GameScanner
+import com.github.emulio.ui.input.InputManager
+import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.gdxutils.glClearColor
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
-class PlatformsScreen(val emulio: Emulio): Screen, InputProcessor, ControllerListener {
-
-
+class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
+	
 	val logger = KotlinLogging.logger { }
 
 	val stage: Stage = Stage()
 	val lbLoading: Label
-
+	
+	val inputController: InputManager = InputManager(this, emulio.config)
+	
+	
+	
 	init {
-
-		Controllers.addListener(this)
-
-
-		val inputMultiplexer = InputMultiplexer()
-		inputMultiplexer.addProcessor(stage)
-		inputMultiplexer.addProcessor(this)
-
+		
 		Gdx.input.inputProcessor = stage
-
-
 		
 		val platform = emulio.platforms[0]
 		val platformTheme = emulio.theme[platform]!!
@@ -102,6 +92,8 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputProcessor, ControllerLis
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()
+		
+		inputController.update(delta)
 	}
 
 	override fun pause() {
@@ -117,7 +109,6 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputProcessor, ControllerLis
 	}
 
 	override fun dispose() {
-
 	}
 
 	private fun observeGameScanner(platforms: List<Platform>) {
@@ -150,8 +141,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputProcessor, ControllerLis
 							lbLoading.setText("All games read: $count in ${System.currentTimeMillis() - start}ms")
 
 							emulio.games = gamesMap
-
-
+							
 						})
 	}
 
@@ -163,73 +153,65 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputProcessor, ControllerLis
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
 		// Exit app on keypress?
 	}
-
-	override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onConfirmButton(): Boolean {
+		logger.debug { "onConfirmButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onCancelButton(): Boolean {
+		logger.debug { "onCancelButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun keyTyped(character: Char): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onUpButton(intensity: Float): Boolean {
+		logger.debug { "onUpButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun scrolled(amount: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onDownButton(intensity: Float): Boolean {
+		logger.debug { "onDownButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun keyUp(keycode: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onLeftButton(intensity: Float): Boolean {
+		logger.debug { "onLeftButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onRightButton(intensity: Float): Boolean {
+		logger.debug { "onRightButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun keyDown(keycode: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onFindButton(): Boolean {
+		logger.debug { "onFindButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onOptionsButton(): Boolean {
+		logger.debug { "onOptionsButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun connected(controller: Controller?) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onSelectButton(): Boolean {
+		logger.debug { "onSelectButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun buttonUp(controller: Controller?, buttonCode: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onPageUpButton(intensity: Float): Boolean {
+		logger.debug { "onPageUpButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun ySliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onPageDownButton(intensity: Float): Boolean {
+		logger.debug { "onPageDownButton: ${System.currentTimeMillis()}" }
+		return true
 	}
-
-	override fun accelerometerMoved(controller: Controller?, accelerometerCode: Int, value: Vector3?): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun axisMoved(controller: Controller?, axisCode: Int, value: Float): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun disconnected(controller: Controller?) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun xSliderMoved(controller: Controller?, sliderCode: Int, value: Boolean): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun povMoved(controller: Controller?, povCode: Int, value: PovDirection?): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun buttonDown(controller: Controller?, buttonCode: Int): Boolean {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	
+	override fun onExitButton(): Boolean {
+		logger.debug { "onExitButton: ${System.currentTimeMillis()}" }
+		return true
 	}
 
 }
