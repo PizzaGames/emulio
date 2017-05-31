@@ -1,4 +1,4 @@
-package com.github.emulio.screens
+package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer

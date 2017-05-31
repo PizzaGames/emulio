@@ -1,4 +1,4 @@
-package com.github.emulio.screens
+package com.github.emulio.ui.screens
 
 
 import com.badlogic.gdx.Gdx
@@ -108,7 +108,7 @@ class SplashScreen(val emulio: Emulio) : Screen {
 		val themesMap = mutableMapOf<Platform, Theme>()
 
 		ThemeReader()
-			.readTheme(platforms, File("../../sample-files/theme/simple"))
+			.readTheme(platforms, File("sample-files/theme/simple"))
 			.subscribeOn(Schedulers.computation())
 			.observeOn(GdxScheduler)
 			.Subscribe(
