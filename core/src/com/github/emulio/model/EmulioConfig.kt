@@ -2,6 +2,7 @@ package com.github.emulio.model
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Input.Keys
+import com.badlogic.gdx.controllers.mappings.Xbox
 
 
 class EmulioConfig {
@@ -37,7 +38,35 @@ class EmulioConfig {
 			
 			exit = Keys.ESCAPE
 		}
-		gamepadConfig = emptyMap()
+		gamepadConfig = mapOf("Controller (XBOX 360 For Windows)" to InputConfig().apply {
+			type = InputType.JOYSTICK
+			name = "Controller (XBOX 360 For Windows)"
+
+			confirm = Xbox.A
+			cancel = Xbox.B
+
+			up = Xbox.DPAD_UP
+			down = Xbox.DPAD_DOWN
+			left = Xbox.DPAD_LEFT
+			right = Xbox.DPAD_RIGHT
+
+
+			find = Xbox.Y
+
+			options = Xbox.START
+			select = Xbox.GUIDE
+
+			pageUp = Xbox.L_BUMPER
+			pageDown = Xbox.R_BUMPER
+
+			//exit = Xbox.ESCAPE
+
+			lTrigger = Xbox.L_TRIGGER
+			rTrigger = Xbox.R_TRIGGER
+
+			axisX = Xbox.L_STICK_HORIZONTAL_AXIS
+			axisY = Xbox.L_STICK_VERTICAL_AXIS
+		})
 		debug = true
 	}
 }

@@ -1,7 +1,6 @@
 package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
@@ -17,8 +16,8 @@ import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.runners.GameScanner
-import com.github.emulio.ui.input.InputManager
 import com.github.emulio.ui.input.InputListener
+import com.github.emulio.ui.input.InputManager
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.gdxutils.glClearColor
@@ -26,19 +25,22 @@ import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
-	
+
+
 	val logger = KotlinLogging.logger { }
 
 	val stage: Stage = Stage()
 	val lbLoading: Label
-	
+
 	val inputController: InputManager = InputManager(this, emulio.config)
-	
-	
-	
+
+
+
 	init {
-		
+
 		Gdx.input.inputProcessor = stage
+
+
 		
 		val platform = emulio.platforms[0]
 		val platformTheme = emulio.theme[platform]!!
@@ -92,7 +94,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()
-		
+
 		inputController.update(delta)
 	}
 
@@ -141,7 +143,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 							lbLoading.setText("All games read: $count in ${System.currentTimeMillis() - start}ms")
 
 							emulio.games = gamesMap
-							
+
 						})
 	}
 
@@ -153,65 +155,66 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
 		// Exit app on keypress?
 	}
-	
+
 	override fun onConfirmButton(): Boolean {
-		logger.debug { "onConfirmButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onCancelButton(): Boolean {
-		logger.debug { "onCancelButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onUpButton(intensity: Float): Boolean {
-		logger.debug { "onUpButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onDownButton(intensity: Float): Boolean {
-		logger.debug { "onDownButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onLeftButton(intensity: Float): Boolean {
-		logger.debug { "onLeftButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onRightButton(intensity: Float): Boolean {
-		logger.debug { "onRightButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onFindButton(): Boolean {
-		logger.debug { "onFindButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onOptionsButton(): Boolean {
-		logger.debug { "onOptionsButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onSelectButton(): Boolean {
-		logger.debug { "onSelectButton: ${System.currentTimeMillis()}" }
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return true
 	}
-	
+
 	override fun onPageUpButton(intensity: Float): Boolean {
-		logger.debug { "onPageUpButton: ${System.currentTimeMillis()}" }
-		return true
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		return false
 	}
-	
+
 	override fun onPageDownButton(intensity: Float): Boolean {
-		logger.debug { "onPageDownButton: ${System.currentTimeMillis()}" }
-		return true
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		return false
 	}
-	
+
 	override fun onExitButton(): Boolean {
-		logger.debug { "onExitButton: ${System.currentTimeMillis()}" }
-		return true
+		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		return false
 	}
+
 
 }

@@ -1,7 +1,27 @@
 !!com.github.emulio.model.EmulioConfig {
   debug: true,
   gamepadConfig: {
-    },
+    Controller (XBOX 360 For Windows): {
+      LTrigger: -1,
+      RTrigger: -1,
+      axisX: -1,
+      axisY: -1,
+      cancel: -1,
+      confirm: -1,
+      down: -1,
+      exit: -1,
+      find: -1,
+      left: -1,
+      name: Controller (XBOX 360 For Windows),
+      options: -1,
+      pageDown: -1,
+      pageUp: -1,
+      right: -1,
+      select: -1,
+      type: JOYSTICK,
+      up: -1
+    }
+  },
   graphicsConfig: {
     fullscreen: null,
     screenHeight: null,
