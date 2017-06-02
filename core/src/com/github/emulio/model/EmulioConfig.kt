@@ -61,8 +61,7 @@ class EmulioConfig {
 
 			//exit = Xbox.ESCAPE
 
-			lTrigger = Xbox.L_TRIGGER
-			rTrigger = Xbox.R_TRIGGER
+			axisTrigger = 4
 
 			axisX = Xbox.L_STICK_VERTICAL_AXIS
 			axisY = Xbox.L_STICK_HORIZONTAL_AXIS
@@ -105,8 +104,7 @@ class InputConfig {
 	var axisX: Int = -1
 	var axisY: Int = -1
 	
-	var lTrigger: Int = -1
-	var rTrigger: Int = -1
+	var axisTrigger: Int = -1
 	
 	var find: Int = -1
 	

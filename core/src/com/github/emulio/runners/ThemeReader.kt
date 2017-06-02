@@ -37,7 +37,6 @@ class ThemeReader {
 			}
 			
 			convertImages(theme)
-
 			emitter.onNext(theme)
 			
 			logger.info { "Theme of '${platform.platformName}' read in ${System.currentTimeMillis() - start}ms " }
@@ -106,6 +105,9 @@ class ThemeReader {
 			if (!pngFile.exists()) {
 				logger.debug { "convertImage: Converting ${imgFile.name} image into ${pngFile.name}" }
 				pngConverter.convertFromSVG(imgFile, pngFile, width, height)
+				viewImage.path = pngFile
+			} else {
+				viewImage.path = pngFile
 			}
 		}
 	

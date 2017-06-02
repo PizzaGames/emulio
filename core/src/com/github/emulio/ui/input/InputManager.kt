@@ -4,49 +4,75 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.Controllers
+import com.badlogic.gdx.controllers.PovDirection
 import com.github.emulio.model.EmulioConfig
-import com.github.emulio.model.Xbox
 import mu.KotlinLogging
 
 
 class InputManager(val listener: InputListener, val config: EmulioConfig) {
 	
 	private val logger = KotlinLogging.logger {}
+
+//	init {
+//		Controllers.addListener(object : ControllerAdapter() {
+//			override fun povMoved(controller: Controller?, povIndex: Int, value: PovDirection?): Boolean {
+//				logger.debug { "povMoved $povIndex $value" }
+//				return super.povMoved(controller, povIndex, value)
+//			}
+//		})
+//	}
 	
 	val input = Gdx.input
 	
 	val keyboardCfg = config.keyboardConfig
 	val gamepadsCfg = config.gamepadConfig
+
+	class ControllerData {
+		lateinit var controller: Controller
+
+		var joyAlreadyPressed = false
+		var joyPressedElapsed = 0.0f
+
+		var ConfirmButton = false
+		var CancelButton = false
+		var FindButton = false
+		var OptionsButton = false
+		var SelectButton = false
+		var ExitButton = false
+		var UpButton = false
+		var DownButton = false
+		var LeftButton = false
+		var RightButton = false
+		var PageUpButton = false
+		var PageDownButton = false
+	}
+
 	
-	var controllers = Controllers.getControllers()
+	var controllers = updateControllers()
 	
 	fun reloadControllers() {
-		controllers = Controllers.getControllers()
+		controllers = updateControllers()
 	}
-	
+
+	private fun updateControllers(): List<ControllerData> {
+		return Controllers.getControllers().map {
+			ControllerData().apply {
+				controller = it
+			}
+		}
+	}
+
 	fun update(delta: Float) {
 		updateControllers(delta)
 		updateKey(delta)
 	}
 
-	var joyAlreadyPressed = false
-	var joyPressedElapsed = 0.0f
-
-	var ConfirmButton = false
-	var CancelButton = false
-	var FindButton = false
-	var OptionsButton = false
-	var SelectButton = false
-	var ExitButton = false
-	var UpButton = false
-	var DownButton = false
-	var LeftButton = false
-	var RightButton = false
-	var PageUpButton = false
-	var PageDownButton = false
 
 
-	fun updateController(controller: Controller, delta: Float) {
+
+	fun updateController(contData: ControllerData, delta: Float) {
+		val controller = contData.controller
+
 		val gamepad = gamepadsCfg[controller.name] ?: return
 
 
@@ -56,88 +82,88 @@ class InputManager(val listener: InputListener, val config: EmulioConfig) {
 //			return
 //		}
 
-		joyPressedElapsed += delta
+		contData.joyPressedElapsed += delta
 
-		if (joyAlreadyPressed && joyPressedElapsed < 0.08f) {
+		if (contData.joyAlreadyPressed && contData.joyPressedElapsed < 0.15f) {
 			return
 		}
 		
 		if (controller.getButton(gamepad.confirm)) {
-			if (!ConfirmButton) {
+			if (!contData.ConfirmButton) {
 				listener.onConfirmButton()
 			}
-			ConfirmButton = true
+			contData.ConfirmButton = true
 		} else if (controller.getButton(gamepad.cancel)) {
-			if (!CancelButton) {
+			if (!contData.CancelButton) {
 				listener.onCancelButton()
 			}
-			CancelButton = true
+			contData.CancelButton = true
 		} else if (controller.getButton(gamepad.find)) {
-			if (!FindButton) {
+			if (!contData.FindButton) {
 				listener.onFindButton()
 			}
-			FindButton = true
+			contData.FindButton = true
 		} else if (controller.getButton(gamepad.options)) {
-			if (!OptionsButton) {
+			if (!contData.OptionsButton) {
 				listener.onOptionsButton()
 			}
-			OptionsButton = true
+			contData.OptionsButton = true
 		} else if (controller.getButton(gamepad.select)) {
-			if (!SelectButton) {
+			if (!contData.SelectButton) {
 				listener.onSelectButton()
 			}
-			SelectButton = true
+			contData.SelectButton = true
 		} else if (controller.getButton(gamepad.exit)) {
-			if (!ExitButton) {
+			if (!contData.ExitButton) {
 				listener.onExitButton()
 			}
-			ExitButton = true
+			contData.ExitButton = true
 		} else if (controller.getButton(gamepad.up)) {
-			if (!UpButton) {
+			if (!contData.UpButton) {
 				listener.onUpButton(1f)
 			}
-			UpButton = true
+			contData.UpButton = true
 		} else if (controller.getButton(gamepad.down)) {
-			if (!DownButton) {
+//			if (!contData.DownButton) {
 				listener.onDownButton(1f)
-			}
-			DownButton = true
+//			}
+//			contData.DownButton = true
 		} else if (controller.getButton(gamepad.left)) {
-			if (!LeftButton) {
+//			if (!contData.LeftButton) {
 				listener.onLeftButton(1f)
-			}
-			LeftButton = true
+//			}
+//			contData.LeftButton = true
 		} else if (controller.getButton(gamepad.right)) {
-			if (!RightButton) {
+//			if (!contData.RightButton) {
 				listener.onRightButton(1f)
-			}
-			RightButton = true
+//			}
+//			contData.RightButton = true
 		} else if (controller.getButton(gamepad.pageUp)) {
-			if (!PageUpButton) {
+//			if (!contData.PageUpButton) {
 				listener.onPageUpButton(1f)
-			}
-			PageUpButton = true
+//			}
+//			contData.PageUpButton = true
 		} else if (controller.getButton(gamepad.pageDown)) {
-			if (!PageDownButton) {
+//			if (!contData.PageDownButton) {
 				listener.onPageDownButton(1f)
-			}
-			PageDownButton = true
+//			}
+//			contData.PageDownButton = true
 		} else {
-			joyAlreadyPressed = false
-			joyPressedElapsed = 0.0f
+			contData.joyAlreadyPressed = false
+			contData.joyPressedElapsed = 0.0f
 
-			ConfirmButton = false
-			CancelButton = false
-			FindButton = false
-			OptionsButton = false
-			SelectButton = false
-			ExitButton = false
-			UpButton = false
-			DownButton = false
-			LeftButton = false
-			RightButton = false
-			PageUpButton = false
-			PageDownButton = false
+			contData.ConfirmButton = false
+			contData.CancelButton = false
+			contData.FindButton = false
+			contData.OptionsButton = false
+			contData.SelectButton = false
+			contData.ExitButton = false
+			contData.UpButton = false
+			contData.DownButton = false
+			contData.LeftButton = false
+			contData.RightButton = false
+			contData.PageUpButton = false
+			contData.PageDownButton = false
 		}
 		
 		val x = controller.getAxis(gamepad.axisX)
@@ -159,30 +185,34 @@ class InputManager(val listener: InputListener, val config: EmulioConfig) {
 			}
 		}
 
-		val lt = controller.getAxis(gamepad.lTrigger)
+		val lt = controller.getAxis(gamepad.axisTrigger)
 		if (isOutsideDeadzone(lt)) {
 			if (lt > 0f) {
+				listener.onPageDownButton(calculateIntensity(lt))
+			} else {
 				listener.onPageUpButton(calculateIntensity(lt))
 			}
 		}
-		val rt = controller.getAxis(gamepad.rTrigger)
-		if (isOutsideDeadzone(rt)) {
-			if (rt > 0f) {
-				listener.onPageDownButton(calculateIntensity(lt))
-			}
+
+
+		val povDirection = controller.getPov(0)
+		if (povDirection == PovDirection.north) {
+			listener.onUpButton(1f)
+		} else if (povDirection == PovDirection.south) {
+			listener.onDownButton(1f)
+		} else if (povDirection == PovDirection.west) {
+			listener.onRightButton(1f)
+		} else if (povDirection == PovDirection.east) {
+			listener.onLeftButton(1f)
 		}
 
-		joyAlreadyPressed = true
-		joyPressedElapsed = 0.0f
+		contData.joyAlreadyPressed = true
+		contData.joyPressedElapsed = 0.0f
 
 	}
 
 	private fun isOutsideDeadzone(value: Float) = value > 0.15f || value < -0.15f
 
-	private fun anyJoyPressed(controller: Controller): Boolean {
-
-		return controller.getButton(-1)
-	}
 
 	private val DEADZONE = 0.1f //TODO deadzone
 	
@@ -199,8 +229,8 @@ class InputManager(val listener: InputListener, val config: EmulioConfig) {
 	}
 	
 	private fun updateControllers(delta: Float) {
-		controllers.forEach { controller ->
-			updateController(controller, delta)
+		controllers.forEach { data ->
+			updateController(data, delta)
 		}
 	}
 
@@ -217,7 +247,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig) {
 
 		keyPressedElapsed += delta
 
-		if (keyAlreadyPressed && keyPressedElapsed < 0.09f) {
+		if (keyAlreadyPressed && keyPressedElapsed < 0.15f) {
 			return
 		}
 
