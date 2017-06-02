@@ -6,6 +6,7 @@ import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.ui.screens.SplashScreen
 
+
 class Emulio : Game() {
 
 	override fun create() {

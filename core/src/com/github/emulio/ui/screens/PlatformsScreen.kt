@@ -3,20 +3,17 @@ package com.github.emulio.ui.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
@@ -40,7 +37,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	val stage: Stage = Stage()
 	lateinit var lbLoading: Label
 
-	val inputController: InputManager = InputManager(this, emulio.config)
+	val inputController: InputManager
 
 
 	private var whitePixmap: Pixmap
@@ -53,8 +50,9 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	private var currentIdx: Int = 0
 
 	init {
-
-		Gdx.input.inputProcessor = stage
+		
+		inputController = InputManager(this, emulio.config, stage)
+		Gdx.input.inputProcessor = inputController
 
 		whitePixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
 		whitePixmap.setColor(0xFFFFFFDD.toInt())
@@ -148,14 +146,13 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 		// platforms
 		val platformTable = Table()
 		platformTable.background(TextureRegionDrawable(TextureRegion(whiteTexture)))
-
-		//FIXME mudar calculo e mecanica de resize para ficar fora do table, e utilizar cubic?
-//		platformTable.add(Image(Texture(FileHandle(getLogo(previeousSystemView))))).maxWidth(100f).expandX()
-		platformTable.add(Image(Texture(FileHandle(getLogo(systemView))))).maxHeight(150f).expandX()
-//		platformTable.add(Image(Texture(FileHandle(getLogo(nextSystemView))))).maxWidth(100f).expandX()
+		
+		platformTable.add(getImageFromSystem(previeousSystemView, 0.4f)).maxWidth(150f).expandX()
+		platformTable.add(getImageFromSystem(systemView, 1f)).maxHeight(160f).expandX()
+		platformTable.add(getImageFromSystem(nextSystemView, 0.4f)).maxWidth(150f).expandX()
 
 		root.add(platformTable).expandX().fillX().height(200f)
-
+		
 		root.row()
 		// gamecount
 		val gameCount = Table()
@@ -169,7 +166,18 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 		root.add(lbLoading).expand().bottom().right().pad(10f)
 		return root
 	}
-
+	
+	private fun getImageFromSystem(systemView: View, alpha: Float): Image {
+		val texture = Texture(FileHandle(getLogo(systemView)), true)
+		texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+		
+		val image = Image(texture)
+		image.color.a = alpha
+		image.setScaling(Scaling.fit)
+		
+		return image
+	}
+	
 	private fun getLogo(systemView: View) = getLogoFromSystem(systemView).path
 
 	private fun getLogoFromSystem(systemView: View) = systemView.getItemByName("logo")!! as ViewImage
@@ -187,6 +195,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	override fun render(delta: Float) {
 		Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+		
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()
 
@@ -206,6 +215,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	}
 
 	override fun dispose() {
+		inputController.dispose()
 	}
 
 	private fun observeGameScanner(platforms: List<Platform>) {
@@ -311,35 +321,6 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	override fun onExitButton(): Boolean {
 		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
 		return false
-	}
-
-
-	inner class Rectangle(x: Float, y: Float, width: Float, height: Float, color: Color) : Actor() {
-
-		private var texture: Texture? = null
-
-		init {
-			createTexture(width.toInt(), height.toInt(), color)
-
-			setX(x)
-			setY(y)
-			setWidth(width)
-			setHeight(height)
-		}
-
-		private fun createTexture(width: Int, height: Int, color: Color) {
-			val pixmap = Pixmap(width, height, Pixmap.Format.RGBA8888)
-			pixmap.setColor(color)
-			pixmap.fillRectangle(0, 0, width, height)
-			texture = Texture(pixmap)
-			pixmap.dispose()
-		}
-
-		override fun draw(batch: Batch?, parentAlpha: Float) {
-			val color = color
-			batch!!.setColor(color.r, color.g, color.b, color.a * parentAlpha)
-			batch.draw(texture, x, y, width, height)
-		}
 	}
 
 }
