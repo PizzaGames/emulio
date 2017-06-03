@@ -2,7 +2,6 @@ package com.github.emulio.model
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.utils.SharedLibraryLoader
 
 
 class EmulioConfig {
@@ -45,26 +44,26 @@ class EmulioConfig {
 			confirm = Xbox.A
 			cancel = Xbox.B
 
-			up = Xbox.DPAD_UP
-			down = Xbox.DPAD_DOWN
-			left = Xbox.DPAD_LEFT
-			right = Xbox.DPAD_RIGHT
-
+			usePov = true
+			up = Xbox.POV_UP
+			down = Xbox.POV_DOWN
+			left = Xbox.POV_LEFT
+			right = Xbox.POV_RIGHT
 
 			find = Xbox.Y
 
 			options = Xbox.START
-			select = Xbox.GUIDE
+			select = Xbox.BACK
 
 			pageUp = Xbox.L_BUMPER
 			pageDown = Xbox.R_BUMPER
 
 			//exit = Xbox.ESCAPE
 
-			axisTrigger = 4
+			axisTrigger = Xbox.AXIS_TRIGGER
 
-			axisX = Xbox.L_STICK_VERTICAL_AXIS
-			axisY = Xbox.L_STICK_HORIZONTAL_AXIS
+			axisX = Xbox.AXIS_LEFT_X
+			axisY = Xbox.AXIS_LEFT_Y
 		})
 		debug = true
 	}
@@ -95,7 +94,8 @@ class InputConfig {
 	
 	var confirm: Int = -1
 	var cancel: Int = -1
-	
+
+	var usePov = false
 	var up: Int = -1
 	var down: Int = -1
 	var left: Int = -1
@@ -144,106 +144,26 @@ class InputConfig {
  * @author badlogic
  */
 object Xbox {
-	// Buttons
-	val A: Int
-	val B: Int
-	val X: Int
-	val Y: Int
-	val GUIDE: Int
-	val L_BUMPER: Int
-	val R_BUMPER: Int
-	val BACK: Int
-	val START: Int
-	val DPAD_UP: Int
-	val DPAD_DOWN: Int
-	val DPAD_LEFT: Int
-	val DPAD_RIGHT: Int
-	val L_STICK: Int
-	val R_STICK: Int
 
-	// Axes
-	/** left trigger, -1 if not pressed, 1 if pressed  */
-	val L_TRIGGER: Int
-	/** right trigger, -1 if not pressed, 1 if pressed  */
-	val R_TRIGGER: Int
-	/** left stick vertical axis, -1 if up, 1 if down  */
-	val L_STICK_VERTICAL_AXIS: Int
-	/** left stick horizontal axis, -1 if left, 1 if right  */
-	val L_STICK_HORIZONTAL_AXIS: Int
-	/** right stick vertical axis, -1 if up, 1 if down  */
-	val R_STICK_VERTICAL_AXIS: Int
-	/** right stick horizontal axis, -1 if left, 1 if right  */
-	val R_STICK_HORIZONTAL_AXIS: Int
-
-	init {
-		if (SharedLibraryLoader.isWindows || SharedLibraryLoader.isLinux) {
-			A = 0
-			B = 1
-			X = 2
-			Y = 3
-			GUIDE = 8
-			L_BUMPER = 4
-			R_BUMPER = 5
-			BACK = 6
-			START = 7
-			DPAD_UP = -1
-			DPAD_DOWN = -1
-			DPAD_LEFT = -1
-			DPAD_RIGHT = -1
-			L_TRIGGER = 2
-			R_TRIGGER = 5
-			L_STICK_VERTICAL_AXIS = 1
-			L_STICK_HORIZONTAL_AXIS = 0
-			L_STICK = 9
-			R_STICK_VERTICAL_AXIS = 4
-			R_STICK_HORIZONTAL_AXIS = 3
-			R_STICK = 10
-		} else if (SharedLibraryLoader.isMac) {
-			A = 11
-			B = 12
-			X = 13
-			Y = 14
-			GUIDE = 10
-			L_BUMPER = 8
-			R_BUMPER = 9
-			BACK = 5
-			START = 4
-			DPAD_UP = 0
-			DPAD_DOWN = 1
-			DPAD_LEFT = 2
-			DPAD_RIGHT = 3
-			L_TRIGGER = 0
-			R_TRIGGER = 1
-			L_STICK_VERTICAL_AXIS = 3
-			L_STICK_HORIZONTAL_AXIS = 2
-			L_STICK = -1
-			R_STICK_VERTICAL_AXIS = 5
-			R_STICK_HORIZONTAL_AXIS = 4
-			R_STICK = -1
-		} else {
-			A = -1
-			B = -1
-			X = -1
-			Y = -1
-			GUIDE = -1
-			L_BUMPER = -1
-			R_BUMPER = -1
-			L_TRIGGER = -1
-			R_TRIGGER = -1
-			BACK = -1
-			START = -1
-			DPAD_UP = -1
-			DPAD_DOWN = -1
-			DPAD_LEFT = -1
-			DPAD_RIGHT = -1
-			L_STICK_VERTICAL_AXIS = -1
-			L_STICK_HORIZONTAL_AXIS = -1
-			L_STICK = -1
-			R_STICK_VERTICAL_AXIS = -1
-			R_STICK_HORIZONTAL_AXIS = -1
-			R_STICK = -1
-		}
-	}
+	val A = 0
+	val B = 1
+	val X = 2
+	val Y = 3
+	val L_BUMPER = 4
+	val R_BUMPER = 5
+	val BACK = 6
+	val START = 7
+	val L_STICK = 8
+	val R_STICK = 9
+	val POV_UP = 10
+	val POV_RIGHT = 11
+	val POV_DOWN = 12
+	val POV_LEFT = 13
+	val AXIS_LEFT_Y = 1 //-1 is up | +1 is down
+	val AXIS_LEFT_X = 0 //-1 is left | +1 is right
+	val AXIS_RIGHT_X = 2 //-1 is left | +1 is right
+	val AXIS_RIGHT_Y = 3 //-1 is up | +1 is down
+	val AXIS_TRIGGER = 4 //value 0 to 1f (for left) ||value 0 to -1f
 
 	/** @return whether the [Controller] is an Xbox controller
 	 */

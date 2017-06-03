@@ -3,12 +3,14 @@ package com.github.emulio.ui.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.*
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -29,8 +31,7 @@ import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 
-class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
-
+class PlatformsScreen(val emulio: Emulio, var initialPlatform: Platform = emulio.platforms[0]): Screen, InputListener {
 
 	val logger = KotlinLogging.logger { }
 
@@ -39,7 +40,6 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 
 	val inputController: InputManager
 
-
 	private var whitePixmap: Pixmap
 	private var whiteTexture: Texture
 	private var grayPixmap: Pixmap
@@ -47,12 +47,22 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	private var outlineFont: BitmapFont
 	private var mainFont: BitmapFont
 
-	private var currentIdx: Int = 0
+	private var currentIdx: Int
+
+	private var screenWidth: Int
+	private var screenHeight: Int
+
+	private var currentCountLabel: Label? = null
+	private var currentPlatform = initialPlatform
 
 	init {
-		
+		currentIdx = emulio.platforms.indexOf(initialPlatform)
+
 		inputController = InputManager(this, emulio.config, stage)
 		Gdx.input.inputProcessor = inputController
+
+		screenWidth = Gdx.graphics.width
+		screenHeight = Gdx.graphics.height
 
 		whitePixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
 		whitePixmap.setColor(0xFFFFFFDD.toInt())
@@ -81,22 +91,19 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 			borderWidth = 1f
 		})
 
-
 		stage.addActor(getPlatformByIndex(currentIdx))
-
 		observeGameScanner(emulio.platforms)
-
 	}
 
-	private fun getPlatformByIndex(nextIdx: Int): Table {
+	private fun getPlatformByIndex(nextIndex: Int): Table {
 		val size = emulio.platforms.size
 
-		this.currentIdx = if (nextIdx == size) {
+		this.currentIdx = if (nextIndex == size) {
 			0
-		} else if (nextIdx == -1) {
+		} else if (nextIndex == -1) {
 			size - 1
 		} else {
-			nextIdx
+			nextIndex
 		}
 
 		val idx = this.currentIdx
@@ -111,6 +118,12 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 			idx - 1
 		}
 
+		this.currentPlatform = emulio.platforms[currentIdx]
+
+		return getPlatformTableByIndex(idx, nextIdx, prevIdx)
+	}
+
+	private fun getPlatformTableByIndex(idx: Int, nextIdx: Int, prevIdx: Int): Table {
 		val platform = emulio.platforms[idx]
 		val nextPlatform = emulio.platforms[nextIdx]
 		val previousPlatform = emulio.platforms[prevIdx]
@@ -119,25 +132,28 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	}
 
 	private fun getPlatformTable(platform: Platform, nextPlatform: Platform, previousPlatform: Platform): Table {
+
+		if (initialPlatform == platform) {
+			// incomplete animations
+		}
+
 		val platformTheme = getTheme(platform)
 		val nextPlatformTheme = getTheme(nextPlatform)
 		val previousPlatformTheme = getTheme(previousPlatform)
 
 		val systemView = checkNotNull(platformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
 		val nextSystemView = checkNotNull(nextPlatformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
-		val previeousSystemView = checkNotNull(previousPlatformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
+		val previousSystemView = checkNotNull(previousPlatformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
 
 		val background = systemView.getItemByName("background")!! as ViewImage
 		val backgroundTexture = Texture(FileHandle(background.path!!))
 
-		val backgroundImage = Image(backgroundTexture)
-		stage.addActor(backgroundImage)
-
 		val root = Table()
 		root.setFillParent(true)
+		root.background(TextureRegionDrawable(TextureRegion(backgroundTexture)))
 		root.add(Image(Texture("images/logo-small.png"))).expand().top().right().pad(10f)
 
-		lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
+		lbLoading = Label("", Label.LabelStyle().apply {
 			font = outlineFont
 		})
 
@@ -146,20 +162,27 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 		// platforms
 		val platformTable = Table()
 		platformTable.background(TextureRegionDrawable(TextureRegion(whiteTexture)))
-		
-		platformTable.add(getImageFromSystem(previeousSystemView, 0.4f)).maxWidth(150f).expandX()
-		platformTable.add(getImageFromSystem(systemView, 1f)).maxHeight(160f).expandX()
-		platformTable.add(getImageFromSystem(nextSystemView, 0.4f)).maxWidth(150f).expandX()
 
-		root.add(platformTable).expandX().fillX().height(200f)
+		val maxWidth = (screenWidth / 3f) - 200f
+		val barHeight = screenHeight / 4f
+
+		platformTable.add(getImageFromSystem(previousSystemView, 0.3f)).width(maxWidth).expandX()
+		platformTable.add(getImageFromSystem(systemView, 1f)).width(screenWidth / 3f + 200f).maxHeight(barHeight - 20f).expandX()
+		platformTable.add(getImageFromSystem(nextSystemView, 0.3f)).width(maxWidth).expandX()
+
+		root.add(platformTable).expandX().fillX().height(barHeight)
 		
 		root.row()
 		// gamecount
 		val gameCount = Table()
 		gameCount.background(TextureRegionDrawable(TextureRegion(grayTexture)))
-		gameCount.add(Label("9999 games found", Label.LabelStyle().apply {
+
+		val gamesCount = emulio.games?.get(platform)?.size ?: 0
+		currentCountLabel = Label("$gamesCount games found", Label.LabelStyle().apply {
 			font = mainFont
-		}))
+		})
+		gameCount.add(currentCountLabel)
+		
 		root.add(gameCount).expandX().fillX().height(50f)
 
 		root.row()
@@ -224,6 +247,7 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 		val start = System.currentTimeMillis()
 
 		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
+		emulio.games = gamesMap
 
 		GameScanner(platforms)
 				.fullScan()
@@ -234,20 +258,23 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 							lbLoading.setText("Reading game $count (${game.platform.platformName})")
 							count++
 
-							val games = gamesMap[game.platform]
+							var games = gamesMap[game.platform]
 							if (games == null) {
-								gamesMap[game.platform] = mutableListOf(game)
+								games = mutableListOf(game)
+								gamesMap[game.platform] = games
 							} else {
 								games.add(game)
+							}
+
+							if (currentPlatform == game.platform && currentCountLabel != null) {
+								currentCountLabel!!.setText("${games!!.size} games found")
 							}
 						},
 						onError = { ex ->
 							onError(ex)
 						},
 						onComplete = {
-							lbLoading.setText("All games read: $count in ${System.currentTimeMillis() - start}ms")
-
-							emulio.games = gamesMap
+							lbLoading.setText("Games scanned: $count in ${System.currentTimeMillis() - start}ms")
 
 						})
 	}
@@ -262,64 +289,71 @@ class PlatformsScreen(val emulio: Emulio): Screen, InputListener {
 	}
 
 	override fun onConfirmButton(): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		lbLoading.setText("ConfirmButton ${System.currentTimeMillis()}")
 		return true
 	}
 
 	override fun onCancelButton(): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		lbLoading.setText("CancelButton ${System.currentTimeMillis()}")
 		return true
 	}
 
-	override fun onUpButton(intensity: Float): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+	override fun onUpButton(): Boolean {
+		lbLoading.setText("UpButton ${System.currentTimeMillis()}")
 		return true
 	}
 
-	override fun onDownButton(intensity: Float): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
-		return true
-	}
-
-	override fun onLeftButton(intensity: Float): Boolean {
-		stage.clear()
-		stage.addActor(getPlatformByIndex(currentIdx - 1))
-		return true
-	}
-
-	override fun onRightButton(intensity: Float): Boolean {
-		stage.clear()
-		stage.addActor(getPlatformByIndex(currentIdx + 1))
+	override fun onDownButton(): Boolean {
+		lbLoading.setText("DownButton ${System.currentTimeMillis()}")
 		return true
 	}
 
 	override fun onFindButton(): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		lbLoading.setText("onFindButton ${System.currentTimeMillis()}")
 		return true
 	}
 
 	override fun onOptionsButton(): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		lbLoading.setText("onOptionsButton ${System.currentTimeMillis()}")
 		return true
 	}
 
 	override fun onSelectButton(): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		lbLoading.setText("onSelectButton ${System.currentTimeMillis()}")
 		return true
 	}
 
-	override fun onPageUpButton(intensity: Float): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+	private fun showPreviousPlatform() {
+		stage.clear()
+		stage.addActor(getPlatformByIndex(currentIdx - 1))
+	}
+
+	private fun showNextPlatform() {
+		stage.clear()
+		stage.addActor(getPlatformByIndex(currentIdx + 1))
+	}
+	override fun onLeftButton(): Boolean {
+		showPreviousPlatform()
+		return true
+	}
+
+	override fun onRightButton(): Boolean {
+		showNextPlatform()
+		return true
+	}
+
+	override fun onPageUpButton(): Boolean {
+		showPreviousPlatform()
 		return false
 	}
 
-	override fun onPageDownButton(intensity: Float): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+	override fun onPageDownButton(): Boolean {
+		showNextPlatform()
 		return false
 	}
 
 	override fun onExitButton(): Boolean {
-		lbLoading.setText("KeyPressed ${System.currentTimeMillis()}")
+		lbLoading.setText("onExitButton ${System.currentTimeMillis()}")
 		return false
 	}
 

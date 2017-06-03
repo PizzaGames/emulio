@@ -47,15 +47,15 @@ systems:
       - ${retroarch.cores}\prosystem_libretro.dll
     roms.extensions: [.zip]
     platform.name: Atari 5200
-  # atari7800:
-  #   roms.path: ${roms.home}\Atari 7800
-  #   run.command:
-  #     - ${retroarch.home}\retroarch.exe
-  #     - -L
-  #     - ${retroarch.cores}\prosystem_libretro.dll
-  #     - ${rom.file}
-  #   platform.name: Atari 7800
-  #   roms.extensions: [.zip]
+  atari7800:
+    roms.path: ${roms.home}\Atari 7800
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\prosystem_libretro.dll
+      - ${rom.file}
+    platform.name: Atari 7800
+    roms.extensions: [.zip]
   atarijaguar:
     roms.path: ${roms.home}\Atari Jaguar
     roms.extensions: [.zip]

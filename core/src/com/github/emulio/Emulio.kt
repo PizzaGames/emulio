@@ -13,7 +13,8 @@ class Emulio : Game() {
 		setScreen(SplashScreen(this))
 	}
 
-	lateinit var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>
+	var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
+
 	lateinit var theme: MutableMap<Platform, Theme>
 	lateinit var platforms: List<Platform>
 	lateinit var config: EmulioConfig
