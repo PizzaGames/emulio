@@ -1,25 +1,25 @@
 package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
 import com.github.emulio.model.EmulioConfig
-import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
-import com.github.emulio.runners.GameScanner
 import com.github.emulio.runners.PlatformReader
 import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
-import com.github.emulio.utils.gdxutils.*
+import com.github.emulio.utils.gdxutils.Subscribe
+import com.github.emulio.utils.gdxutils.glClearColor
 import com.github.emulio.yaml.YamlUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -27,25 +27,41 @@ import mu.KotlinLogging
 import java.io.File
 
 
-class SplashScreen(val emulio: Emulio) : Screen {
+class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	val logger = KotlinLogging.logger { }
 
 	lateinit var platforms: List<Platform>
 
-	val stage: Stage
 	val lbLoading: Label
+
+	val startTime = System.currentTimeMillis()
+
+	private var imgLogo: Image
 
 	init {
 		logger.debug { "create()" }
 
-		stage = Stage()
+		val soundIntro = Gdx.audio.newSound(Gdx.files.internal("sounds/sms.mp3"))
+		soundIntro.play()
+
 		Gdx.input.inputProcessor = stage
 
 		val table = Table()
 		table.setFillParent(true)
 
-		val imgLogo = Image(Texture("images/logo.png"))
+		imgLogo = Image(Texture("images/logo.png"))
+
+		val noAlphaColor = Color(imgLogo.color)
+		noAlphaColor.a = 1f
+		imgLogo.color.a = 0f
+		Timer.schedule(object : Timer.Task() {
+			override fun run() {
+				imgLogo.addAction(Actions.color(noAlphaColor, 2f))
+			}
+		}, 1f)
+
+
 		table.add(imgLogo)
 
 
@@ -148,8 +164,6 @@ class SplashScreen(val emulio: Emulio) : Screen {
 					logger.debug { "theme read for platform '$platformName'" }
 					lbLoading.setText("Loading theme for platform $platformName")
 					
-					
-					
 					themesMap.put(platform, theme)
 				},
 				onError =  { ex ->
@@ -158,10 +172,15 @@ class SplashScreen(val emulio: Emulio) : Screen {
 				onComplete = {
 					logger.debug { "theme loaded in ${System.currentTimeMillis() - start}ms " }
 					
-					lbLoading.setText("Theme loaded")
+					lbLoading.setText("")
 					emulio.theme = themesMap
 
-					emulio.screen = PlatformsScreen(emulio)
+					Timer.schedule(object : Timer.Task() {
+						override fun run() {
+							switchScreen(PlatformsScreen(emulio))
+						}
+					}, 4f)
+
 				})
 	}
 
@@ -183,10 +202,6 @@ class SplashScreen(val emulio: Emulio) : Screen {
 	}
 
 	override fun hide() {
-
-	}
-
-	override fun show() {
 
 	}
 

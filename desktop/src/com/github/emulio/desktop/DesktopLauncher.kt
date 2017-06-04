@@ -13,7 +13,7 @@ object DesktopLauncher {
             samples = 16
             width = 1280
             height = 720
-			fullscreen = true
+//			fullscreen = true
 //            width = 1600
 //            height = 1200
             title = "Emulio"

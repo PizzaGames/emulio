@@ -10,8 +10,9 @@ import com.github.emulio.ui.screens.SplashScreen
 class Emulio : Game() {
 
 	override fun create() {
-		setScreen(SplashScreen(this))
+		screen = SplashScreen(this)
 	}
+
 
 	var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
 

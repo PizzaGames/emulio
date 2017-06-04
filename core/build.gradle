@@ -29,4 +29,3 @@ dependencies {
     compile 'org.apache.xmlgraphics:batik-transcoder:1.9'
     compile 'org.apache.xmlgraphics:batik-codec:1.9'
 }
-

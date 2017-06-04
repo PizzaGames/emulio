@@ -207,7 +207,7 @@ systems:
     platform.name: Playstation 2
   wii:
     roms.path: ${roms.home}\Nintendo Wii
-    roms.extensions: [.cue, .iso, .ccd, .img, .mds]
+    roms.extensions: [.iso, .ccd, .img, .mds]
     run.command: ${emulators.home}\wii_gc\dolphin5\dolphin.exe --batch --exec ${rom.file}
     platform.name: Wii
   wiiu:
