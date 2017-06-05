@@ -4,16 +4,16 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
@@ -25,33 +25,34 @@ import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
-import com.github.emulio.utils.gdxutils.glClearColor
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 
-class PlatformsScreen(emulio: Emulio, var initialPlatform: Platform = emulio.platforms[0]): EmulioScreen(emulio), InputListener {
+class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platforms[0]): EmulioScreen(emulio), InputListener {
 
 	val logger = KotlinLogging.logger { }
 
-	lateinit var lbLoading: Label
+	private val inputController: InputManager
 
-	val inputController: InputManager
-
-	private var whitePixmap: Pixmap
 	private var whiteTexture: Texture
-	private var grayPixmap: Pixmap
 	private var grayTexture: Texture
 	private var outlineFont: BitmapFont
 	private var mainFont: BitmapFont
 
+	private lateinit var lbCount: Label
+	private lateinit var lbLoading: Label
+	private lateinit var root: Group
+	private lateinit var bgBlack: Image
+	private lateinit var groupPlatforms: Group
+
+	private var bgLastPlatform: Image? = null
+	private var currentPlatform = initialPlatform
 	private var currentIdx: Int
 
-	private var screenWidth: Int
-	private var screenHeight: Int
+	private val interpolation = Interpolation.fade
 
-	private var currentCountLabel: Label? = null
-	private var currentPlatform = initialPlatform
+	private var children = arrayListOf<Image>()
 
 	init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
@@ -59,20 +60,8 @@ class PlatformsScreen(emulio: Emulio, var initialPlatform: Platform = emulio.pla
 		inputController = InputManager(this, emulio.config, stage)
 		Gdx.input.inputProcessor = inputController
 
-		screenWidth = Gdx.graphics.width
-		screenHeight = Gdx.graphics.height
-
-		whitePixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-		whitePixmap.setColor(0xFFFFFFDD.toInt())
-		whitePixmap.fillRectangle(0, 0, 1, 1)
-		whiteTexture = Texture(whitePixmap)
-		whitePixmap.dispose()
-
-		grayPixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-		grayPixmap.setColor(0xCCCCCCDD.toInt())
-		grayPixmap.fillRectangle(0, 0, 1, 1)
-		grayTexture = Texture(grayPixmap)
-		grayPixmap.dispose()
+		whiteTexture = createColorTexture(0xFFFFFFDD.toInt())
+		grayTexture = createColorTexture(0xCCCCCCDD.toInt())
 
 		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
 		outlineFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
@@ -89,124 +78,214 @@ class PlatformsScreen(emulio: Emulio, var initialPlatform: Platform = emulio.pla
 			borderWidth = 1f
 		})
 
-		setPlatformByIndex(currentIdx)
+		initGUI()
+		updatePlatformBg(initialPlatform)
+
+		updateCurrentPlatform(emulio.platforms, if (currentIdx == 0) { emulio.platforms.size - 1 } else { currentIdx - 1 }, currentIdx)
+
 		observeGameScanner(emulio.platforms)
 	}
 
-	private fun setPlatformByIndex(nextIndex: Int) {
-		val size = emulio.platforms.size
+	private fun initGUI() {
+		initBlackBackground()
 
-		this.currentIdx = if (nextIndex == size) {
-			0
-		} else if (nextIndex == -1) {
-			size - 1
-		} else {
-			nextIndex
-		}
+		initRoot()
+		initLogoSmall()
+		initLoading()
 
-		val idx = this.currentIdx
-		val nextIdx = if (idx == size - 1) {
-			0
-		} else {
-			idx + 1
-		}
-		val prevIdx = if (idx == 0) {
-			size - 1
-		} else {
-			idx - 1
-		}
-
-		this.currentPlatform = emulio.platforms[currentIdx]
-
-		setPlatformTableByIndex(idx, nextIdx, prevIdx)
+		initGroupPlatforms()
+		initGroupPlatformCount()
 	}
 
-	private fun setPlatformTableByIndex(idx: Int, nextIdx: Int, prevIdx: Int) {
-		val platform = emulio.platforms[idx]
-		val nextPlatform = emulio.platforms[nextIdx]
-		val previousPlatform = emulio.platforms[prevIdx]
+	private lateinit var groupCount: Table
 
-		setPlatformTable(platform, nextPlatform, previousPlatform)
+	private fun initGroupPlatformCount() {
+		groupCount = Table()
+		groupCount.addActor(Image(grayTexture).apply {
+			setFillParent(true)
+		})
+
+		val lbCount = Label("", Label.LabelStyle().apply {
+			font = mainFont
+		})
+
+		groupCount.add(lbCount)
+
+		groupCount.width = screenWidth
+		groupCount.height = 50f
+		groupCount.color.a = 0f
+
+		groupCount.y = groupPlatforms.y - groupCount.height
+		groupCount.x = 0f
+
+		this.lbCount = lbCount
+
+		root.addActor(groupCount)
 	}
 
-	private fun setPlatformTable(platform: Platform, nextPlatform: Platform, previousPlatform: Platform) {
-		if (initialPlatform == platform) {
-			// incomplete animations
-		} else {
-			stage.clear()
-		}
+	private fun updatePlatformBg(platform: Platform) {
+		groupCount.color.a = 0f
+		lbCount.setText("")
+		groupCount.clearActions()
+
+		val action = SequenceAction(
+				Actions.delay(1f),
+				Actions.fadeIn(1f, interpolation),
+				Actions.run {
+					val text = if (emulio.games != null) {
+						val gamesCount = emulio.games!![platform]?.size ?: 0
+						if (gamesCount == 0) {
+							"Loading..."
+						} else {
+							"$gamesCount games found"
+						}
+					} else {
+						"Loading..."
+					}
+					lbCount.setText(text)
+				}
+		)
+
+		groupCount.addAction(action)
 
 		val platformTheme = getTheme(platform)
-		val nextPlatformTheme = getTheme(nextPlatform)
-		val previousPlatformTheme = getTheme(previousPlatform)
-
 		val systemView = checkNotNull(platformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
-		val nextSystemView = checkNotNull(nextPlatformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
-		val previousSystemView = checkNotNull(previousPlatformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
-
 		val background = systemView.getItemByName("background")!! as ViewImage
 		val backgroundTexture = Texture(FileHandle(background.path!!))
+		initBgPlatform(backgroundTexture)
 
+		groupPlatforms.zIndex = 10
+		lbLoading.zIndex = 10
+		logo.zIndex = 10
+		groupCount.zIndex = 9
+	}
 
-		val root = Table()
-		root.setFillParent(true)
+	private fun initGroupPlatforms() {
+		val widthPerPlatform = screenWidth / 3f
 
-		val drawable = TextureRegionDrawable(TextureRegion(backgroundTexture))
-		root.background(drawable)
+		groupPlatforms = Group().apply {
+			addActor(Image(whiteTexture).apply {
+				setFillParent(true)
+			})
+			width = (emulio.platforms.size + 4) * widthPerPlatform
+			height = screenHeight / 3.5f
+			x = -(widthPerPlatform)
+			y = (screenHeight - height) / 2
+		}
 
-		val logoSmall = Image(Texture("images/logo-small.png"))
-		root.add(logoSmall).expand().top().right().pad(10f)
+		val paddingHeight = 20f
 
+		val paddingWidth = 60f
+		var currentX = 0f
+
+		currentX += initPlatform(emulio.platforms[emulio.platforms.size - 2], widthPerPlatform, paddingWidth, currentX)
+		currentX += initPlatform(emulio.platforms.last(), widthPerPlatform, paddingWidth, currentX)
+
+		emulio.platforms.forEach { platform ->
+			currentX += initPlatform(platform, widthPerPlatform, paddingWidth, currentX)
+		}
+
+		currentX += initPlatform(emulio.platforms[0], widthPerPlatform, paddingWidth, currentX)
+		currentX += initPlatform(emulio.platforms[1], widthPerPlatform, paddingWidth, currentX)
+
+		root.addActor(groupPlatforms)
+	}
+
+	private fun initPlatform(platform: Platform, widthPerPlatform: Float, paddingWidth: Float, currentX: Float): Float {
+		val theme = getTheme(platform)
+		val systemView = checkNotNull(theme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found. please check your theme files." })
+
+		val image = getImageFromSystem(systemView, 1f).apply {
+			//height = Math.max(groupPlatforms.height - paddingHeight, height)
+			width = widthPerPlatform - paddingWidth * 2
+
+			color.a = 0.3f
+
+			x = currentX + ((widthPerPlatform - width) / 2)
+			y = (groupPlatforms.height - height) / 2
+
+			name = platform.platformName
+
+			setScaling(Scaling.fit)
+		}
+
+		children.add(image)
+
+		groupPlatforms.addActor(image)
+
+		return widthPerPlatform
+	}
+
+	private fun initRoot() {
+		root = Group().apply {
+			width = screenWidth
+			height = screenHeight
+			x = 0f
+			y = 0f
+		}
+		stage.addActor(root)
+	}
+
+	private fun initLoading() {
 		lbLoading = Label("", Label.LabelStyle().apply {
 			font = outlineFont
 		})
 
-
-		root.row()
-		// platforms
-		val platformTable = Table()
-		platformTable.background(TextureRegionDrawable(TextureRegion(whiteTexture)))
-
-		val maxWidth = (screenWidth / 3f) - 200f
-		val barHeight = screenHeight / 4f
-
-		platformTable.add(getImageFromSystem(previousSystemView, 0.3f)).width(maxWidth).expandX()
-		platformTable.add(getImageFromSystem(systemView, 1f)).width(screenWidth / 3f + 200f).maxHeight(barHeight - 20f).expandX()
-		platformTable.add(getImageFromSystem(nextSystemView, 0.3f)).width(maxWidth).expandX()
-
-		root.add(platformTable).expandX().fillX().height(barHeight)
-
-		root.row()
-		// gamecount
-		val gameCount = Table()
-		gameCount.background(TextureRegionDrawable(TextureRegion(grayTexture)))
-
-		val gamesCount = emulio.games?.get(platform)?.size ?: 0
-		currentCountLabel = Label("$gamesCount games found", Label.LabelStyle().apply {
-			font = mainFont
-		})
-		gameCount.add(currentCountLabel)
-
-		root.add(gameCount).expandX().fillX().height(50f)
-
-		root.row()
-		root.add(lbLoading).expand().bottom().right().pad(10f)
-
-		stage.addActor(root)
-
+		lbLoading.x = 20f
+		lbLoading.y = 20f
+		root.addActor(lbLoading)
 	}
-	
+
+	private lateinit var logo: Image
+
+	private fun initLogoSmall() {
+		logo = Image(Texture("images/logo-small.png")).apply {
+			x = screenWidth
+			y = screenHeight - height - 20f
+			addAction(Actions.moveTo(screenWidth - width - 20f, y, 0.5f, interpolation))
+		}
+		root.addActor(logo)
+	}
+
+	private fun initBgPlatform(backgroundTexture: Texture) {
+		if (bgLastPlatform != null) {
+			val bg = bgLastPlatform!!
+			bg.addAction(SequenceAction(Actions.fadeOut(0.5f, interpolation), Actions.run { bg.remove() }))
+		}
+
+		val bgPlatform = Image(backgroundTexture).apply {
+			setScaling(Scaling.fill)
+			setFillParent(true)
+			color.a = 0f
+			addAction(Actions.fadeIn(0.5f, interpolation))
+			zIndex = 0
+		}
+		root.addActor(bgPlatform)
+		bgLastPlatform = bgPlatform
+	}
+
+	private fun initBlackBackground() {
+		bgBlack = Image(createColorTexture(0x000000FF)).apply {
+			x = 0f
+			y = 0f
+			height = screenHeight
+			width = screenWidth
+			zIndex = 0
+		}
+		stage.addActor(bgBlack)
+	}
+
 	private fun getImageFromSystem(systemView: View, alpha: Float): Image {
 		val texture = Texture(FileHandle(getLogo(systemView)), true)
 		texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-		
+
 		val image = Image(texture)
 		image.color.a = alpha
 		image.setScaling(Scaling.fit)
-		
+
 		return image
 	}
-	
+
 	private fun getLogo(systemView: View) = getLogoFromSystem(systemView).path
 
 	private fun getLogoFromSystem(systemView: View) = systemView.getItemByName("logo")!! as ViewImage
@@ -218,9 +297,8 @@ class PlatformsScreen(emulio: Emulio, var initialPlatform: Platform = emulio.pla
 	}
 
 	override fun render(delta: Float) {
-		Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-		
+
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()
 
@@ -268,8 +346,15 @@ class PlatformsScreen(emulio: Emulio, var initialPlatform: Platform = emulio.pla
 								games.add(game)
 							}
 
-							if (currentPlatform == game.platform && currentCountLabel != null) {
-								currentCountLabel!!.setText("${games!!.size} games found")
+							if (currentPlatform == game.platform) {
+
+								val size = games.size
+								val text = if (size == 0) {
+									"No games found"
+								} else {
+									"$size games found"
+								}
+								lbCount.setText(text)
 							}
 						},
 						onError = { ex ->
@@ -326,12 +411,94 @@ class PlatformsScreen(emulio: Emulio, var initialPlatform: Platform = emulio.pla
 	}
 
 	private fun showPreviousPlatform() {
-//		stage.addActor(setPlatformByIndex(currentIdx - 1))
-		setPlatformByIndex(currentIdx)
+		val platforms = emulio.platforms
+
+		val lastIdx = currentIdx
+
+		if (currentIdx == 0) {
+			currentIdx = platforms.size - 1
+
+			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+
+			val widthPerPlatform = screenWidth / 3
+			groupPlatforms.x = -(widthPerPlatform * (platforms.size + 1))
+			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, 0.1f, interpolation))
+		} else {
+			currentIdx--
+
+			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+
+			val widthPerPlatform = screenWidth / 3
+			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, 0.1f, interpolation))
+		}
+
+		updatePlatformBg(currentPlatform)
+	}
+
+	val imgWidthInc = 150f
+
+	private fun updateCurrentPlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
+		val children = children
+		val size = platforms.size
+
+		val offset = 2
+
+		if (currentIdx == 0 && lastIdx == size - 1) {
+			children[offset + size - 2].color.a = 0.3f
+			children[offset + lastIdx].color.a = 0.3f
+		} else if (currentIdx == (size - 1) && lastIdx == 0) {
+			children[offset + 1].color.a = 0.3f
+			children[offset + lastIdx].color.a = 0.3f
+		} else {
+			children[offset + lastIdx].color.a = 0.3f
+		}
+
+		children[offset + currentIdx].color.a = 1f
+		println("${children[currentIdx + 2].name}")
+
+		this.currentPlatform = platforms[this.currentIdx]
+//		groupPlatforms.children.forEach { it ->
+//			if (it.name == currentPlatform.platformName) {
+//				it.color.a = 0.3f
+//				it.width -= imgWidthInc
+//				it.x += imgWidthInc / 2f
+//			}
+//		}
+
+
+
+//		groupPlatforms.children.forEach { it ->
+//			if (it.name == currentPlatform.platformName) {
+//				it.color.a = 1f
+//				it.width += imgWidthInc
+//				it.x -= imgWidthInc / 2f
+//			}
+//		}
 	}
 
 	private fun showNextPlatform() {
-		setPlatformByIndex(currentIdx + 1)
+		val platforms = emulio.platforms
+
+		val lastIdx = currentIdx
+
+		if (currentIdx == platforms.size - 1) {
+			currentIdx = 0
+
+			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+
+			val widthPerPlatform = screenWidth / 3
+			groupPlatforms.x = 0f
+			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, 0.1f, interpolation))
+		} else {
+			currentIdx++
+
+			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+
+			val widthPerPlatform = screenWidth / 3
+			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, 0.1f, interpolation))
+		}
+
+		updatePlatformBg(currentPlatform)
 	}
 	override fun onLeftButton(): Boolean {
 		showPreviousPlatform()

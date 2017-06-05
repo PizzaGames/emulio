@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
 import com.github.emulio.model.EmulioConfig
@@ -35,8 +35,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	val lbLoading: Label
 
-	val startTime = System.currentTimeMillis()
-
 	private var imgLogo: Image
 
 	init {
@@ -47,13 +45,9 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 		Gdx.input.inputProcessor = stage
 
-		val table = Table()
-		table.setFillParent(true)
-
 		imgLogo = Image(Texture("images/logo.png"))
 
-		val noAlphaColor = Color(imgLogo.color)
-		noAlphaColor.a = 1f
+		val noAlphaColor = Color(imgLogo.color).apply { a = 1f }
 		imgLogo.color.a = 0f
 		Timer.schedule(object : Timer.Task() {
 			override fun run() {
@@ -61,8 +55,36 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 			}
 		}, 1f)
 
+		imgLogo.x = (screenWidth - imgLogo.width) / 2
+		imgLogo.y = (screenHeight - imgLogo.height) / 2
 
-		table.add(imgLogo)
+		val imgLogoPartial = Image(Texture("images/logo-partial.png"))
+		imgLogoPartial.x = (screenWidth - imgLogoPartial.width) / 2
+		imgLogoPartial.y = -imgLogoPartial.height
+
+		val sequenceAction = SequenceAction()
+		val imgLogoPartialAlphaColor = Color(imgLogo.color).apply { a = 1f }
+		imgLogoPartial.color.a = 0f
+		sequenceAction.addAction(Actions.color(imgLogoPartialAlphaColor, 0.3f))
+		imgLogoPartial.addAction(Actions.moveTo((screenWidth - imgLogoPartial.width) / 2, (screenHeight - imgLogoPartial.height) / 2, 0.3f))
+		imgLogoPartial.addAction(sequenceAction)
+
+		stage.addActor(imgLogoPartial)
+
+		stage.addActor(Group().apply {
+			width = screenWidth
+			x = 0f
+			y = 0f
+
+			addActor(Image(createColorTexture(0x6FBBDBFF)).apply {
+				x = 0f
+				y = 0f
+				height = ((screenHeight - imgLogoPartial.height) / 2)
+				width = screenWidth
+			})
+
+		})
+		stage.addActor(imgLogo)
 
 
 		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
@@ -76,7 +98,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		})
 		lbLoading.setPosition(10f, 5f)
 
-		stage.addActor(table)
 		stage.addActor(lbLoading)
 
 		// load main configurations/games and all stuff.. from mongo?
