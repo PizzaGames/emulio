@@ -51,8 +51,12 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	private var currentIdx: Int
 
 	private val interpolation = Interpolation.fade
+	private val slideInterpolation = Interpolation.circle
+	private val slideDuration = 0.25f
 
-	private var children = arrayListOf<Image>()
+	private var platformImages = arrayListOf<Image>()
+	private var platformOriginalX = arrayListOf<Float>()
+	private var platformOriginalWidth = arrayListOf<Float>()
 
 	init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
@@ -81,7 +85,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		initGUI()
 		updatePlatformBg(initialPlatform)
 
-		updateCurrentPlatform(emulio.platforms, if (currentIdx == 0) { emulio.platforms.size - 1 } else { currentIdx - 1 }, currentIdx)
+		updatePlatform(emulio.platforms, if (currentIdx == 0) { emulio.platforms.size - 1 } else { currentIdx - 1 }, currentIdx)
 
 		observeGameScanner(emulio.platforms)
 	}
@@ -159,9 +163,12 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		logo.zIndex = 10
 		groupCount.zIndex = 9
 	}
-
+	
+	private var widthPerPlatform: Float = 0f
+	private var platformWidth: Float = 0f
+	
 	private fun initGroupPlatforms() {
-		val widthPerPlatform = screenWidth / 3f
+		widthPerPlatform = screenWidth / 3f
 
 		groupPlatforms = Group().apply {
 			addActor(Image(whiteTexture).apply {
@@ -177,6 +184,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		val paddingWidth = 60f
 		var currentX = 0f
+		
+		platformWidth = widthPerPlatform - paddingWidth * 2
 
 		currentX += initPlatform(emulio.platforms[emulio.platforms.size - 2], widthPerPlatform, paddingWidth, currentX)
 		currentX += initPlatform(emulio.platforms.last(), widthPerPlatform, paddingWidth, currentX)
@@ -190,14 +199,14 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		root.addActor(groupPlatforms)
 	}
-
+	
 	private fun initPlatform(platform: Platform, widthPerPlatform: Float, paddingWidth: Float, currentX: Float): Float {
 		val theme = getTheme(platform)
 		val systemView = checkNotNull(theme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found. please check your theme files." })
-
+		
 		val image = getImageFromSystem(systemView, 1f).apply {
 			//height = Math.max(groupPlatforms.height - paddingHeight, height)
-			width = widthPerPlatform - paddingWidth * 2
+			width = platformWidth //widthPerPlatform - paddingWidth * 2
 
 			color.a = 0.3f
 
@@ -208,8 +217,10 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 			setScaling(Scaling.fit)
 		}
-
-		children.add(image)
+		
+		platformImages.add(image)
+		platformOriginalX.add(image.x)
+		platformOriginalWidth.add(image.width)
 
 		groupPlatforms.addActor(image)
 
@@ -418,84 +429,68 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		if (currentIdx == 0) {
 			currentIdx = platforms.size - 1
 
-			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
 			groupPlatforms.x = -(widthPerPlatform * (platforms.size + 1))
-			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, 0.1f, interpolation))
+			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, slideDuration, slideInterpolation))
 		} else {
 			currentIdx--
 
-			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
-			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, 0.1f, interpolation))
+			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, slideDuration, slideInterpolation))
 		}
 
 		updatePlatformBg(currentPlatform)
 	}
 
-	val imgWidthInc = 150f
-
-	private fun updateCurrentPlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
-		val children = children
-		val size = platforms.size
-
-		val offset = 2
-
-		if (currentIdx == 0 && lastIdx == size - 1) {
-			children[offset + size - 2].color.a = 0.3f
-			children[offset + lastIdx].color.a = 0.3f
-		} else if (currentIdx == (size - 1) && lastIdx == 0) {
-			children[offset + 1].color.a = 0.3f
-			children[offset + lastIdx].color.a = 0.3f
-		} else {
-			children[offset + lastIdx].color.a = 0.3f
+	private fun updatePlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
+		val children = platformImages
+		
+		val currentPlatform = platforms[this.currentIdx]
+		
+		val expandWidth = 200f
+		
+		children.forEachIndexed { i, image ->
+			val originalX = platformOriginalX[i]
+			val originalWidth = platformOriginalWidth[i]
+			if (image.name == currentPlatform.platformName) {
+				image.x = originalX - (expandWidth / 2f)
+				image.width = originalWidth + expandWidth
+				image.color.a = 1f
+			} else {
+				image.x = originalX
+				image.width = originalWidth
+				image.color.a = 0.3f
+			}
 		}
 
-		children[offset + currentIdx].color.a = 1f
-		println("${children[currentIdx + 2].name}")
-
-		this.currentPlatform = platforms[this.currentIdx]
-//		groupPlatforms.children.forEach { it ->
-//			if (it.name == currentPlatform.platformName) {
-//				it.color.a = 0.3f
-//				it.width -= imgWidthInc
-//				it.x += imgWidthInc / 2f
-//			}
-//		}
-
-
-
-//		groupPlatforms.children.forEach { it ->
-//			if (it.name == currentPlatform.platformName) {
-//				it.color.a = 1f
-//				it.width += imgWidthInc
-//				it.x -= imgWidthInc / 2f
-//			}
-//		}
+		this.currentPlatform = currentPlatform
 	}
-
+	
 	private fun showNextPlatform() {
 		val platforms = emulio.platforms
 
 		val lastIdx = currentIdx
-
+		
+		
 		if (currentIdx == platforms.size - 1) {
 			currentIdx = 0
 
-			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
 			groupPlatforms.x = 0f
-			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, 0.1f, interpolation))
+			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, slideDuration, slideInterpolation))
 		} else {
 			currentIdx++
 
-			updateCurrentPlatform(platforms, lastIdx, currentIdx)
+			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
-			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, 0.1f, interpolation))
+			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, slideDuration, slideInterpolation))
 		}
 
 		updatePlatformBg(currentPlatform)
