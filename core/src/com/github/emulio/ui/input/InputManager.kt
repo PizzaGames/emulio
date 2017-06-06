@@ -59,9 +59,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 
 
 	init {
-		logger.debug { "Initializing InputManager" }
 		Controllers.addListener(this)
-
 		reloadControllers()
 	}
 

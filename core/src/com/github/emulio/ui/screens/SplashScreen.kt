@@ -87,14 +87,13 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		stage.addActor(imgLogo)
 
 
-		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
-		val francoisFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+		val mainFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 20
 			color = Color(0x37424AFF)
 		})
 
 		lbLoading = Label("Initializing main interface", Label.LabelStyle().apply {
-			font = francoisFont
+			font = mainFont
 		})
 		lbLoading.setPosition(10f, 5f)
 
@@ -193,7 +192,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 				onComplete = {
 					logger.debug { "theme loaded in ${System.currentTimeMillis() - start}ms " }
 					
-					lbLoading.setText("")
+					lbLoading.setText("Loading...")
 					emulio.theme = themesMap
 
 					Timer.schedule(object : Timer.Task() {

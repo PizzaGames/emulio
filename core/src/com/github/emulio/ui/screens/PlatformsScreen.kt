@@ -37,8 +37,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	private var whiteTexture: Texture
 	private var grayTexture: Texture
-	private var outlineFont: BitmapFont
-	private var mainFont: BitmapFont
+	private var loadingFont: BitmapFont
+	private var gameCountFont: BitmapFont
 
 	private lateinit var lbCount: Label
 	private lateinit var lbLoading: Label
@@ -51,12 +51,19 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	private var currentIdx: Int
 
 	private val interpolation = Interpolation.fade
-	private val slideInterpolation = Interpolation.circle
-	private val slideDuration = 0.25f
+	private val slideInterpolation = Interpolation.fade
+	private val slideDuration = 0.3f
+	private val platformDisabledAlpha = 0.15f
+	private val expandWidth = 200f
+	private val groupPlatformsHeight = screenHeight / 3.5f
 
 	private var platformImages = arrayListOf<Image>()
 	private var platformOriginalX = arrayListOf<Float>()
 	private var platformOriginalWidth = arrayListOf<Float>()
+
+	private var widthPerPlatform = screenWidth / 3f
+	private var platformWidth: Float = 0f
+
 
 	init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
@@ -67,27 +74,29 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		whiteTexture = createColorTexture(0xFFFFFFDD.toInt())
 		grayTexture = createColorTexture(0xCCCCCCDD.toInt())
 
-		val generator = FreeTypeFontGenerator(Gdx.files.internal("fonts/FrancoisOne-Regular.ttf"))
-		outlineFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+		loadingFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 16
 			color = Color.WHITE
-			borderColor = Color.BLACK
-			borderWidth = 1f
+			color.a = 0.5f
 		})
 
-		mainFont = generator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-			size = 20
+		gameCountFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+			size = 26
 			color = Color.BLACK
-			borderColor = Color.GRAY
-			borderWidth = 1f
 		})
 
 		initGUI()
 		updatePlatformBg(initialPlatform)
 
+		if (currentIdx != 0) {
+			groupPlatforms.x = -(widthPerPlatform * (currentIdx + 1))
+		}
+
 		updatePlatform(emulio.platforms, if (currentIdx == 0) { emulio.platforms.size - 1 } else { currentIdx - 1 }, currentIdx)
 
-		observeGameScanner(emulio.platforms)
+		if (emulio.games == null) {
+			observeGameScanner(emulio.platforms)
+		}
 	}
 
 	private fun initGUI() {
@@ -110,7 +119,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		})
 
 		val lbCount = Label("", Label.LabelStyle().apply {
-			font = mainFont
+			font = gameCountFont
 		})
 
 		groupCount.add(lbCount)
@@ -129,25 +138,23 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	private fun updatePlatformBg(platform: Platform) {
 		groupCount.color.a = 0f
-		lbCount.setText("")
 		groupCount.clearActions()
+
+		val text = if (emulio.games != null) {
+			val gamesCount = emulio.games!![platform]?.size ?: 0
+			if (gamesCount == 0) {
+				"Loading..."
+			} else {
+				"$gamesCount games available"
+			}
+		} else {
+			"Loading..."
+		}
+		lbCount.setText(text)
 
 		val action = SequenceAction(
 				Actions.delay(1f),
-				Actions.fadeIn(1f, interpolation),
-				Actions.run {
-					val text = if (emulio.games != null) {
-						val gamesCount = emulio.games!![platform]?.size ?: 0
-						if (gamesCount == 0) {
-							"Loading..."
-						} else {
-							"$gamesCount games found"
-						}
-					} else {
-						"Loading..."
-					}
-					lbCount.setText(text)
-				}
+				Actions.fadeIn(0.2f, interpolation)
 		)
 
 		groupCount.addAction(action)
@@ -164,18 +171,15 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		groupCount.zIndex = 9
 	}
 	
-	private var widthPerPlatform: Float = 0f
-	private var platformWidth: Float = 0f
-	
 	private fun initGroupPlatforms() {
-		widthPerPlatform = screenWidth / 3f
+
 
 		groupPlatforms = Group().apply {
 			addActor(Image(whiteTexture).apply {
 				setFillParent(true)
 			})
 			width = (emulio.platforms.size + 4) * widthPerPlatform
-			height = screenHeight / 3.5f
+			height = groupPlatformsHeight
 			x = -(widthPerPlatform)
 			y = (screenHeight - height) / 2
 		}
@@ -208,7 +212,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			//height = Math.max(groupPlatforms.height - paddingHeight, height)
 			width = platformWidth //widthPerPlatform - paddingWidth * 2
 
-			color.a = 0.3f
+			color.a = platformDisabledAlpha
 
 			x = currentX + ((widthPerPlatform - width) / 2)
 			y = (groupPlatforms.height - height) / 2
@@ -216,6 +220,14 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			name = platform.platformName
 
 			setScaling(Scaling.fit)
+		}
+
+		if (image.height > groupPlatformsHeight - 20f) {
+			image.apply {
+				height = groupPlatformsHeight - 20f
+				x = currentX + ((widthPerPlatform - width) / 2)
+				y = (groupPlatforms.height - height) / 2
+			}
 		}
 		
 		platformImages.add(image)
@@ -239,7 +251,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	private fun initLoading() {
 		lbLoading = Label("", Label.LabelStyle().apply {
-			font = outlineFont
+			font = loadingFont
 		})
 
 		lbLoading.x = 20f
@@ -346,7 +358,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 				.observeOn(GdxScheduler)
 				.Subscribe(
 						onNext = { game ->
-							lbLoading.setText("Reading game $count (${game.platform.platformName})")
+							lbLoading.setText("Scanning games from ${game.platform.platformName.capitalize()}")
 							count++
 
 							var games = gamesMap[game.platform]
@@ -361,9 +373,9 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 								val size = games.size
 								val text = if (size == 0) {
-									"No games found"
+									"No games available"
 								} else {
-									"$size games found"
+									"$size games available"
 								}
 								lbCount.setText(text)
 							}
@@ -372,7 +384,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 							onError(ex)
 						},
 						onComplete = {
-							lbLoading.setText("Games scanned: $count in ${System.currentTimeMillis() - start}ms")
+							lbLoading.setText("")
 
 						})
 	}
@@ -388,6 +400,9 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	override fun onConfirmButton(): Boolean {
 		lbLoading.setText("ConfirmButton ${System.currentTimeMillis()}")
+
+
+		switchScreen(GameListScreen(emulio, currentPlatform))
 		return true
 	}
 
@@ -421,6 +436,27 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		return true
 	}
 
+	private fun updatePlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
+		val children = platformImages
+		val currentPlatform = platforms[this.currentIdx]
+		
+		children.forEachIndexed { i, image ->
+			val originalX = platformOriginalX[i]
+			val originalWidth = platformOriginalWidth[i]
+			if (image.name == currentPlatform.platformName) {
+				image.x = originalX - (expandWidth / 2f)
+				image.width = Math.max((screenWidth / 3), originalWidth + expandWidth)
+				image.color.a = 1f
+			} else {
+				image.x = originalX
+				image.width = originalWidth
+				image.color.a = platformDisabledAlpha
+			}
+		}
+
+		this.currentPlatform = currentPlatform
+	}
+
 	private fun showPreviousPlatform() {
 		val platforms = emulio.platforms
 
@@ -432,42 +468,19 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
+			groupPlatforms.clearActions()
 			groupPlatforms.x = -(widthPerPlatform * (platforms.size + 1))
-			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, slideDuration, slideInterpolation))
+			groupPlatforms.addAction(Actions.moveTo(-(widthPerPlatform * (platforms.size)), groupPlatforms.y, slideDuration, slideInterpolation))
 		} else {
 			currentIdx--
 
 			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
-			groupPlatforms.addAction(Actions.moveBy(+widthPerPlatform, 0f, slideDuration, slideInterpolation))
+			groupPlatforms.addAction(Actions.moveTo(-(widthPerPlatform * (currentIdx + 1)), groupPlatforms.y, slideDuration, slideInterpolation))
 		}
 
 		updatePlatformBg(currentPlatform)
-	}
-
-	private fun updatePlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
-		val children = platformImages
-		
-		val currentPlatform = platforms[this.currentIdx]
-		
-		val expandWidth = 200f
-		
-		children.forEachIndexed { i, image ->
-			val originalX = platformOriginalX[i]
-			val originalWidth = platformOriginalWidth[i]
-			if (image.name == currentPlatform.platformName) {
-				image.x = originalX - (expandWidth / 2f)
-				image.width = originalWidth + expandWidth
-				image.color.a = 1f
-			} else {
-				image.x = originalX
-				image.width = originalWidth
-				image.color.a = 0.3f
-			}
-		}
-
-		this.currentPlatform = currentPlatform
 	}
 	
 	private fun showNextPlatform() {
@@ -482,15 +495,17 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
+
+			groupPlatforms.clearActions()
 			groupPlatforms.x = 0f
-			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, slideDuration, slideInterpolation))
+			groupPlatforms.addAction(Actions.moveTo(-(widthPerPlatform), groupPlatforms.y, slideDuration, slideInterpolation))
 		} else {
 			currentIdx++
 
 			updatePlatform(platforms, lastIdx, currentIdx)
 
 			val widthPerPlatform = screenWidth / 3
-			groupPlatforms.addAction(Actions.moveBy(-widthPerPlatform, 0f, slideDuration, slideInterpolation))
+			groupPlatforms.addAction(Actions.moveTo(-(widthPerPlatform * (currentIdx + 1)), groupPlatforms.y, slideDuration, slideInterpolation))
 		}
 
 		updatePlatformBg(currentPlatform)

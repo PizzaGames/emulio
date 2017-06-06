@@ -18,7 +18,7 @@ object DesktopLauncher {
 //            height = 1200
             title = "Emulio"
             backgroundFPS = 5
-            foregroundFPS = 30
+            foregroundFPS = 50
             initialBackgroundColor = Color(0x6FBBDBFF)
         }
 		

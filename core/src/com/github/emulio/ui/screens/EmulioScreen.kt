@@ -1,10 +1,10 @@
 package com.github.emulio.ui.screens
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
@@ -17,11 +17,11 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	val screenWidth = Gdx.graphics.width.toFloat()
 	val screenHeight = Gdx.graphics.height.toFloat()
 
+	val freeTypeFontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
+
 	override fun show() {
 		stage.root.color.a = 0f
 		stage.root.addAction(Actions.fadeIn(0.5f))
-
-
 	}
 
 	fun createColorTexture(rgba: Int): Texture {
