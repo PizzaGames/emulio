@@ -228,8 +228,9 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	fun dispose() {
-		logger.debug { "Disposing InputManager" }
+		//logger.debug { "Disposing InputManager" }
 		Controllers.removeListener(this)
+
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

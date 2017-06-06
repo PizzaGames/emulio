@@ -1,5 +1,6 @@
 package com.github.emulio.desktop
 
+import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
@@ -11,6 +12,8 @@ object DesktopLauncher {
     @JvmStatic fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration().apply {
             samples = 16
+//            width = 1920
+//            height = 1080
             width = 1280
             height = 720
 //			fullscreen = true
@@ -19,9 +22,15 @@ object DesktopLauncher {
             title = "Emulio"
             backgroundFPS = 5
             foregroundFPS = 50
-            initialBackgroundColor = Color(0x6FBBDBFF)
+//            initialBackgroundColor = Color(0x6FBBDBFF)
+			initialBackgroundColor = Color(0x000000FF)
+
+			addIcon("images/32-icon.png", Files.FileType.Internal)
         }
-		
+
+
+
+
 		LwjglApplication(Emulio(), config)
 	
 		

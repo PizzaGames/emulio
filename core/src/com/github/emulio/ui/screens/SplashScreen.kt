@@ -40,41 +40,42 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	init {
 		logger.debug { "create()" }
 
-		val soundIntro = Gdx.audio.newSound(Gdx.files.internal("sounds/sms.mp3"))
-		soundIntro.play()
+		stage.addActor(Image(createColorTexture(0x6FBBDBFF)).apply {
+			setFillParent(true)
+			color.a = 0f
+			addAction(SequenceAction(Actions.fadeIn(0.1f),
+					Actions.run {
+						val soundIntro = Gdx.audio.newSound(Gdx.files.internal("sounds/sms.mp3"))
+						soundIntro.play()
+					}))
+		})
+
+
 
 		Gdx.input.inputProcessor = stage
 
 		imgLogo = Image(Texture("images/logo.png"))
 
-		val noAlphaColor = Color(imgLogo.color).apply { a = 1f }
 		imgLogo.color.a = 0f
-		Timer.schedule(object : Timer.Task() {
-			override fun run() {
-				imgLogo.addAction(Actions.color(noAlphaColor, 2f))
-			}
-		}, 1f)
+
 
 		imgLogo.x = (screenWidth - imgLogo.width) / 2
 		imgLogo.y = (screenHeight - imgLogo.height) / 2
 
-		val imgLogoPartial = Image(Texture("images/logo-partial.png"))
-		imgLogoPartial.x = (screenWidth - imgLogoPartial.width) / 2
-		imgLogoPartial.y = -imgLogoPartial.height
-
-		val sequenceAction = SequenceAction()
-		val imgLogoPartialAlphaColor = Color(imgLogo.color).apply { a = 1f }
-		imgLogoPartial.color.a = 0f
-		sequenceAction.addAction(Actions.color(imgLogoPartialAlphaColor, 0.3f))
-		imgLogoPartial.addAction(Actions.moveTo((screenWidth - imgLogoPartial.width) / 2, (screenHeight - imgLogoPartial.height) / 2, 0.3f))
-		imgLogoPartial.addAction(sequenceAction)
-
+		val imgLogoPartial = Image(Texture("images/logo-partial.png")).apply {
+			x = (screenWidth - width) / 2
+			y = ((screenHeight - height) / 2) - height
+			color.a = 0f
+		}
 		stage.addActor(imgLogoPartial)
 
-		stage.addActor(Group().apply {
+		val maskGroup = Group().apply {
 			width = screenWidth
 			x = 0f
 			y = 0f
+
+			color.a = 0f
+			addAction(Actions.fadeIn(0.2f))
 
 			addActor(Image(createColorTexture(0x6FBBDBFF)).apply {
 				x = 0f
@@ -83,8 +84,27 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 				width = screenWidth
 			})
 
-		})
+		}
+		stage.addActor(maskGroup)
 		stage.addActor(imgLogo)
+
+
+
+		imgLogoPartial.addAction(SequenceAction(
+			Actions.delay(0.2f),
+			Actions.fadeIn(0.1f),
+			Actions.moveTo((screenWidth - imgLogoPartial.width) / 2, (screenHeight - imgLogoPartial.height) / 2, 0.4f),
+			Actions.run {
+				maskGroup.remove()
+				imgLogo.addAction(SequenceAction(
+						Actions.delay(0.5f),
+						Actions.fadeIn(1f),
+						Actions.run {
+							maskGroup.remove()
+						})
+				)
+			})
+		)
 
 
 		val mainFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
@@ -102,6 +122,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		// load main configurations/games and all stuff.. from mongo?
 		
 		lbLoading.setText("Loading configurations")
+
 		observeConfig()
 
 	}
@@ -207,7 +228,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 
 	override fun render(delta: Float) {
-		Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
+		//Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()

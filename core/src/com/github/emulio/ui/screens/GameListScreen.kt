@@ -2,6 +2,11 @@ package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.github.emulio.Emulio
 import com.github.emulio.model.Platform
 import com.github.emulio.ui.input.InputListener
@@ -11,8 +16,44 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private val inputController: InputManager = InputManager(this, emulio.config, stage)
 
+	private val interpolation = Interpolation.fade
+
+	private lateinit var root: Group
+	private lateinit var logo: Image
+
 	init {
 		Gdx.input.inputProcessor = inputController
+		initGUI()
+	}
+
+	private fun initGUI() {
+		val blackTexture = createColorTexture(0x000000FF)
+		stage.addActor(Image(blackTexture).apply {
+			setFillParent(true)
+		})
+
+		initRoot()
+		initLogoSmall()
+
+	}
+
+	private fun initRoot() {
+		root = Group().apply {
+			width = screenWidth
+			height = screenHeight
+			x = 0f
+			y = 0f
+		}
+		stage.addActor(root)
+	}
+
+	private fun initLogoSmall() {
+		logo = Image(Texture("images/logo-small.png")).apply {
+			x = screenWidth
+			y = screenHeight - height - 20f
+			addAction(Actions.moveTo(screenWidth - width - 20f, y, 0.5f, interpolation))
+		}
+		root.addActor(logo)
 	}
 
 	override fun hide() {
@@ -37,6 +78,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun dispose() {
+		super.dispose()
+		inputController.dispose()
 	}
 
 	override fun onConfirmButton(): Boolean {

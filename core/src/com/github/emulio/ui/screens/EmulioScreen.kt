@@ -35,11 +35,18 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 		return texture
 	}
 
+	override fun dispose() {
+		stage.dispose()
+	}
+
 	fun switchScreen(newScreen: Screen) {
 		stage.root.color.a = 1f
 		val sequenceAction = SequenceAction()
 		sequenceAction.addAction(Actions.fadeOut(0.5f))
-		sequenceAction.addAction(Actions.run({ emulio.screen = newScreen }))
+		sequenceAction.addAction(Actions.run({
+			emulio.screen = newScreen
+			dispose()
+		}))
 		stage.root.addAction(sequenceAction)
 	}
 }

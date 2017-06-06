@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
+import com.github.emulio.model.theme.HelpSystem
 import com.github.emulio.model.theme.View
 import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.runners.GameScanner
@@ -54,15 +55,17 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	private val slideInterpolation = Interpolation.fade
 	private val slideDuration = 0.3f
 	private val platformDisabledAlpha = 0.15f
-	private val expandWidth = 200f
-	private val groupPlatformsHeight = screenHeight / 3.5f
-
-	private var platformImages = arrayListOf<Image>()
-	private var platformOriginalX = arrayListOf<Float>()
-	private var platformOriginalWidth = arrayListOf<Float>()
 
 	private var widthPerPlatform = screenWidth / 3f
-	private var platformWidth: Float = 0f
+	private val expandWidth = screenWidth / 4f
+
+	private val groupPlatformsHeight = screenHeight / 3.5f
+	private var platformImages = arrayListOf<Image>()
+	private var platformOriginalX = arrayListOf<Float>()
+
+	private var platformOriginalWidth = arrayListOf<Float>()
+	val paddingWidth = expandWidth / 3
+	private var platformWidth = widthPerPlatform - paddingWidth * 2
 
 
 	init {
@@ -153,8 +156,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		lbCount.setText(text)
 
 		val action = SequenceAction(
-				Actions.delay(1f),
-				Actions.fadeIn(0.2f, interpolation)
+				Actions.delay(0.8f),
+				Actions.fadeIn(0.5f, interpolation)
 		)
 
 		groupCount.addAction(action)
@@ -164,6 +167,23 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		val background = systemView.getItemByName("background")!! as ViewImage
 		val backgroundTexture = Texture(FileHandle(background.path!!))
 		initBgPlatform(backgroundTexture)
+
+
+		//TODO
+//		val helpSystem = systemView.getItemByName("help")
+//		if (helpSystem != null) {
+//			helpSystem as HelpSystem
+//
+//			val textColor = helpSystem.textColor
+//			if (textColor != null) {
+//				val argb = Integer.parseInt(textColor, 16)
+//				loadingFont.color = Color()
+//			}
+//		} else {
+//			loadingFont.color = Color.WHITE
+//		}
+
+
 
 		groupPlatforms.zIndex = 10
 		lbLoading.zIndex = 10
@@ -184,12 +204,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			y = (screenHeight - height) / 2
 		}
 
-		val paddingHeight = 20f
-
-		val paddingWidth = 60f
 		var currentX = 0f
-		
-		platformWidth = widthPerPlatform - paddingWidth * 2
 
 		currentX += initPlatform(emulio.platforms[emulio.platforms.size - 2], widthPerPlatform, paddingWidth, currentX)
 		currentX += initPlatform(emulio.platforms.last(), widthPerPlatform, paddingWidth, currentX)
@@ -341,13 +356,11 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun dispose() {
+		super.dispose()
 		inputController.dispose()
 	}
 
 	private fun observeGameScanner(platforms: List<Platform>) {
-		var count = 0
-
-		val start = System.currentTimeMillis()
 
 		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
 		emulio.games = gamesMap
@@ -359,7 +372,6 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 				.Subscribe(
 						onNext = { game ->
 							lbLoading.setText("Scanning games from ${game.platform.platformName.capitalize()}")
-							count++
 
 							var games = gamesMap[game.platform]
 							if (games == null) {
@@ -384,7 +396,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 							onError(ex)
 						},
 						onComplete = {
-							lbLoading.setText("")
+							lbLoading.addAction(Actions.fadeOut(0.5f))
 
 						})
 	}
@@ -399,9 +411,6 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onConfirmButton(): Boolean {
-		lbLoading.setText("ConfirmButton ${System.currentTimeMillis()}")
-
-
 		switchScreen(GameListScreen(emulio, currentPlatform))
 		return true
 	}
