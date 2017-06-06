@@ -41,10 +41,6 @@ class XMLReader {
 		theme.formatVersion = document.getElementsByTagName("formatVersion")?.item(0)?.textContent
 		theme.views = readViews(document.getElementsByTagName("view"), xmlFile, theme)
 
-
-
-
-
         return theme
     }
 	
@@ -67,6 +63,21 @@ class XMLReader {
 			view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
 			
 			views.add(view)
+		}
+
+		for (i in 0..viewNodes.length) {
+			val viewNode = viewNodes.item(i) ?: continue
+			check(viewNode.nodeName == "view")
+
+			val viewName = viewNode.attributes.getNamedItem("name").nodeValue
+			if (viewName.contains(",")) {
+				viewName.split(",").forEach { vName ->
+					val toMergeView = theme.getViewByName(vName.trim())
+					if (toMergeView != null && toMergeView.viewItems != null) {
+						toMergeView.viewItems!!.addAll(readViewItems(viewNode.childNodes, xmlFile, toMergeView))
+					}
+				}
+			}
 		}
 		
 		return views
