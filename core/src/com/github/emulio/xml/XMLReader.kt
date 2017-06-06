@@ -49,38 +49,43 @@ class XMLReader {
 			return emptyList()
 		}
 		
-		val views = mutableListOf<View>()
+		val viewMap = mutableMapOf<String, View>()
 		
 		for (i in 0..viewNodes.length) {
 			val viewNode = viewNodes.item(i) ?: continue
 			check(viewNode.nodeName == "view")
 
 			val viewName = viewNode.attributes.getNamedItem("name").nodeValue
-
-			val view = theme.getViewByName(viewName) ?: View()
-
-			view.name = viewName
-			view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
 			
-			views.add(view)
-		}
-
-		for (i in 0..viewNodes.length) {
-			val viewNode = viewNodes.item(i) ?: continue
-			check(viewNode.nodeName == "view")
-
-			val viewName = viewNode.attributes.getNamedItem("name").nodeValue
 			if (viewName.contains(",")) {
-				viewName.split(",").forEach { vName ->
-					val toMergeView = theme.getViewByName(vName.trim())
-					if (toMergeView != null && toMergeView.viewItems != null) {
-						toMergeView.viewItems!!.addAll(readViewItems(viewNode.childNodes, xmlFile, toMergeView))
+				viewName.split(",").forEach { name ->
+					val viewName = name.trim()
+					
+					val view = theme.getViewByName(viewName) ?: View()
+					view.name = viewName
+					view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
+					
+					if (viewMap[viewName] != null) {
+						val viewToMerge = viewMap[viewName]!!
+						view.viewItems!!.addAll(viewToMerge.viewItems!!)
 					}
+					viewMap[viewName] = view
 				}
+			} else {
+				val view = theme.getViewByName(viewName) ?: View()
+				view.name = viewName
+				view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
+				
+				if (viewMap[viewName] != null) {
+					val viewToMerge = viewMap[viewName]!!
+					view.viewItems!!.addAll(viewToMerge.viewItems!!)
+				}
+				viewMap[viewName] = view
 			}
+			
 		}
 		
-		return views
+		return viewMap.values.toList()
 	}
 	
 	private fun readViewItems(itemNodes: NodeList?, xmlFile: File, view: View): MutableList<ViewItem> {
@@ -88,46 +93,82 @@ class XMLReader {
 			return ArrayList()
 		}
 		
-		val items = view.viewItems ?: mutableListOf<ViewItem>()
+		val itemsByName = mutableMapOf<String, ViewItem>()
+		
+		if (view.viewItems != null) {
+			view.viewItems!!.forEach { item ->
+				itemsByName[item.name!!] = item
+			}
+		}
 
 		for (i in 0..itemNodes.length) {
 			val node = itemNodes.item(i) ?: continue
 
 			val attributes = node.attributes
-			val viewItemName = attributes?.getNamedItem("name")?.nodeValue
-
-			val foundView = if (viewItemName != null) {
-				view.getItemByName(viewItemName)
-			} else {
-				null
-			}
-
+			
 			if (node.nodeName == "#text" ||
 					node.nodeName == "#comment") {
 				continue
 			}
 			
-			val viewItem = when(node.nodeName) {
-				"image" -> { readImage(node, xmlFile, foundView) }
-				"ninepatch" -> { readNinepatch(node, xmlFile, foundView) }
-				"container" -> { readContainer(node, xmlFile, foundView) }
-				"rating" -> { readRating(node, xmlFile, foundView) }
-				"datetime" -> { readDatetime(node, xmlFile, foundView) }
-				"helpsystem" -> { readHelpSystem(node, xmlFile, foundView) }
-				"textlist" -> { readTextList(node, xmlFile, foundView) }
-				"text" -> { readText(node, xmlFile, foundView) }
-				"view" -> { readViewItem(node, xmlFile, foundView) }
+			val viewItemName = attributes?.getNamedItem("name")?.nodeValue!!
+			
+			if (viewItemName.contains(",")) {
+				viewItemName.split(",").forEach { splittedName ->
+					val viewItemName = splittedName.trim()
+					
+					val foundView = itemsByName[viewItemName]
+					
+					itemsByName[viewItemName] = readViewItem(foundView, node, xmlFile).apply {
+						name = viewItemName
+					}
+				}
+			} else {
 				
-				else -> {
-					error("Tag not supported yet '${node.nodeName}' ")
+				val foundView = itemsByName[viewItemName]
+				itemsByName[viewItemName] = readViewItem(foundView, node, xmlFile).apply {
+					name = viewItemName
 				}
 			}
-
-			items.add(viewItem)
-			
 		}
 		
-		return items
+		return itemsByName.values.toMutableList()
+	}
+	
+	private fun readViewItem(foundView: ViewItem?, node: Node, xmlFile: File): ViewItem {
+		return when (node.nodeName) {
+			"image" -> {
+				readImage(node, xmlFile, foundView)
+			}
+			"ninepatch" -> {
+				readNinepatch(node, xmlFile, foundView)
+			}
+			"container" -> {
+				readContainer(node, xmlFile, foundView)
+			}
+			"rating" -> {
+				readRating(node, xmlFile, foundView as Text?)
+			}
+			"datetime" -> {
+				readDatetime(node, xmlFile, foundView as Text?)
+			}
+			"helpsystem" -> {
+				readHelpSystem(node, xmlFile, foundView)
+			}
+			"textlist" -> {
+				readTextList(node, xmlFile, foundView as Text?)
+			}
+			"text" -> {
+				readText(node, xmlFile, foundView)
+			}
+			"view" -> {
+				readViewItem(node, xmlFile, foundView)
+			}
+			
+			else -> {
+				error("Tag not supported yet '${node.nodeName}' ")
+			}
+		}
 	}
 	
 	private fun readContainer(node: Node, xmlFile: File, foundView: ViewItem?): Container {
@@ -167,8 +208,8 @@ class XMLReader {
 		return text.readViewItem(node)
 	}
 	
-	private fun readTextList(node: Node, xmlFile: File, foundView: ViewItem?): TextList {
-		val textList = if (foundView != null) { foundView as TextList } else { TextList() }
+	private fun readTextList(node: Node, xmlFile: File, foundView: Text?): TextList {
+		val textList = if (foundView != null) { TextList(foundView) } else { TextList() }
 		return textList.readViewItem(node)
 	}
 	
@@ -177,8 +218,14 @@ class XMLReader {
 		return helpSystem.readViewItem(node)
 	}
 	
-	private fun readDatetime(node: Node, xmlFile: File, foundView: ViewItem?): DateTime {
-		val dateTime = if (foundView != null) { foundView as DateTime } else { DateTime() }
+	private fun readDatetime(node: Node, xmlFile: File, foundView: Text?): DateTime {
+		val dateTime = if (foundView != null) {
+			if (foundView is DateTime) {
+				DateTime(foundView)
+			} else {
+				DateTime(foundView)
+			}
+		} else { DateTime() }
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
@@ -195,8 +242,14 @@ class XMLReader {
 		return dateTime.readViewItem(node)
 	}
 	
-	private fun  readRating(node: Node, xmlFile: File, foundView: ViewItem?): Rating {
-		val rating = if (foundView != null) { foundView as Rating } else { Rating() }
+	private fun  readRating(node: Node, xmlFile: File, foundView: Text?): Rating {
+		val rating = if (foundView != null) {
+			if (foundView is Rating) {
+				Rating(foundView)
+			} else {
+				Rating(foundView)
+			}
+		} else { Rating() }
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {

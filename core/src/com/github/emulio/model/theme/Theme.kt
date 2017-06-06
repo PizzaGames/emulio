@@ -41,7 +41,6 @@ class View {
 				return item
 			}
 		}
-		
 		return null
 	}
 	
@@ -86,7 +85,20 @@ enum class TextAlignment {
 	JUSTIFY
 }
 
-class Text : ViewItem() {
+open class Text : ViewItem {
+	
+	constructor()
+	
+	constructor(copy: Text) {
+		text = copy.text
+		forceUpperCase = copy.forceUpperCase
+		color = copy.color
+		fontPath = copy.fontPath
+		fontSize = copy.fontSize
+		alignment = copy.alignment
+	}
+	
+	
 	var text: String? = null
 	var forceUpperCase: Boolean? = null
 	var color: String? = null
@@ -99,18 +111,46 @@ class Text : ViewItem() {
 	}
 }
 
-class DateTime : ViewItem() {
+class DateTime : Text {
+	
+	constructor()
+	
+	constructor(copy: Text) : super(copy)
+	
+	constructor(copy: DateTime) {
+		date = copy.date
+		text = copy.text
+		forceUpperCase = copy.forceUpperCase
+		color = copy.color
+		fontPath = copy.fontPath
+		fontSize = copy.fontSize
+		alignment = copy.alignment
+	}
+	
 	var date: Date? = null
-	var color: String? = null
-	var fontPath: File? = null
-	var fontSize: Int? = null
 
 	override fun toString(): String {
 		return "DateTime(date=$date, color=$color, fontPath=$fontPath, fontSize=$fontSize)"
 	}
 }
 
-class Rating : ViewItem() {
+class Rating : Text {
+	
+	constructor()
+	
+	constructor(copy: Text) : super(copy)
+	
+	constructor(copy: Rating) {
+		filledPath = copy.filledPath
+		unfilledPath = copy.unfilledPath
+		text = copy.text
+		forceUpperCase = copy.forceUpperCase
+		color = copy.color
+		fontPath = copy.fontPath
+		fontSize = copy.fontSize
+		alignment = copy.alignment
+	}
+	
 	var filledPath: File? = null
 	var unfilledPath: File? = null
 
@@ -119,8 +159,11 @@ class Rating : ViewItem() {
 	}
 }
 
-class TextList : ViewItem()
-
+class TextList : Text {
+	constructor()
+	
+	constructor(copy: Text) : super(copy)
+}
 
 class HelpSystem : ViewItem() {
 	override fun toString(): String {

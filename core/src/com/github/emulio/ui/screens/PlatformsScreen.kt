@@ -494,9 +494,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	
 	private fun showNextPlatform() {
 		val platforms = emulio.platforms
-
 		val lastIdx = currentIdx
-		
 		
 		if (currentIdx == platforms.size - 1) {
 			currentIdx = 0
