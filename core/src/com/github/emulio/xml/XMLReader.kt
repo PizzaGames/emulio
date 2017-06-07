@@ -119,14 +119,14 @@ class XMLReader {
 					
 					val foundView = itemsByName[viewItemName]
 					
-					itemsByName[viewItemName] = readViewItem(foundView, node, xmlFile).apply {
+					itemsByName[viewItemName] = readViewItem(viewItemName, foundView, node, xmlFile).apply {
 						name = viewItemName
 					}
 				}
 			} else {
 				
 				val foundView = itemsByName[viewItemName]
-				itemsByName[viewItemName] = readViewItem(foundView, node, xmlFile).apply {
+				itemsByName[viewItemName] = readViewItem(viewItemName, foundView, node, xmlFile).apply {
 					name = viewItemName
 				}
 			}
@@ -135,34 +135,34 @@ class XMLReader {
 		return itemsByName.values.toMutableList()
 	}
 	
-	private fun readViewItem(foundView: ViewItem?, node: Node, xmlFile: File): ViewItem {
+	private fun readViewItem(name: String, foundView: ViewItem?, node: Node, xmlFile: File): ViewItem {
 		return when (node.nodeName) {
 			"image" -> {
-				readImage(node, xmlFile, foundView)
+				readImage(node, xmlFile, foundView, name)
 			}
 			"ninepatch" -> {
-				readNinepatch(node, xmlFile, foundView)
+				readNinepatch(node, xmlFile, foundView, name)
 			}
 			"container" -> {
-				readContainer(node, xmlFile, foundView)
+				readContainer(node, xmlFile, foundView, name)
 			}
 			"rating" -> {
-				readRating(node, xmlFile, foundView as Text?)
+				readRating(node, xmlFile, foundView as Text?, name)
 			}
 			"datetime" -> {
-				readDatetime(node, xmlFile, foundView as Text?)
+				readDatetime(node, xmlFile, foundView as Text?, name)
 			}
 			"helpsystem" -> {
-				readHelpSystem(node, xmlFile, foundView)
+				readHelpSystem(node, xmlFile, foundView, name)
 			}
 			"textlist" -> {
-				readTextList(node, xmlFile, foundView as Text?)
+				readTextList(node, xmlFile, foundView as Text?, name)
 			}
 			"text" -> {
-				readText(node, xmlFile, foundView)
+				readText(node, xmlFile, foundView, name)
 			}
 			"view" -> {
-				readViewItem(node, xmlFile, foundView)
+				readViewItem(node, xmlFile, foundView, name)
 			}
 			
 			else -> {
@@ -171,27 +171,29 @@ class XMLReader {
 		}
 	}
 	
-	private fun readContainer(node: Node, xmlFile: File, foundView: ViewItem?): Container {
+	private fun readContainer(node: Node, xmlFile: File, foundView: ViewItem?, name: String): Container {
 		val container = if (foundView != null) { foundView as Container } else { Container() }
 		return container.readViewItem(node)
 	}
 	
-	private fun readNinepatch(node: Node, xmlFile: File, foundView: ViewItem?): NinePatch {
+	private fun readNinepatch(node: Node, xmlFile: File, foundView: ViewItem?, name: String): NinePatch {
 		val ninePatch = if (foundView != null) { foundView as NinePatch } else { NinePatch() }
 		return ninePatch.readImage(node, xmlFile)
 	}
 	
-	private fun readText(node: Node, xmlFile: File, foundView: ViewItem?): Text {
+	private fun readText(node: Node, xmlFile: File, foundView: ViewItem?, name: String): Text {
 		val text = if (foundView != null) { foundView as Text } else { Text() }
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
 				val child = childNodes.item(i) ?: continue
 				when (child.nodeName) {
-					"date" -> { text.text = node.nodeValue }
-					"color" -> { text.color = node.nodeValue }
+					"text" -> {
+						text.text = child.textContent
+					}
+					"color" -> { text.color = child.textContent }
 					"alignment" -> {
-						text.alignment = when(node.nodeValue) {
+						text.alignment = when(child.textContent) {
 							"center" -> TextAlignment.CENTER
 							"left" -> TextAlignment.LEFT
 							"justify" -> TextAlignment.JUSTIFY
@@ -199,26 +201,28 @@ class XMLReader {
 							else -> TextAlignment.LEFT
 						}
 					}
-					"fontpath" -> { text.fontPath = File(xmlFile.parentFile, child.nodeValue) }
-					"fontsize" -> { text.fontSize = node.nodeValue.toInt() }
+					"fontPath" -> {
+						text.fontPath = File(xmlFile.parentFile, child.textContent)
+					}
+					"fontSize" -> { text.fontSize = child.textContent.toFloat() }
 				}
 			}
 			
 		}
 		return text.readViewItem(node)
 	}
-	
-	private fun readTextList(node: Node, xmlFile: File, foundView: Text?): TextList {
+
+	private fun readTextList(node: Node, xmlFile: File, foundView: Text?, name: String): TextList {
 		val textList = if (foundView != null) { TextList(foundView) } else { TextList() }
 		return textList.readViewItem(node)
 	}
 	
-	private fun readHelpSystem(node: Node, xmlFile: File, foundView: ViewItem?): HelpSystem {
+	private fun readHelpSystem(node: Node, xmlFile: File, foundView: ViewItem?, name: String): HelpSystem {
 		val helpSystem = if (foundView != null) { foundView as HelpSystem } else { HelpSystem() }
 		return helpSystem.readViewItem(node)
 	}
 	
-	private fun readDatetime(node: Node, xmlFile: File, foundView: Text?): DateTime {
+	private fun readDatetime(node: Node, xmlFile: File, foundView: Text?, name: String): DateTime {
 		val dateTime = if (foundView != null) {
 			if (foundView is DateTime) {
 				DateTime(foundView)
@@ -234,7 +238,7 @@ class XMLReader {
 					"date" -> { dateTime.date = SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(node.nodeValue) }
 					"color" -> { dateTime.color = node.nodeValue }
 					"fontpath" -> { dateTime.fontPath = File(xmlFile.parentFile, child.nodeValue) }
-					"fontsize" -> { dateTime.fontSize = node.nodeValue.toInt() }
+					"fontsize" -> { dateTime.fontSize = node.nodeValue.toFloat() }
 				}
 			}
 			
@@ -242,7 +246,7 @@ class XMLReader {
 		return dateTime.readViewItem(node)
 	}
 	
-	private fun  readRating(node: Node, xmlFile: File, foundView: Text?): Rating {
+	private fun  readRating(node: Node, xmlFile: File, foundView: Text?, name: String): Rating {
 		val rating = if (foundView != null) {
 			if (foundView is Rating) {
 				Rating(foundView)
@@ -279,12 +283,12 @@ class XMLReader {
 		return readViewItem(node)
 	}
 	
-	private fun readImage(node: Node, xmlFile: File, foundView: ViewItem?): ViewImage {
+	private fun readImage(node: Node, xmlFile: File, foundView: ViewItem?, name: String): ViewImage {
 		val viewImage = if (foundView != null) { foundView as ViewImage } else { ViewImage() }
 		return viewImage.readImage(node, xmlFile)
 	}
 	
-	private fun readViewItem(node: Node, xmlFile: File, foundView: ViewItem?): ViewItem {
+	private fun readViewItem(node: Node, xmlFile: File, foundView: ViewItem?, name: String): ViewItem {
 		val viewItem = foundView ?: ViewItem()
 		return viewItem.readViewItem(node)
 	}
@@ -309,6 +313,14 @@ class XMLReader {
 	
 	private fun ViewItem.readViewItemChild(child: Node) {
 		when (child.nodeName) {
+
+			"pos" -> {
+				val position = child.textContent.split(" ")
+
+				positionX = position[0].toFloatOrNull()
+				positionY = position[1].toFloatOrNull()
+			}
+
 			"position" -> {
 				val position = child.textContent.split(" ")
 				

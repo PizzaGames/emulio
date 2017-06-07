@@ -100,11 +100,11 @@ open class Text : ViewItem {
 	
 	
 	var text: String? = null
-	var forceUpperCase: Boolean? = null
+	var forceUpperCase: Boolean = false
 	var color: String? = null
 	var fontPath: File? = null
-	var fontSize: Int? = null
-	var alignment: TextAlignment? = null
+	var fontSize: Float? = null
+	var alignment: TextAlignment = TextAlignment.LEFT
 
 	override fun toString(): String {
 		return "Text(text=$text, forceUpperCase=$forceUpperCase, color=$color, fontPath=$fontPath, fontSize=$fontSize, alignment=$alignment)"
