@@ -214,6 +214,19 @@ class XMLReader {
 
 	private fun readTextList(node: Node, xmlFile: File, foundView: Text?, name: String): TextList {
 		val textList = if (foundView != null) { TextList(foundView) } else { TextList() }
+		
+		if (node.hasChildNodes()) {
+			val childNodes = node.childNodes
+			for (i in 0..childNodes.length) {
+				val child = childNodes.item(i) ?: continue
+				when (child.nodeName) {
+					"selectorColor" -> { child.textContent }
+					"selectedColor" -> { child.textContent }
+					"primaryColor" -> { child.textContent }
+					"secondaryColor" -> { child.textContent }
+				}
+			}
+		}
 		return textList.readViewItem(node)
 	}
 	
@@ -235,10 +248,10 @@ class XMLReader {
 			for (i in 0..childNodes.length) {
 				val child = childNodes.item(i) ?: continue
 				when (child.nodeName) {
-					"date" -> { dateTime.date = SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(node.nodeValue) }
-					"color" -> { dateTime.color = node.nodeValue }
-					"fontpath" -> { dateTime.fontPath = File(xmlFile.parentFile, child.nodeValue) }
-					"fontsize" -> { dateTime.fontSize = node.nodeValue.toFloat() }
+					"date" -> { dateTime.date = SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(child.textContent) }
+					"color" -> { dateTime.color = child.textContent }
+					"fontpath" -> { dateTime.fontPath = File(xmlFile.parentFile, child.textContent) }
+					"fontsize" -> { dateTime.fontSize = child.textContent?.toFloat() }
 				}
 			}
 			

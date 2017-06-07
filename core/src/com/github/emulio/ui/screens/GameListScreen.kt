@@ -9,12 +9,15 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
+import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Array
 import com.github.emulio.Emulio
+import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
-import com.github.emulio.model.theme.Text
-import com.github.emulio.model.theme.TextAlignment
+import com.github.emulio.model.theme.*
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 
@@ -26,13 +29,19 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private lateinit var root: Group
 	private lateinit var logo: Image
-
+	
+	private var games: kotlin.collections.List<Game>
+	
 	init {
 		Gdx.input.inputProcessor = inputController
+		
+		games = emulio.games!![platform]?.toList() ?: emptyList<Game>()
+		
 		initGUI()
 	}
 
 	private fun initGUI() {
+		//TODO read the header, footer, background
 		val lightGrayTexture = createColorTexture(0xc5c6c7FF.toInt())
 		stage.addActor(Image(lightGrayTexture).apply {
 			setFillParent(true)
@@ -45,23 +54,47 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		val basicView = theme.getViewByName("basic")!!
 
 		val systemName1 = basicView.getItemByName("system_name_1") as Text
-
-
-
-
-
-		val txtField = buildTextField(systemName1)
-		stage.addActor(txtField)
-
-
+		stage.addActor(buildTextField(systemName1))
+		
 		val systemName2 = basicView.getItemByName("system_name_2") as Text
+		stage.addActor(buildTextField(systemName2))
 
-
-
-
+		val logo = basicView.getItemByName("logo") as ViewImage
+		stage.addActor(buildImage(logo))
+		
+		val darkGrayTexture = createColorTexture(0x97999BFF.toInt())
+		stage.addActor(Image(darkGrayTexture).apply {
+			setFillParent(true)
+		})
+		
+		val textList = basicView.getItemByName("gamelist") as TextList
+		stage.addActor(buildGameList(textList))
 
 	}
-
+	
+	private fun buildGameList(textList: TextList): List<Game> {
+		return List<Game>(List.ListStyle(
+			getFont(textList),
+			getColor(textList.selectedColor),
+			getColor(textList.primaryColor),
+			null
+		)).apply {
+			
+			val g = games.toTypedArray()
+			
+		}
+	}
+	
+	private fun buildImage(logo: ViewImage): Image {
+		val texture = Texture(FileHandle(logo.path!!), true)
+		
+		return Image(texture).apply {
+			setPosition(logo)
+			setSize(logo)
+			setOrigin(logo)
+		}
+	}
+	
 	private fun buildTextField(textView: Text): TextField {
 
 		val text = if (textView.forceUpperCase) {
@@ -77,34 +110,47 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 				TextAlignment.CENTER -> Align.center
 				TextAlignment.JUSTIFY -> Align.left //TODO
 			})
-
-			var width = screenWidth * textView.sizeX!!
-			var height = screenHeight * textView.sizeY!!
-
-			if (textView.maxSizeX != null) {
-				width = Math.max(width, screenWidth * textView.maxSizeX!!)
-			}
-			if (textView.maxSizeY != null) {
-				height = Math.max(height, screenHeight * textView.maxSizeY!!)
-			}
-
-			setSize(width, height)
-
-			val x = screenWidth * textView.positionX!!
-			val y = screenHeight * textView.positionY!!
-
-			setPosition(x, y)
+			setSize(textView)
+			setPosition(textView)
 		}
 	}
-
+	
+	private fun Widget.setOrigin(viewItem: ViewItem) {
+		if (viewItem.originX != null && viewItem.originY != null) {
+			setOrigin(width * viewItem.originX!!, height * (1 - viewItem.originY!!))
+		}
+	}
+	
+	private fun Widget.setSize(viewItem: ViewItem) {
+		var width = screenWidth * viewItem.sizeX!!
+		var height = screenHeight * viewItem.sizeY!!
+		
+		if (viewItem.maxSizeX != null) {
+			width = Math.max(width, screenWidth * viewItem.maxSizeX!!)
+		}
+		if (viewItem.maxSizeY != null) {
+			height = Math.max(height, screenHeight * viewItem.maxSizeY!!)
+		}
+		setSize(width, height)
+	}
+	
+	private fun Widget.setPosition(view: ViewItem) {
+		val x = screenWidth * view.positionX!!
+		val y = screenHeight * (1f - view.positionY!!)
+		
+		setPosition(x, y)
+	}
+	
 	private fun  getTextFieldStyle(textView: Text): TextField.TextFieldStyle {
 		return TextField.TextFieldStyle(
-				getFontFromTextView(textView),
-				getColor(textView.color ?: "000000FF"),
+				getFont(textView),
+				getColor(textView),
 				null, null, null)
 	}
-
-	private fun getFontFromTextView(textView: Text): BitmapFont {
+	
+	private fun getColor(textView: Text) = getColor(textView.color ?: "000000FF")
+	
+	private fun getFont(textView: Text): BitmapFont {
 		return getFont(getFontPath(textView), getFontSize(textView.fontSize), getColor(textView.color))
 	}
 
