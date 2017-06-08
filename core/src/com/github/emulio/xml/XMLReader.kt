@@ -341,7 +341,7 @@ class XMLReader {
 				positionY = position[1].toFloatOrNull()
 			}
 			
-			"maxsize" -> {
+			"maxSize" -> {
 				val maxSize = child.textContent.split(" ")
 				
 				maxSizeX = maxSize[0].toFloatOrNull()

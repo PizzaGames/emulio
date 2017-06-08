@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
+import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
@@ -62,13 +63,13 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		val logo = basicView.getItemByName("logo") as ViewImage
 		stage.addActor(buildImage(logo))
 		
-		val darkGrayTexture = createColorTexture(0x97999BFF.toInt())
-		stage.addActor(Image(darkGrayTexture).apply {
-			setFillParent(true)
-		})
+//		val darkGrayTexture = createColorTexture(0x97999BFF.toInt())
+//		stage.addActor(Image(darkGrayTexture).apply {
+//			setFillParent(true)
+//		})
 		
-		val textList = basicView.getItemByName("gamelist") as TextList
-		stage.addActor(buildGameList(textList))
+//		val textList = basicView.getItemByName("gamelist") as TextList
+//		stage.addActor(buildGameList(textList))
 
 	}
 	
@@ -79,18 +80,20 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			getColor(textList.primaryColor),
 			null
 		)).apply {
-			
+
 			val g = games.toTypedArray()
-			
+
 		}
 	}
 	
 	private fun buildImage(logo: ViewImage): Image {
 		val texture = Texture(FileHandle(logo.path!!), true)
-		
+
 		return Image(texture).apply {
-			setPosition(logo)
+			setScaling(Scaling.fill)
+
 			setSize(logo)
+			setPosition(logo)
 			setOrigin(logo)
 		}
 	}
@@ -117,13 +120,27 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	
 	private fun Widget.setOrigin(viewItem: ViewItem) {
 		if (viewItem.originX != null && viewItem.originY != null) {
-			setOrigin(width * viewItem.originX!!, height * (1 - viewItem.originY!!))
+			val offsetX = width * viewItem.originX!!
+			val offsetY = height * (1f - viewItem.originY!!)
+//			setOrigin(offsetX, offsetY)
+
+			x += offsetX
+			y += offsetY
 		}
 	}
 	
 	private fun Widget.setSize(viewItem: ViewItem) {
-		var width = screenWidth * viewItem.sizeX!!
-		var height = screenHeight * viewItem.sizeY!!
+		var width = if (viewItem.sizeX != null) {
+			screenWidth * viewItem.sizeX!!
+		} else {
+			this.width
+		}
+
+		var height = if (viewItem.sizeY != null) {
+			screenHeight * viewItem.sizeY!!
+		} else {
+			this.height
+		}
 		
 		if (viewItem.maxSizeX != null) {
 			width = Math.max(width, screenWidth * viewItem.maxSizeX!!)
@@ -136,7 +153,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	
 	private fun Widget.setPosition(view: ViewItem) {
 		val x = screenWidth * view.positionX!!
-		val y = screenHeight * (1f - view.positionY!!)
+		val y = (screenHeight * (1f - view.positionY!!)) - height
 		
 		setPosition(x, y)
 	}
@@ -156,7 +173,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private fun getFontPath(textView: Text): FileHandle {
 		if (textView.fontPath != null) {
-			return Gdx.files.external(textView.fontPath!!.absolutePath)
+			return FileHandle(textView.fontPath!!.absolutePath)
 		} else{
 			return Gdx.files.internal("fonts/RopaSans-Regular.ttf")
 		}
@@ -166,7 +183,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		if (fontSize == null) {
 			return 26
 		} else {
-			return (fontSize * screenHeight * 2).toInt()
+			return (fontSize * screenHeight).toInt()
 		}
 	}
 
