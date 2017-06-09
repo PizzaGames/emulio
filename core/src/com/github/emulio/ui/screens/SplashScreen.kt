@@ -216,11 +216,14 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 					lbLoading.setText("Loading...")
 					emulio.theme = themesMap
 
-					Timer.schedule(object : Timer.Task() {
-						override fun run() {
-							switchScreen(PlatformsScreen(emulio))
-						}
-					}, 4f)
+					//FIXME if loading ended to animate
+					switchScreen(PlatformsScreen(emulio))
+
+//					Timer.schedule(object : Timer.Task() {
+//						override fun run() {
+//							switchScreen(PlatformsScreen(emulio))
+//						}
+//					}, 4f)
 
 				})
 	}

@@ -27,6 +27,8 @@ class PNGConverter {
 			pngTranscoder.transcode(input, output)
 			outputStream.flush()
 		}
+
+		pngFile.deleteOnExit()
 	}
 
 

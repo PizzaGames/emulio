@@ -2,13 +2,22 @@ package com.github.emulio.runners
 
 import com.badlogic.gdx.Gdx
 import com.github.emulio.model.Platform
-import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.model.theme.Theme
+import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.xml.XMLReader
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import mu.KotlinLogging
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory
+import org.apache.batik.bridge.BridgeContext
+import org.apache.batik.bridge.DocumentLoader
+import org.apache.batik.bridge.GVTBuilder
+import org.apache.batik.bridge.UserAgentAdapter
+import org.apache.batik.util.XMLResourceDescriptor
+import java.awt.geom.Rectangle2D
 import java.io.File
+import java.io.FileInputStream
+
 
 class ThemeReader {
 	
@@ -78,24 +87,55 @@ class ThemeReader {
 			val graphics = Gdx.graphics
 			val screenWidth = graphics.width
 			val screenHeight = graphics.height
-			
-			val width = if (maxSizeX != null) {
-				screenWidth * maxSizeX
-			} else if (sizeX != null) {
+
+			val preferredBounds = readPreferredBounds(imgFile)
+
+			val preferredWidth = preferredBounds.width
+			val preferredHeight = preferredBounds.height
+
+
+			val preferredWidthCeil = Math.ceil(preferredWidth)
+			var width = if (sizeX != null) {
 				screenWidth * sizeX
 			} else {
-				null
+				preferredWidthCeil.toFloat()
 			}
-			
-			val height = if (maxSizeY != null) {
-				screenHeight * maxSizeY
-			} else if (sizeY != null) {
+
+			val widthDouble = width.toDouble()
+			if (maxSizeX != null) {
+				width = Math.ceil(Math.min(widthDouble, (screenWidth * maxSizeX).toDouble())).toFloat()
+			}
+
+			val preferredHeightCeil = Math.ceil(preferredHeight)
+			var height = if (sizeY != null) {
 				screenHeight * sizeY
 			} else {
-				null
+				preferredHeightCeil.toFloat()
 			}
-			
-			val imgName = if (width == null && height == null) {
+
+			val heightDouble = height.toDouble()
+			if (maxSizeY != null) {
+				height = Math.ceil(Math.min(heightDouble, (screenHeight * maxSizeY).toDouble())).toFloat()
+			}
+
+			val originalRatio = preferredWidthCeil / preferredHeightCeil
+			if ((widthDouble / heightDouble) != originalRatio) {
+				println("Outside ratio!")
+
+				if (Math.max(widthDouble, preferredWidthCeil) / Math.min(widthDouble, preferredWidthCeil) == originalRatio) {
+					val rx = preferredWidth / width
+					height = preferredHeight.toFloat() * rx.toFloat()
+				} else if (Math.max(heightDouble, preferredHeightCeil) / Math.min(heightDouble, preferredHeightCeil) == originalRatio) {
+					val ry = preferredHeight / height
+					width = preferredWidth.toFloat() * ry.toFloat()
+				} else {
+					width = preferredWidth.toFloat()
+					height = preferredHeight.toFloat()
+				}
+
+			}
+
+			val imgName = if (width == preferredWidth.toFloat() && height == preferredHeight.toFloat()) {
 				"${imgFile.nameWithoutExtension}.png"
 			} else {
 				"${imgFile.nameWithoutExtension}_${width}x$height.png"
@@ -109,9 +149,28 @@ class ThemeReader {
 			} else {
 				viewImage.path = pngFile
 			}
+
+			pngFile.deleteOnExit()
 		}
-	
+
 	}
-	
+
+	private fun readPreferredBounds(imgFile: File): Rectangle2D {
+		return FileInputStream(imgFile).use { fis ->
+			val factory = SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName())
+
+			val document = factory.createDocument(imgFile.toURI().toURL().toString(), fis)
+			val agent = UserAgentAdapter()
+			val loader = DocumentLoader(agent)
+			val context = BridgeContext(agent, loader)
+
+			context.isDynamic = true
+			val builder = GVTBuilder()
+			val root = builder.build(context, document)
+
+			root.primitiveBounds
+		}
+	}
+
 }
 
