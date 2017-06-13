@@ -6,14 +6,17 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Scaling
@@ -45,38 +48,69 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private fun initGUI() {
 		//TODO read the header, footer, background
-		val lightGrayTexture = createColorTexture(0xc5c6c7FF.toInt())
-		stage.addActor(Image(lightGrayTexture).apply {
-			setFillParent(true)
-		})
+		
+		val theme = emulio.theme[platform]!!
+		
+		
+		buildBasicView(theme.getViewByName("basic")!!)
+		//buildDetailedView(theme.getViewByName("detailed")!!)
+		
+		
 
+	}
+	
+	private fun buildBasicView(basicView: View) {
+		buildCommonComponents(basicView)
+		
+		val gamelistView = basicView.getItemByName("gamelist") as TextList
+		stage.addActor(buildTextList(gamelistView))
+		
+	}
+	
+	
+	
+	private fun buildCommonComponents(view: View) {
+		val backgroundView = view.getItemByName("background") as ViewImage?
+		if (backgroundView != null) {
+			stage.addActor(buildImage(backgroundView).apply {
+				setScaling(Scaling.stretch)
+				setPosition(0f, 0f)
+				setSize(screenWidth, screenHeight)
+			})
+		} else {
+			val lightGrayTexture = createColorTexture(0xc5c6c7FF.toInt())
+			stage.addActor(Image(lightGrayTexture).apply {
+				setFillParent(true)
+			})
+		}
+		
+		val footer = view.getItemByName("footer") as ViewImage?
+		if (footer != null) {
+			stage.addActor(buildImage(footer, Scaling.stretch))
+		}
+		
+		val header = view.getItemByName("header") as ViewImage?
+		if (header != null) {
+			stage.addActor(buildImage(header, Scaling.stretch))
+		}
+		
 		initRoot()
 		initLogoSmall()
-
-		val theme = emulio.theme[platform]!!
-		val basicView = theme.getViewByName("basic")!!
-
-		val systemName1 = basicView.getItemByName("system_name_1")?.let { it as Text }
+		
+		val systemName1 = view.getItemByName("system_name_1")?.let { it as Text }
 		if (systemName1 != null) {
 			stage.addActor(buildTextField(systemName1))
 		}
 		
-		val systemName2 = basicView.getItemByName("system_name_2")?.let { it as Text }
+		val systemName2 = view.getItemByName("system_name_2")?.let { it as Text }
 		if (systemName2 != null) {
 			stage.addActor(buildTextField(systemName2))
 		}
-
-		val logo = basicView.getItemByName("logo") as ViewImage
-		stage.addActor(buildImage(logo))
 		
-//		val darkGrayTexture = createColorTexture(0x97999BFF.toInt())
-//		stage.addActor(Image(darkGrayTexture).apply {
-//			setFillParent(true)
-//		})
-		
-//		val textList = basicView.getItemByName("gamelist") as TextList
-//		stage.addActor(buildGameList(textList))
-
+		val logo = view.getItemByName("logo") as ViewImage?
+		if (logo != null) {
+			stage.addActor(buildImage(logo))
+		}
 	}
 	
 	private fun buildGameList(textList: TextList): List<Game> {
@@ -92,17 +126,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 	}
 	
-	private fun buildImage(logo: ViewImage): Image {
-		val texture = Texture(FileHandle(logo.path!!), true)
+	private fun buildImage(image: ViewImage, scaling: Scaling = Scaling.fit): Image {
+		val texture = Texture(FileHandle(image.path!!), true)
 		texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
 
 		return Image(texture).apply {
-			setScaling(Scaling.fit)
+			setScaling(scaling)
 
-			setSize(logo)
-			setPosition(logo)
+			setSize(image)
+			setPosition(image)
 
-			setOrigin(logo)
+			setOrigin(image)
 		}
 	}
 	
@@ -126,10 +160,45 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 	}
 	
+	private fun buildTextList(gamelistView: TextList): List<String> {
+		
+		return List<String>(List.ListStyle().apply {
+			val fnt = getFont(gamelistView)
+			font = fnt
+			
+			fontColorSelected = getColor(gamelistView.selectedColor)
+			fontColorUnselected = getColor(gamelistView.primaryColor)
+			//TODO secondary Color?
+			
+			val selectorTexture = createColorTexture(getColor(gamelistView.selectorColor).toIntBits())
+			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
+		}).apply {
+			setSize(screenWidth, 200f)
+			setPosition(0f, 100f)
+			setItems("Alo", "Mundo")
+		}
+	
+	}
+	
 	private fun Widget.setOrigin(viewItem: ViewItem) {
 		if (viewItem.originX != null && viewItem.originY != null) {
-			val offsetX = width * viewItem.originX!!
-			val offsetY = height * (1f - viewItem.originY!!)
+			val originX = viewItem.originX!!
+			val originY = viewItem.originY!!
+			
+			val offsetX = if (originX == 0f) {
+				0f
+			} else {
+				width * originX
+			}
+			
+			val offsetY = if (originY == 0f) {
+				0f
+			} else if (originY == 1f) {
+				height
+			} else {
+				height * (1f - viewItem.originY!!)
+			}
+			
 			setOrigin(offsetX, offsetY)
 
 			x += offsetX
@@ -207,8 +276,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	private fun initLogoSmall() {
 		logo = Image(Texture("images/logo-small.png")).apply {
 			x = screenWidth
-			y = height
-			addAction(Actions.moveTo(screenWidth - width - 20f, y, 0.5f, interpolation))
+			y = (height / 2) - 5f
+			addAction(Actions.moveTo(screenWidth - width - 15f, y, 0.5f, interpolation))
 		}
 		root.addActor(logo)
 	}

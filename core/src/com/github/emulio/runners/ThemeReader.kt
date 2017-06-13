@@ -158,8 +158,6 @@ class ThemeReader {
 			} else {
 				viewImage.path = pngFile
 			}
-
-			pngFile.deleteOnExit()
 		}
 
 	}
