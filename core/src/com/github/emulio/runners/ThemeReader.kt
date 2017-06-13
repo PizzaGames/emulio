@@ -78,15 +78,15 @@ class ThemeReader {
 		
 		if (imgFile.extension.toLowerCase() == "svg") {
 			
-			val sizeX = viewImage.sizeX
-			val sizeY = viewImage.sizeY
+			val sizeX = viewImage.sizeX?.toDouble()
+			val sizeY = viewImage.sizeY?.toDouble()
 			
-			val maxSizeX = viewImage.maxSizeX
-			val maxSizeY = viewImage.maxSizeY
+			val maxSizeX = viewImage.maxSizeX?.toDouble()
+			val maxSizeY = viewImage.maxSizeY?.toDouble()
 			
 			val graphics = Gdx.graphics
-			val screenWidth = graphics.width
-			val screenHeight = graphics.height
+			val screenWidth = graphics.width.toDouble()
+			val screenHeight = graphics.height.toDouble()
 
 			val preferredBounds = readPreferredBounds(imgFile)
 
@@ -98,53 +98,62 @@ class ThemeReader {
 			var width = if (sizeX != null) {
 				screenWidth * sizeX
 			} else {
-				preferredWidthCeil.toFloat()
+				preferredWidthCeil
 			}
-
-			val widthDouble = width.toDouble()
+			
 			if (maxSizeX != null) {
-				width = Math.ceil(Math.min(widthDouble, (screenWidth * maxSizeX).toDouble())).toFloat()
+				width = Math.ceil(Math.min(width, (screenWidth * maxSizeX)))
 			}
 
 			val preferredHeightCeil = Math.ceil(preferredHeight)
 			var height = if (sizeY != null) {
 				screenHeight * sizeY
 			} else {
-				preferredHeightCeil.toFloat()
+				preferredHeightCeil
 			}
-
-			val heightDouble = height.toDouble()
+			
 			if (maxSizeY != null) {
-				height = Math.ceil(Math.min(heightDouble, (screenHeight * maxSizeY).toDouble())).toFloat()
+				height = Math.ceil(Math.min(height, (screenHeight * maxSizeY)))
 			}
 
-			val originalRatio = preferredWidthCeil / preferredHeightCeil
-			if ((widthDouble / heightDouble) != originalRatio) {
+			val preferredRatio = preferredWidthCeil / preferredHeightCeil
+			val desiredRatio = width / height
+			
+			if (desiredRatio != preferredRatio) {
 				println("Outside ratio!")
-
-				if (Math.max(widthDouble, preferredWidthCeil) / Math.min(widthDouble, preferredWidthCeil) == originalRatio) {
-					val rx = preferredWidth / width
-					height = preferredHeight.toFloat() * rx.toFloat()
-				} else if (Math.max(heightDouble, preferredHeightCeil) / Math.min(heightDouble, preferredHeightCeil) == originalRatio) {
-					val ry = preferredHeight / height
-					width = preferredWidth.toFloat() * ry.toFloat()
+				
+				val pw = preferredWidth
+				val ph = preferredHeight
+				
+				val spx = width
+				val spy = height
+				
+				val rw = pw / spx
+				val rh = ph / spy
+				
+				val npw = pw / rw
+				val nph = ph / rw
+				
+				if (spx >= npw && spy >= nph) {
+					width = Math.ceil(npw)
+					height = Math.ceil(nph)
 				} else {
-					width = preferredWidth.toFloat()
-					height = preferredHeight.toFloat()
+					width = Math.ceil(pw / rh)
+					height = Math.ceil(ph / rh)
 				}
 
 			}
 
-			val imgName = if (width == preferredWidth.toFloat() && height == preferredHeight.toFloat()) {
+			val imgName = if (width == preferredWidth && height == preferredHeight) {
 				"${imgFile.nameWithoutExtension}.png"
 			} else {
-				"${imgFile.nameWithoutExtension}_${width}x$height.png"
+				"${imgFile.nameWithoutExtension}_${width.toInt()}x${height.toInt()}.png"
 			}
 			
 			val pngFile = File(imgFile.parentFile, imgName)
 			if (!pngFile.exists()) {
 				logger.debug { "convertImage: Converting ${imgFile.name} image into ${pngFile.name}" }
-				pngConverter.convertFromSVG(imgFile, pngFile, width, height)
+				pngConverter.convertFromSVG(imgFile, pngFile, width.toFloat(), height.toFloat())
 				viewImage.path = pngFile
 			} else {
 				viewImage.path = pngFile
