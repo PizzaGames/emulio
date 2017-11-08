@@ -7,9 +7,6 @@
 [![Issue Count](https://codeclimate.com/github/PizzaGames/emulio/badges/issue_count.svg)](https://codeclimate.com/github/PizzaGames/emulio)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-
-
-
 # emulio
 Emulators frontend inspired by EmulationStation but written in a better platform to support better usability and eye candy.
 
@@ -19,9 +16,16 @@ EmulationStation project is great but the PC version is abandonned and since is 
 
 Initially this is focused on Windows, Linux and MAC platforms, but in the long term the idea is to be totally crossplatform. LibGDX are going to be the limit, that means, what LibGDX supports, we will try to keep this supported as well
 
+## Community
+Everyone is welcome to help the project to evolve. The main idea is to have a more crossplatform emulationstation alternative to every enviroment and with a great performance.
+
+## Performance
+The EmulationStation has some performance problems and in some enviroments it can take too much time to even start the application. Emulio is here to solve this problem. All loadings are lazy and run on another threads with incremental updates, so user can start enjoy even if every files are still being read.
+
+On an initial tests, EmulationStation was taking up to 5 minutes to load an full collection of games from several systems. The same ammount of information is read by emulio in 11 seconds.
+
+This gain in performance made this project continue in a way to achieve a better support software than the original EmulationStation
 
 ## Backlog/Current status
 You can see what's planned and in development in the waffle.io boards :)
 - [https://waffle.io/PizzaGames/emulio](https://waffle.io/PizzaGames/emulio)
-
-  
