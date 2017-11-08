@@ -13,13 +13,14 @@ cache:
 
 # Setup environment
 before_install:
+- ls
 - chmod a+x gradlew
 - chmod a+x gradle/wrapper/gradle-wrapper.jar
 
 # Default gradle task will be run automatically on build, no need to define it
 
 # Deployment to GitHub-releases
-before_deploy:
+#before_deploy:
   # Generate a packaged jar for the desktop-project and rename it to include the tag
 #- ./gradlew desktop:dist
 #- mv desktop/build/libs/desktop-1.0.jar desktop/build/libs/{PROJECT_NAME}-$TRAVIS_TAG.jar
