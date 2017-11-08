@@ -13,16 +13,17 @@ cache:
 
 # Setup environment
 before_install:
-- chmod +x gradlew
+- chmod a+x gradlew
+- chmod a+x gradle/wrapper/gradle-wrapper.jar
 
 # Default gradle task will be run automatically on build, no need to define it
 
 # Deployment to GitHub-releases
-#before_deploy:
-#  # Generate a packaged jar for the desktop-project and rename it to include the tag
+before_deploy:
+  # Generate a packaged jar for the desktop-project and rename it to include the tag
 #- ./gradlew desktop:dist
 #- mv desktop/build/libs/desktop-1.0.jar desktop/build/libs/{PROJECT_NAME}-$TRAVIS_TAG.jar
-#  # Generate a packaged apk for the android-project and rename it (this apk is unsigned/unaligned)
+  # Generate a packaged apk for the android-project and rename it (this apk is unsigned/unaligned)
 #- ./gradlew android:assembleRelease
 #- mv android/build/outputs/apk/android-release-unsigned.apk android/build/outputs/apk/{PROJECT_NAME}-$TRAVIS_TAG-unaligned.apk
 #  # Generate and zip deployment files for the HTML project
@@ -42,3 +43,4 @@ before_install:
 #    repo: {GITHUB_USER}/{PROJECT_NAME}
 #    branches: master
 #    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$" # Only deploy tags that match something like v1.0.0
+
