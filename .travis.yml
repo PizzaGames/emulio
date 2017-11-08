@@ -13,7 +13,6 @@ cache:
 
 # Setup environment
 before_install:
-- ls
 - chmod a+x gradlew
 - chmod a+x gradle/wrapper/gradle-wrapper.jar
 
