@@ -6,5 +6,6 @@ Emulators frontend inspired by EmulationStation but written in a better platform
 
 ## Backlog/Current status
 You can see what's planned and in development in the waffle.io boards :)
-[https://waffle.io/PizzaGames/emulio](https://waffle.io/PizzaGames/emulio)
+- [https://waffle.io/PizzaGames/emulio](https://waffle.io/PizzaGames/emulio)
+
   
