@@ -2,8 +2,11 @@
 ![logo](https://s1.postimg.org/mrtbd0yhr/emulio.png)
 
 [![Build Status](https://travis-ci.org/PizzaGames/emulio.svg?branch=master)](https://travis-ci.org/PizzaGames/emulio)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/PizzaGames/emulio.svg?columns=all)](https://waffle.io/PizzaGames/emulio)
 [![Code Climate](https://codeclimate.com/github/PizzaGames/emulio/badges/gpa.svg)](https://codeclimate.com/github/PizzaGames/emulio)
 [![Issue Count](https://codeclimate.com/github/PizzaGames/emulio/badges/issue_count.svg)](https://codeclimate.com/github/PizzaGames/emulio)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)
 
 # emulio
 Emulators frontend inspired by EmulationStation but written in a better platform to support better usability and eye candy.
