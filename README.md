@@ -5,7 +5,9 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/PizzaGames/emulio.svg?columns=all)](https://waffle.io/PizzaGames/emulio)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7e57917786cfc50075fd/maintainability)](https://codeclimate.com/github/PizzaGames/emulio/maintainability)
 [![Issue Count](https://codeclimate.com/github/PizzaGames/emulio/badges/issue_count.svg)](https://codeclimate.com/github/PizzaGames/emulio)
-[![license](https://img.shields.io/github/PizzaGames/emulio/apistatus.svg?style=plastic)]()
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+
 
 
 # emulio
