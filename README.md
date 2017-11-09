@@ -26,6 +26,9 @@ On an initial tests, EmulationStation was taking up to 5 minutes to load an full
 
 This gain in performance made this project continue in a way to achieve a better support software than the original EmulationStation
 
+## License 
+Emulio is under GPLv3. When I (the initial developer) started this development I wanted emulio to be a free and open version to everyone and with the intention of always evolve and without anyone getting it's source and closing for another purpose.. The main idea here, is to prevent emulio to be more evolved but closed for a limited audience. The main reason is to get to everyone with its source for people contribute if they want.
+
 ## Backlog/Current status
 You can see what's planned and in development in the waffle.io boards :)
 - [https://waffle.io/PizzaGames/emulio](https://waffle.io/PizzaGames/emulio)
