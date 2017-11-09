@@ -17,7 +17,8 @@ EmulationStation project is great but the PC version is abandonned and since is 
 Initially this is focused on Windows, Linux and MAC platforms, but in the long term the idea is to be totally crossplatform. LibGDX are going to be the limit, that means, what LibGDX supports, we will try to keep this supported as well
 
 ## Documentation
-You can check our wiki pages. It consists in two parts. One for Users and other for developers. Check out our wiki [here](wiki)
+You can check our wiki pages. It consists in two parts. One for Users and other for developers. Check out our wiki [here](https://github.com/PizzaGames/emulio/wiki)
+- [Wiki](https://github.com/PizzaGames/emulio/wiki)
 
 ## Community
 Everyone is welcome to help the project to evolve. The main idea is to have a more crossplatform emulationstation alternative to every enviroment and with a great performance.
