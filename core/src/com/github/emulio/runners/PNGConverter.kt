@@ -35,6 +35,7 @@ class PNGConverter {
 }
 
 
+
 //fun main(args: Array<String>) {
 //	val start = System.currentTimeMillis()
 //	PNGConverter().convertFromSVG(File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.svg"), File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.png"), 200f, 200f)

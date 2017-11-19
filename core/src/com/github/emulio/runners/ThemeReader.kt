@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D
 import java.io.File
 import java.io.FileInputStream
 
+const val FORCE_PNG_CONVERSION = true
 
 class ThemeReader {
 	
@@ -34,7 +35,7 @@ class ThemeReader {
 		return theme
 	}
 
-	fun readPlatformTheme(platform: Platform, themeDir: File): Flowable<Theme> {
+	private fun readPlatformTheme(platform: Platform, themeDir: File): Flowable<Theme> {
 		return Flowable.create({ emitter ->
 			val start = System.currentTimeMillis()
 			
@@ -67,7 +68,7 @@ class ThemeReader {
 		}
 	}
 	
-	val pngConverter = PNGConverter()
+	private val pngConverter = PNGConverter()
 	
 	private fun convertImage(viewImage: ViewImage) {
 		val imgFile = viewImage.path ?: return
@@ -121,25 +122,22 @@ class ThemeReader {
 			
 			if (desiredRatio != preferredRatio) {
 				println("Outside ratio!")
-				
-				val pw = preferredWidth
-				val ph = preferredHeight
-				
-				val spx = width
+
+                val spx = width
 				val spy = height
 				
-				val rw = pw / spx
-				val rh = ph / spy
+				val rw = preferredWidth / spx
+				val rh = preferredHeight / spy
 				
-				val npw = pw / rw
-				val nph = ph / rw
+				val npw = preferredWidth / rw
+				val nph = preferredHeight / rw
 				
 				if (spx >= npw && spy >= nph) {
 					width = Math.ceil(npw)
 					height = Math.ceil(nph)
 				} else {
-					width = Math.ceil(pw / rh)
-					height = Math.ceil(ph / rh)
+					width = Math.ceil(preferredWidth / rh)
+					height = Math.ceil(preferredHeight / rh)
 				}
 
 			}
@@ -151,7 +149,8 @@ class ThemeReader {
 			}
 			
 			val pngFile = File(imgFile.parentFile, imgName)
-			if (!pngFile.exists()) {
+
+            if (!pngFile.exists() || FORCE_PNG_CONVERSION) {
 				logger.debug { "convertImage: Converting ${imgFile.name} image into ${pngFile.name}" }
 				pngConverter.convertFromSVG(imgFile, pngFile, width.toFloat(), height.toFloat())
 				viewImage.path = pngFile

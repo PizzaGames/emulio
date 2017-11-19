@@ -7,8 +7,6 @@ import java.io.File
 
 
 class PlatformReader : Function0<List<Platform>> {
-	override fun invoke(): List<Platform> {
-		return YamlUtils().parsePlatforms(File("emulio-platforms.yaml"))
-	}
+	override fun invoke(): List<Platform> = YamlUtils().parsePlatforms(File("emulio-platforms.yaml"))
 }
 
