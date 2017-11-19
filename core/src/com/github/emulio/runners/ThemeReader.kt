@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D
 import java.io.File
 import java.io.FileInputStream
 
-const val FORCE_PNG_CONVERSION = true
+const val FORCE_PNG_CONVERSION = false
 
 class ThemeReader {
 	
