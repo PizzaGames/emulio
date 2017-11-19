@@ -27,6 +27,9 @@ import mu.KotlinLogging
 import java.io.File
 
 
+/**
+ *
+ */
 class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	val logger = KotlinLogging.logger { }
@@ -87,8 +90,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		}
 		stage.addActor(maskGroup)
 		stage.addActor(imgLogo)
-
-
 
 		imgLogoPartial.addAction(SequenceAction(
 			Actions.delay(0.2f),
@@ -216,14 +217,15 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 					lbLoading.setText("Loading...")
 					emulio.theme = themesMap
 
-					//FIXME if loading ended to animate
-					switchScreen(PlatformsScreen(emulio))
-
-//					Timer.schedule(object : Timer.Task() {
-//						override fun run() {
-//							switchScreen(PlatformsScreen(emulio))
-//						}
-//					}, 4f)
+					//TODO improve the implementation below..
+                    // here we need to detect if the animation is already done
+                    // before we call the switch screen method.. In this way
+                    // emulio is taking 1 second longer on loading screen.
+					Timer.schedule(object : Timer.Task() {
+						override fun run() {
+							switchScreen(PlatformsScreen(emulio))
+						}
+					}, 1f)
 
 				})
 	}
