@@ -10,12 +10,10 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
-class GameScanner(val platforms: List<Platform>) : Function0<Flowable<Game>> {
+class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Game>> {
 	val logger = KotlinLogging.logger { }
 	
-	fun fullScan() : Flowable<Game> {
-		return invoke()
-	}
+	fun fullScan() : Flowable<Game> = invoke()
 	
 	override fun invoke(): Flowable<Game> {
 		
