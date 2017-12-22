@@ -25,6 +25,7 @@ object DesktopLauncher {
 //            initialBackgroundColor = Color(0x6FBBDBFF)
 			initialBackgroundColor = Color(0x000000FF)
 
+
 			addIcon("images/32-icon.png", Files.FileType.Internal)
         }
 

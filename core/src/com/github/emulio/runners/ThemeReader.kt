@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D
 import java.io.File
 import java.io.FileInputStream
 
-const val FORCE_PNG_CONVERSION = false
+const val FORCE_PNG_CONVERSION = true
 
 class ThemeReader {
 	
@@ -94,7 +94,6 @@ class ThemeReader {
 			val preferredWidth = preferredBounds.width
 			val preferredHeight = preferredBounds.height
 
-
 			val preferredWidthCeil = Math.ceil(preferredWidth)
 			var width = if (sizeX != null) {
 				screenWidth * sizeX
@@ -124,21 +123,21 @@ class ThemeReader {
 				println("Outside ratio!")
 
                 val spx = width
-				val spy = height
-				
-				val rw = preferredWidth / spx
-				val rh = preferredHeight / spy
-				
-				val npw = preferredWidth / rw
-				val nph = preferredHeight / rw
-				
-				if (spx >= npw && spy >= nph) {
-					width = Math.ceil(npw)
-					height = Math.ceil(nph)
-				} else {
-					width = Math.ceil(preferredWidth / rh)
-					height = Math.ceil(preferredHeight / rh)
-				}
+                val spy = height
+
+                val rw = preferredWidth / spx
+                val rh = preferredHeight / spy
+
+                val npw = preferredWidth / rw
+                val nph = preferredHeight / rw
+
+                if (spx >= npw && spy >= nph) {
+                    width = Math.ceil(npw)
+                    height = Math.ceil(nph)
+                } else {
+                    width = Math.ceil(preferredWidth / rh)
+                    height = Math.ceil(preferredHeight / rh)
+                }
 
 			}
 

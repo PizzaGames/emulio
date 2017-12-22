@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
@@ -18,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
@@ -63,7 +60,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		buildCommonComponents(basicView)
 		
 		val gamelistView = basicView.getItemByName("gamelist") as TextList
-		stage.addActor(buildTextList(gamelistView))
+		stage.addActor(buildBasicList(gamelistView))
 		
 	}
 	
@@ -113,7 +110,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 	}
 	
-	private fun buildGameList(textList: TextList): List<Game> {
+	private fun buildDetailedList(textList: TextList): List<Game> {
 		return List<Game>(List.ListStyle(
 			getFont(textList),
 			getColor(textList.selectedColor),
@@ -160,7 +157,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 	}
 	
-	private fun buildTextList(gamelistView: TextList): List<String> {
+	private fun buildBasicList(gamelistView: TextList): List<String> {
 		
 		return List<String>(List.ListStyle().apply {
 			val fnt = getFont(gamelistView)
@@ -173,9 +170,20 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			val selectorTexture = createColorTexture(getColor(gamelistView.selectorColor).toIntBits())
 			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 		}).apply {
-			setSize(screenWidth, 200f)
-			setPosition(0f, 100f)
-			setItems("Alo", "Mundo")
+
+
+            setSize(gamelistView)
+            setPosition(gamelistView)
+
+
+            //setBounds(20f, 400f, screenWidth * 0.8f, 200f)
+
+
+            gamelistView.forceUpperCase
+            games.forEach { game ->
+                items.add(game.name ?: game.path.name)
+            }
+
 		}
 	
 	}
@@ -243,24 +251,23 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 	}
 	
-	private fun getFont(textView: Text): BitmapFont {
-		return getFont(getFontPath(textView), getFontSize(textView.fontSize), getColor(textView.textColor ?: textView.color))
-	}
+	private fun getFont(textView: Text): BitmapFont =
+            getFont(getFontPath(textView), getFontSize(textView.fontSize), getColor(textView.textColor ?: textView.color))
 
 	private fun getFontPath(textView: Text): FileHandle {
-		if (textView.fontPath != null) {
-			return FileHandle(textView.fontPath!!.absolutePath)
-		} else{
-			return Gdx.files.internal("fonts/RopaSans-Regular.ttf")
-		}
+        return if (textView.fontPath != null) {
+            FileHandle(textView.fontPath!!.absolutePath)
+        } else{
+            Gdx.files.internal("fonts/RopaSans-Regular.ttf")
+        }
 	}
 
 	private fun getFontSize(fontSize: Float?): Int {
-		if (fontSize == null) {
-			return 26
-		} else {
-			return (fontSize * screenHeight).toInt()
-		}
+        return if (fontSize == null) {
+            30
+        } else {
+            (fontSize * screenHeight).toInt()
+        }
 	}
 
 	private fun initRoot() {

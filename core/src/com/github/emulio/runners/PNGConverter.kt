@@ -12,7 +12,6 @@ class PNGConverter {
 	val pngTranscoder = PNGTranscoder()
 
 	fun convertFromSVG(svgFile: File, pngFile: File, width: Float?, height: Float?) {
-		
 		if (width != null) {
 			pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, width)
 		}
@@ -27,8 +26,6 @@ class PNGConverter {
 			pngTranscoder.transcode(input, output)
 			outputStream.flush()
 		}
-
-		pngFile.deleteOnExit()
 	}
 
 

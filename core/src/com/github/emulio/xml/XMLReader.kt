@@ -59,17 +59,17 @@ class XMLReader {
 			
 			if (viewName.contains(",")) {
 				viewName.split(",").forEach { name ->
-					val viewName = name.trim()
+					val singleViewName = name.trim()
 					
-					val view = theme.getViewByName(viewName) ?: View()
-					view.name = viewName
+					val view = theme.getViewByName(singleViewName) ?: View()
+					view.name = singleViewName
 					view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
 					
-					if (viewMap[viewName] != null) {
-						val viewToMerge = viewMap[viewName]!!
+					if (viewMap[singleViewName] != null) {
+						val viewToMerge = viewMap[singleViewName]!!
 						view.viewItems!!.addAll(viewToMerge.viewItems!!)
 					}
-					viewMap[viewName] = view
+					viewMap[singleViewName] = view
 				}
 			} else {
 				val view = theme.getViewByName(viewName) ?: View()
@@ -219,12 +219,14 @@ class XMLReader {
 			val childNodes = node.childNodes
 			for (i in 0..childNodes.length) {
 				val child = childNodes.item(i) ?: continue
-				when (child.nodeName) {
-					"selectorColor" -> { child.textContent }
-					"selectedColor" -> { child.textContent }
-					"primaryColor" -> { child.textContent }
-					"secondaryColor" -> { child.textContent }
-				}
+                if (child.textContent != null) {
+                    when (child.nodeName) {
+                        "selectorColor" -> { textList.selectorColor = child.textContent }
+                        "selectedColor" -> { textList.selectedColor = child.textContent }
+                        "primaryColor" -> { textList.primaryColor = child.textContent }
+                        "secondaryColor" -> { textList.secondaryColor = child.textContent }
+                    }
+                }
 			}
 		}
 		return textList.readViewItem(node)
