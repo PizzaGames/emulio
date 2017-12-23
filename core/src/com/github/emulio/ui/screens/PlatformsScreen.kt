@@ -206,7 +206,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		var currentX = 0f
 
-		currentX += initPlatform(emulio.platforms[emulio.platforms.size - 2], widthPerPlatform, paddingWidth, currentX)
+		currentX += initPlatform(emulio.platforms[Math.max(emulio.platforms.size - 2, 0)], widthPerPlatform, paddingWidth, currentX)
 		currentX += initPlatform(emulio.platforms.last(), widthPerPlatform, paddingWidth, currentX)
 
 		emulio.platforms.forEach { platform ->
@@ -214,7 +214,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		}
 
 		currentX += initPlatform(emulio.platforms[0], widthPerPlatform, paddingWidth, currentX)
-		currentX += initPlatform(emulio.platforms[1], widthPerPlatform, paddingWidth, currentX)
+		currentX += initPlatform(emulio.platforms[(if (emulio.platforms.size > 1) { 1 } else { 0 })], widthPerPlatform, paddingWidth, currentX)
 
 		root.addActor(groupPlatforms)
 	}

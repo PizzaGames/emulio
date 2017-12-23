@@ -38,7 +38,7 @@ systems:
       - ${retroarch.cores}\stella_libretro.dll
       - ${rom.file}
     roms.extensions: [.zip]
-    platform.name: Atari 2600
+    platform.name: Atari 2100
   atari5200:
     roms.path: ${roms.home}\Atari 5200
     run.command:

@@ -124,9 +124,9 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			Tag.DEVELOPER -> {developer = String(ch, start, length)}
 			Tag.GENRE -> {genre = String(ch, start, length)}
 			Tag.PLAYERS -> {players = String(ch, start, length)}
-            Tag.GAME_LIST -> TODO()
-            Tag.GAME -> TODO()
-            Tag.NO_STATE -> TODO()
+//            Tag.GAME_LIST -> TODO()
+//            Tag.GAME -> TODO()
+//            Tag.NO_STATE -> TODO()
         }
 	}
 

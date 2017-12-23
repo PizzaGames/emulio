@@ -137,7 +137,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	private fun updateControllerAxis(cv: ControllerValues, delta: Float) {
-		val delayTime = 0.200f
+		val delayTime = 0.150f
 
 		updateAxisUpDown(cv, delta, delayTime)
 		updateAxisLeftRight(cv, delta, delayTime)
@@ -240,7 +240,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		elapsedPressedKeyTime += delta
 
 		if (pressedKeyRepeat) {
-			if (elapsedPressedKeyTime > 0.25f) {
+			if (elapsedPressedKeyTime > 0.15f) {
 				fireKeyboardEvent(config.keyboardConfig, pressedkey)
 				elapsedPressedKeyTime = 0f
 			}

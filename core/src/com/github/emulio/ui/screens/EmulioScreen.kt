@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.github.emulio.Emulio
+import java.math.BigInteger
 
 abstract class EmulioScreen(val emulio: Emulio) : Screen {
 
@@ -26,10 +27,10 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	val freeTypeFontGenerator = getFreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
 
 	fun getColor(rgba: String?): Color = when {
-        rgba == null -> Color.GREEN
-        rgba.length == 6 -> Color(Integer.parseInt(rgba + "FF", 16))
-        rgba.length == 8 -> Color(Integer.parseInt(rgba, 16))
-        else -> Color.RED
+        rgba == null -> Color.BLACK
+        rgba.length == 6 -> Color(BigInteger(rgba.toUpperCase() + "FF", 16).toInt())
+        rgba.length == 8 -> Color(BigInteger(rgba.toUpperCase(), 16).toInt())
+        else -> Color.BLACK
     }
 
 	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color): BitmapFont {
@@ -48,11 +49,11 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	}
 
 	private fun getFreeTypeFontGenerator(fileHandle: FileHandle): FreeTypeFontGenerator {
-		if (freeFontGeneratorCache.containsKey(fileHandle)) {
-			return freeFontGeneratorCache[fileHandle]!!
-		} else {
-			return FreeTypeFontGenerator(fileHandle).apply { freeFontGeneratorCache[fileHandle] = this }
-		}
+        return if (freeFontGeneratorCache.containsKey(fileHandle)) {
+            freeFontGeneratorCache[fileHandle]!!
+        } else {
+            FreeTypeFontGenerator(fileHandle).apply { freeFontGeneratorCache[fileHandle] = this }
+        }
 	}
 
 	override fun show() {
@@ -85,4 +86,9 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 		}))
 		stage.root.addAction(sequenceAction)
 	}
+}
+
+fun main(args: Array<String>) {
+
+    print(Integer.toHexString(BigInteger("97999b" + "FF", 16).toInt()))
 }

@@ -29,7 +29,6 @@ class XMLReader {
     fun parseTheme(xmlFile: File): Theme {
 
 		check(xmlFile.exists()) { "File ${xmlFile.absolutePath} does not exists" }
-
 		check(xmlFile.isFile)
     
 		val factory = DocumentBuilderFactory.newInstance()
@@ -213,7 +212,7 @@ class XMLReader {
 	}
 
 	private fun readTextList(node: Node, xmlFile: File, foundView: Text?, name: String): TextList {
-		val textList = if (foundView != null) { TextList(foundView) } else { TextList() }
+		val textList = if (foundView != null) { foundView as TextList } else { TextList() }
 		
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes

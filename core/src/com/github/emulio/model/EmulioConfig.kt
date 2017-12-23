@@ -135,12 +135,9 @@ class InputConfig {
  */
 
 /** Mappings for the Xbox series of controllers. Works only on desktop so far.
-
  * See [this
    * image](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/360_controller.svg/450px-360_controller.svg.png) which describes each button and axes.
-
  * All codes are for buttons expect the L_STICK_XXX, R_STICK_XXX, L_TRIGGER and R_TRIGGER codes, which are axes.
-
  * @author badlogic
  */
 object Xbox {

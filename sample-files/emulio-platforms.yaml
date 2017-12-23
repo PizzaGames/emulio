@@ -137,7 +137,7 @@ systems:
   saturn:
     roms.path: ${roms.home}\saturn
     roms.extensions: [.cue, .iso, .ccd, .mds]
-    run.command: 
+    run.command:
       - ${retroarch.home}\retroarch.exe
       - -L
       - ${retroarch.cores}\yabause_libretro.dll
@@ -168,13 +168,13 @@ systems:
     roms.extensions: [.cdi]
     run.command:
       - ${emulators.home}\dreamcast\nulldc104\nullDC_Win32_Release-NoTrace.exe
-      - -config 
+      - -config
       - nullDC:Emulator.Autostart=1
-      - -config 
+      - -config
       - ImageReader:LoadDefaultImage=1
-      - -config 
+      - -config
       - Fullscreen.Enabled=1
-      - -config 
+      - -config
       - ImageReader:DefaultImage=${rom.file}
     # run.command: ${retroarch.home}\retroarch.exe -L "${retroarch.cores}\reicast_libretro.dll" ${rom.file}= "${emulators.home}\dreamcast\NullDC 1.0.4\nullDC_Win32_Release-NoTrace.exe" -config nullDC:Emulator.Autostart=1 -config ImageReader:LoadDefaultImage=1 -config Fullscreen.Enabled=1 -config ImageReader:DefaultImage=${rom.file}
     platform.name: Sega Dreamcast
@@ -196,7 +196,7 @@ systems:
   scummvm:
     roms.path: ${roms.home}\scumm
     roms.extensions: [.svm]
-    run.command: 
+    run.command:
       ${roms.home}\scumm\scummvm\scummvm.exe ${basename}
     platform.name: ScummVM
   gbc:

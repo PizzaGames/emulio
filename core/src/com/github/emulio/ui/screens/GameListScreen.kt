@@ -55,12 +55,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		
 
 	}
-	
-	private fun buildBasicView(basicView: View) {
+
+    private var basicList: List<String>? = null
+
+    private fun buildBasicView(basicView: View) {
 		buildCommonComponents(basicView)
 		
 		val gamelistView = basicView.getItemByName("gamelist") as TextList
-		stage.addActor(buildBasicList(gamelistView))
+        basicList = buildBasicList(gamelistView)
+        stage.addActor(basicList)
 		
 	}
 	
@@ -160,18 +163,20 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	private fun buildBasicList(gamelistView: TextList): List<String> {
 		
 		return List<String>(List.ListStyle().apply {
-			val fnt = getFont(gamelistView)
-			font = fnt
-			
-			fontColorSelected = getColor(gamelistView.selectedColor)
-			fontColorUnselected = getColor(gamelistView.primaryColor)
-			//TODO secondary Color?
+
+            //FIXME apparently there is a problem related with ttf fonts?
+//            fontColorUnselected = Color.WHITE//getColor(gamelistView.primaryColor)
+//            fontColorSelected = Color.WHITE//getColor(gamelistView.selectedColor)
+
+            font = getFont(
+                    getFontPath(gamelistView),
+                    getFontSize(gamelistView.fontSize),
+                    getColor(gamelistView.primaryColor))
 			
 			val selectorTexture = createColorTexture(getColor(gamelistView.selectorColor).toIntBits())
 			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
+
 		}).apply {
-
-
             setSize(gamelistView)
             setPosition(gamelistView)
 
@@ -325,14 +330,42 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onUpButton(): Boolean {
+
+        basicList?.let { it ->
+            selectPrevious(it)
+        }
+
 		return true
 	}
 
-	override fun onDownButton(): Boolean {
+    private fun selectPrevious(list: List<String>) {
+        val prevIndex = list.selectedIndex - 1
+        if (prevIndex < 0) {
+            list.selectedIndex = list.items.size - 1
+        } else {
+            list.selectedIndex = prevIndex
+        }
+    }
+
+    override fun onDownButton(): Boolean {
+
+        basicList?.let { it ->
+            selectNext(it)
+        }
+
 		return true
 	}
 
-	override fun onLeftButton(): Boolean {
+    private fun selectNext(list: List<String>) {
+        val nextIndex = list.selectedIndex + 1
+        if (nextIndex >= list.items.size) {
+            list.selectedIndex = 0
+        } else {
+            list.selectedIndex = nextIndex
+        }
+    }
+
+    override fun onLeftButton(): Boolean {
 		return true
 	}
 
