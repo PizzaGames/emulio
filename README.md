@@ -2,9 +2,8 @@
 ![logo](https://s1.postimg.org/mrtbd0yhr/emulio.png)
 
 [![Build Status](https://travis-ci.org/PizzaGames/emulio.svg?branch=master)](https://travis-ci.org/PizzaGames/emulio)
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/PizzaGames/emulio.svg?columns=all)](https://waffle.io/PizzaGames/emulio)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7e57917786cfc50075fd/maintainability)](https://codeclimate.com/github/PizzaGames/emulio/maintainability)
-[![Issue Count](https://codeclimate.com/github/PizzaGames/emulio/badges/issue_count.svg)](https://codeclimate.com/github/PizzaGames/emulio)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/PizzaGames/emulio.svg?columns=Backlog,To%20do,In%20Progress)](https://waffle.io/PizzaGames/emulio)
+[![codebeat](https://codebeat.co/badges/7fc9e22e-807e-4742-b129-d6062397beef)](https://codebeat.co/projects/github-com-pizzagames-emulio-master)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 # emulio
