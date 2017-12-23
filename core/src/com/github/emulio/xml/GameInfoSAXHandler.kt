@@ -115,8 +115,6 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 		return File(baseDir, pathFixed)
 	}
 
-
-
 	override fun characters(ch: CharArray, start: Int, length: Int) {
 		when (tag) {
 			Tag.PATH -> {path = String(ch, start, length)}
@@ -126,10 +124,13 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			Tag.DEVELOPER -> {developer = String(ch, start, length)}
 			Tag.GENRE -> {genre = String(ch, start, length)}
 			Tag.PLAYERS -> {players = String(ch, start, length)}
-		}
+            Tag.GAME_LIST -> TODO()
+            Tag.GAME -> TODO()
+            Tag.NO_STATE -> TODO()
+        }
 	}
 
-	private fun convertDate(ch: CharArray, start: Int, length: Int): Date {
+	fun convertDate(ch: CharArray, start: Int, length: Int): Date {
 		val calendar = GregorianCalendar.getInstance()
 
 		var currentOffset = start
