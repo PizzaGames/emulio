@@ -49,8 +49,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		val theme = emulio.theme[platform]!!
 		
 		
-		buildBasicView(theme.getViewByName("basic")!!)
-		//buildDetailedView(theme.getViewByName("detailed")!!)
+		buildBasicView(theme.findView("basic")!!)
+		//buildDetailedView(theme.findView("detailed")!!)
 		
 		
 
@@ -61,7 +61,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     private fun buildBasicView(basicView: View) {
 		buildCommonComponents(basicView)
 		
-		val gamelistView = basicView.getItemByName("gamelist") as TextList
+		val gamelistView = basicView.findViewItem("gamelist") as TextList
         basicList = buildBasicList(gamelistView)
         stage.addActor(basicList)
 		
@@ -70,7 +70,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	
 	
 	private fun buildCommonComponents(view: View) {
-		val backgroundView = view.getItemByName("background") as ViewImage?
+		val backgroundView = view.findViewItem("background") as ViewImage?
 		if (backgroundView != null) {
 			stage.addActor(buildImage(backgroundView).apply {
 				setScaling(Scaling.stretch)
@@ -84,12 +84,12 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			})
 		}
 		
-		val footer = view.getItemByName("footer") as ViewImage?
+		val footer = view.findViewItem("footer") as ViewImage?
 		if (footer != null) {
 			stage.addActor(buildImage(footer, Scaling.stretch))
 		}
 		
-		val header = view.getItemByName("header") as ViewImage?
+		val header = view.findViewItem("header") as ViewImage?
 		if (header != null) {
 			stage.addActor(buildImage(header, Scaling.stretch))
 		}
@@ -97,17 +97,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		initRoot()
 		initLogoSmall()
 		
-		val systemName1 = view.getItemByName("system_name_1")?.let { it as Text }
+		val systemName1 = view.findViewItem("system_name_1")?.let { it as Text }
 		if (systemName1 != null) {
 			stage.addActor(buildTextField(systemName1))
 		}
 		
-		val systemName2 = view.getItemByName("system_name_2")?.let { it as Text }
+		val systemName2 = view.findViewItem("system_name_2")?.let { it as Text }
 		if (systemName2 != null) {
 			stage.addActor(buildTextField(systemName2))
 		}
 		
-		val logo = view.getItemByName("logo") as ViewImage?
+		val logo = view.findViewItem("logo") as ViewImage?
 		if (logo != null) {
 			stage.addActor(buildImage(logo))
 		}
@@ -165,15 +165,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		return List<String>(List.ListStyle().apply {
 
             //FIXME apparently there is a problem related with ttf fonts?
-//            fontColorUnselected = Color.WHITE//getColor(gamelistView.primaryColor)
-//            fontColorSelected = Color.WHITE//getColor(gamelistView.selectedColor)
+            fontColorUnselected = Color.WHITE//getColor(gamelistView.primaryColor)
+            fontColorSelected = Color.WHITE//getColor(gamelistView.selectedColor)
 
             font = getFont(
                     getFontPath(gamelistView),
                     getFontSize(gamelistView.fontSize),
                     getColor(gamelistView.primaryColor))
-			
-			val selectorTexture = createColorTexture(getColor(gamelistView.selectorColor).toIntBits())
+
+			val selectorTexture = createColorTexture(0x393a3bFF)
 			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
 		}).apply {

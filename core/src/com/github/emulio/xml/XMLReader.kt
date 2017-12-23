@@ -60,7 +60,7 @@ class XMLReader {
 				viewName.split(",").forEach { name ->
 					val singleViewName = name.trim()
 					
-					val view = theme.getViewByName(singleViewName) ?: View()
+					val view = theme.findView(singleViewName) ?: View()
 					view.name = singleViewName
 					view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
 					
@@ -71,7 +71,7 @@ class XMLReader {
 					viewMap[singleViewName] = view
 				}
 			} else {
-				val view = theme.getViewByName(viewName) ?: View()
+				val view = theme.findView(viewName) ?: View()
 				view.name = viewName
 				view.viewItems = readViewItems(viewNode.childNodes, xmlFile, view)
 				

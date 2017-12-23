@@ -15,7 +15,7 @@ class Theme {
 		return "Theme(formatVersion=$formatVersion, includeTheme=$includeTheme, views=$views)"
 	}
 	
-	fun getViewByName(name: String): View? {
+	fun findView(name: String): View? {
 		views?.forEach { view ->
 			if (view.name == name) {
 				return view
@@ -35,7 +35,7 @@ class View {
 		return "View(name=$name, viewItems=$viewItems)"
 	}
 	
-	fun getItemByName(name: String): ViewItem? {
+	fun findViewItem(name: String): ViewItem? {
 		viewItems?.forEach { item ->
 			if (item.name == name) {
 				return item

@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
-import com.github.emulio.model.theme.HelpSystem
 import com.github.emulio.model.theme.View
 import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.runners.GameScanner
@@ -163,14 +162,14 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		groupCount.addAction(action)
 
 		val platformTheme = getTheme(platform)
-		val systemView = checkNotNull(platformTheme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found." })
-		val background = systemView.getItemByName("background")!! as ViewImage
+		val systemView = checkNotNull(platformTheme.findView("system"), { "System tag of theme ${platform.platformName} not found." })
+		val background = systemView.findViewItem("background")!! as ViewImage
 		val backgroundTexture = Texture(FileHandle(background.path!!))
 		initBgPlatform(backgroundTexture)
 
 
 		//TODO
-//		val helpSystem = systemView.getItemByName("help")
+//		val helpSystem = systemView.findViewItem("help")
 //		if (helpSystem != null) {
 //			helpSystem as HelpSystem
 //
@@ -221,7 +220,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	
 	private fun initPlatform(platform: Platform, widthPerPlatform: Float, paddingWidth: Float, currentX: Float): Float {
 		val theme = getTheme(platform)
-		val systemView = checkNotNull(theme.getViewByName("system"), { "System tag of theme ${platform.platformName} not found. please check your theme files." })
+		val systemView = checkNotNull(theme.findView("system"), { "System tag of theme ${platform.platformName} not found. please check your theme files." })
 		
 		val image = getImageFromSystem(systemView, 1f).apply {
 			//height = Math.max(groupPlatforms.height - paddingHeight, height)
@@ -326,7 +325,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	private fun getLogo(systemView: View) = getLogoFromSystem(systemView).path
 
-	private fun getLogoFromSystem(systemView: View) = systemView.getItemByName("logo")!! as ViewImage
+	private fun getLogoFromSystem(systemView: View) = systemView.findViewItem("logo")!! as ViewImage
 
 	private fun getTheme(platform: Platform) = emulio.theme[platform]!!
 
