@@ -8,12 +8,11 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.List
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
-import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
@@ -56,14 +55,34 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	}
 
-    private var basicList: List<String>? = null
+    private lateinit var listView: List<String>
+    private lateinit var listScrollPane: ScrollPane
 
     private fun buildBasicView(basicView: View) {
 		buildCommonComponents(basicView)
 		
 		val gamelistView = basicView.findViewItem("gamelist") as TextList
-        basicList = buildBasicList(gamelistView)
-        stage.addActor(basicList)
+        listView = buildBasicList(gamelistView)
+
+        listScrollPane = ScrollPane(listView, Skin()).apply {
+
+            setFlickScroll(true)
+            setScrollBarPositions(false, true)
+
+            setForceScroll(false, true)
+            setSmoothScrolling(true)
+            isTransform = true
+
+            setSize(gamelistView)
+            setPosition(gamelistView)
+        }
+
+
+
+
+
+
+        stage.addActor(listScrollPane)
 		
 	}
 	
@@ -178,7 +197,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 		}).apply {
             setSize(gamelistView)
-            setPosition(gamelistView)
 
 
             //setBounds(20f, 400f, screenWidth * 0.8f, 200f)
@@ -204,13 +222,11 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 				width * originX
 			}
 			
-			val offsetY = if (originY == 0f) {
-				0f
-			} else if (originY == 1f) {
-				height
-			} else {
-				height * (1f - viewItem.originY!!)
-			}
+			val offsetY = when (originY) {
+                0f -> 0f
+                1f -> height
+                else -> height * (1f - viewItem.originY!!)
+            }
 			
 			setOrigin(offsetX, offsetY)
 
@@ -219,7 +235,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 	}
 	
-	private fun Widget.setSize(viewItem: ViewItem) {
+	private fun Actor.setSize(viewItem: ViewItem) {
 		var width = if (viewItem.sizeX != null) {
 			screenWidth * viewItem.sizeX!!
 		} else {
@@ -241,7 +257,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		setSize(width, height)
 	}
 	
-	private fun Widget.setPosition(view: ViewItem) {
+	private fun Actor.setPosition(view: ViewItem) {
 		val x = screenWidth * view.positionX!!
 		val y = (screenHeight * (1f - view.positionY!!)) - height
 		
@@ -299,10 +315,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	override fun render(delta: Float) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()
-
 		inputController.update(delta)
 	}
 
@@ -330,40 +344,34 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onUpButton(): Boolean {
-
-        basicList?.let { it ->
-            selectPrevious(it)
-        }
-
+        selectPrevious()
 		return true
 	}
 
-    private fun selectPrevious(list: List<String>) {
-        val prevIndex = list.selectedIndex - 1
+    private fun selectPrevious() {
+        val prevIndex = listView.selectedIndex - 1
         if (prevIndex < 0) {
-            list.selectedIndex = list.items.size - 1
+            listView.selectedIndex = listView.items.size - 1
         } else {
-            list.selectedIndex = prevIndex
+            listView.selectedIndex = prevIndex
+        }
+    }
+
+    private fun selectNext() {
+        val nextIndex = listView.selectedIndex + 1
+        if (nextIndex >= listView.items.size) {
+            listView.selectedIndex = 0
+        } else {
+            listView.selectedIndex = nextIndex
         }
     }
 
     override fun onDownButton(): Boolean {
-
-        basicList?.let { it ->
-            selectNext(it)
-        }
-
+        selectNext()
 		return true
 	}
 
-    private fun selectNext(list: List<String>) {
-        val nextIndex = list.selectedIndex + 1
-        if (nextIndex >= list.items.size) {
-            list.selectedIndex = 0
-        } else {
-            list.selectedIndex = nextIndex
-        }
-    }
+
 
     override fun onLeftButton(): Boolean {
 		return true
