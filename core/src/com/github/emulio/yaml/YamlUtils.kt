@@ -1,6 +1,5 @@
 package com.github.emulio.yaml
 
-import com.github.emulio.Emulio
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import mu.KotlinLogging
@@ -43,8 +42,7 @@ class YamlUtils {
 		val systems: Map<String, Map<String, *>> = yaml["systems"] as Map<String, Map<String, *>>
 		
 		for ((platformName, platform) in systems) {
-			val platformName = platformName
-			val romsExtensions = expandList(platform["roms.extensions"])
+            val romsExtensions = expandList(platform["roms.extensions"])
 			val romsPath = File(platform["roms.path"] as String)
 			val runCommand = expandList(platform["run.command"])
 			
@@ -72,9 +70,19 @@ class YamlUtils {
 		return emptyList()
 	}
 
-    fun parse(languageFile: File): Map<Any, Any> {
+    fun parse(languageFile: File): Map<*, *> {
+        check(languageFile.exists())
+        check(languageFile.isFile)
+
         FileInputStream(languageFile).use {
-            getYaml().load(it)
+            val yaml = Yaml()
+            val loaded = yaml.load(it)
+            return if (loaded == null) {
+                emptyMap<Any, Any>()
+            } else {
+                loaded as Map<*, *>
+            }
+
         }
     }
 

@@ -9,6 +9,7 @@ object I18n {
 
     private val languageMap by lazy {
         val emulio = Gdx.app.applicationListener as Emulio
+
         YamlUtils().parse(emulio.getLanguageFile())
     }
 
@@ -19,7 +20,6 @@ object I18n {
     fun containsKey(key: String): Boolean {
         return languageMap.containsKey(key)
     }
-
 
 }
 

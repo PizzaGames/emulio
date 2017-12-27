@@ -148,10 +148,10 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			if (gamesCount == 0) {
 				"Loading..."
 			} else {
-				"$gamesCount games available"
+				"$gamesCount" + "games available".translate()
 			}
 		} else {
-			"Loading..."
+			"Loading...".translate()
 		}
 		lbCount.setText(text)
 
@@ -371,7 +371,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 				.observeOn(GdxScheduler)
 				.Subscribe(
 						onNext = { game ->
-							lbLoading.setText("Scanning games from ${game.platform.platformName.capitalize()}")
+							lbLoading.setText("Scanning games from".translate() + " " + game.platform.platformName.capitalize())
 
 							var games = gamesMap[game.platform]
 							if (games == null) {
@@ -385,9 +385,9 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 								val size = games.size
 								val text = if (size == 0) {
-									"No games available"
+									"No games available".translate()
 								} else {
-									"$size games available"
+									"$size " + "games available".translate()
 								}
 								lbCount.setText(text)
 							}
