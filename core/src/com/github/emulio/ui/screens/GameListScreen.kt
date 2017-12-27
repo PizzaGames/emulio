@@ -80,8 +80,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
 
-
-
         stage.addActor(listScrollPane)
 		
 	}
@@ -197,9 +195,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 		}).apply {
             setSize(gamelistView)
-
-
-            //setBounds(20f, 400f, screenWidth * 0.8f, 200f)
 
 
             gamelistView.forceUpperCase

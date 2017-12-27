@@ -7,7 +7,7 @@ import mu.KotlinLogging
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import org.yaml.snakeyaml.DumperOptions
-
+import java.io.FileInputStream
 
 
 class YamlUtils {
@@ -15,7 +15,9 @@ class YamlUtils {
 	val logger = KotlinLogging.logger { }
 	
 	fun parseEmulioConfig(yamlFile: File): EmulioConfig {
-		return getYaml().load(yamlFile.readText()) as EmulioConfig
+        FileInputStream(yamlFile).use {
+            return getYaml().load(it) as EmulioConfig
+        }
 	}
 	
 	fun saveEmulioConfig(yamlFile: File, config: EmulioConfig) {
@@ -69,5 +71,11 @@ class YamlUtils {
 		
 		return emptyList()
 	}
-	
+
+    fun parse(languageFile: File): Map<Any, Any> {
+        FileInputStream(languageFile).use {
+            getYaml().load(it)
+        }
+    }
+
 }

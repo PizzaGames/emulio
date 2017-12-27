@@ -20,6 +20,7 @@ import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.gdxutils.glClearColor
+import com.github.emulio.utils.translate
 import com.github.emulio.yaml.YamlUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers

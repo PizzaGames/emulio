@@ -25,6 +25,7 @@ import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
+import com.github.emulio.utils.translate
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
@@ -410,6 +411,12 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onConfirmButton(): Boolean {
+
+        val currentGames = emulio.listGames(currentPlatform)
+        if (currentGames.isEmpty()) {
+            lbCount.setText("Still loading this section...".translate())
+            return true
+        }
 		switchScreen(GameListScreen(emulio, currentPlatform))
 		return true
 	}

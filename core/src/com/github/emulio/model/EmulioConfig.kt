@@ -2,18 +2,24 @@ package com.github.emulio.model
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.controllers.Controller
+import java.io.File
 
 
 class EmulioConfig {
 	lateinit var graphicsConfig: GraphicsConfig
 	lateinit var uiConfig: UIConfig
+    lateinit var languagePath: String
 	lateinit var keyboardConfig: InputConfig
 	lateinit var gamepadConfig: Map<String, InputConfig>
-	var debug: Boolean = false
+	var debug: Boolean = true
 	
 	fun loadDefaults() {
 		graphicsConfig = GraphicsConfig()
 		uiConfig = UIConfig()
+
+        languagePath = "languages/emulio-language-en_US.yaml"
+        check(File(languagePath).exists(), {"Language file '$languagePath' not found. Please check your files.."})
+
 		keyboardConfig = InputConfig().apply {
 			type = InputType.KEYBOARD
 			name = "Keyboard"
