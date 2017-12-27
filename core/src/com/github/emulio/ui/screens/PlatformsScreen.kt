@@ -146,7 +146,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		val text = if (emulio.games != null) {
 			val gamesCount = emulio.games!![platform]?.size ?: 0
 			if (gamesCount == 0) {
-				"Loading..."
+				"Loading...".translate()
 			} else {
 				"$gamesCount" + "games available".translate()
 			}
@@ -371,7 +371,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 				.observeOn(GdxScheduler)
 				.Subscribe(
 						onNext = { game ->
-							lbLoading.setText("Scanning games from".translate() + " " + game.platform.platformName.capitalize())
+							lbLoading.setText("Scanning games from".translate() + " ${game.platform.platformName.capitalize()}")
 
 							var games = gamesMap[game.platform]
 							if (games == null) {
@@ -397,13 +397,12 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 						},
 						onComplete = {
 							lbLoading.addAction(Actions.fadeOut(0.5f))
-
 						})
 	}
 
 	private fun onError(exception: Throwable) {
 
-		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.")
+		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.".translate())
 		lbLoading.setPosition(10f, 20f)
 
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })

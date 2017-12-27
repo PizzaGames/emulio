@@ -23,7 +23,6 @@ object I18n {
 
 }
 
-
 fun String.translate(): String {
     return I18n.translate(this)
 }

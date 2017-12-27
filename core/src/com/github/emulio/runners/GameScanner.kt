@@ -29,11 +29,11 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 				val gameList = File(romsPath, "gamelist.xml")
 				val pathSet = mutableSetOf<String>()
 
-				val gamelistFlowable = if (gameList.isFile) {
+				val listGamesFlowable = if (gameList.isFile) {
 					logger.info { "reading [${gameList.absolutePath}]" }
 					val gamesObservable = xmlReader.parseGameList(gameList, romsPath, pathSet, platform)
 					
-					logger.debug { "gamelist read, scanning for new games"  }
+					logger.debug { "Game list read, scanning for new games"  }
 					gamesObservable
 				} else {
 					Flowable.empty<Game>()
@@ -44,7 +44,7 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 					emitter.onComplete()
 				}, BackpressureStrategy.BUFFER)
 
-				games = games.concatWith(gamelistFlowable).concatWith(filesObservable)
+				games = games.concatWith(listGamesFlowable).concatWith(filesObservable)
 			}
 		}
 		
