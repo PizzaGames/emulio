@@ -116,3 +116,6 @@ gradle-app.setting
 Thumbs.db
 
 *sample-files/*/*.png
+
+**/out/
+**/build/
