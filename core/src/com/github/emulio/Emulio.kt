@@ -5,6 +5,7 @@ import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.ui.screens.SplashScreen
+import sun.plugin.util.EventMulticaster
 import java.io.InputStream
 
 
@@ -25,6 +26,8 @@ class Emulio : Game() {
     }
 
     fun getLanguageStream(): InputStream {
+
+
         val languageStream = Emulio::class.java.getResourceAsStream(config.languagePath)
 
         check(languageStream != null, {"Unable to find language file. ${config.languagePath}"})

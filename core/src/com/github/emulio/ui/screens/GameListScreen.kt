@@ -74,8 +74,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             setFlickScroll(true)
             setScrollBarPositions(false, true)
 
-            setForceScroll(false, true)
             setSmoothScrolling(true)
+
             isTransform = true
 
             setSize(gamelistView)
@@ -195,7 +195,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
             // TODO: alignment of list items?
-            // TODO: horizontal scroll on lists? it is implemented?
+            // TODO: horizontal marquee on lists? it is implemented?
             // of not, how to do? It is possible?
 
 		}).apply {
@@ -376,6 +376,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         } else {
             listView.selectedIndex = prevIndex
         }
+
+        checkVisible(prevIndex)
     }
 
     private fun selectNext(amount: Int = 1) {
@@ -385,6 +387,32 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         } else {
             listView.selectedIndex = nextIndex
         }
+
+        checkVisible(nextIndex)
+
+    }
+
+    private fun checkVisible(index: Int) {
+        val itemHeight = listView.itemHeight
+
+        val selectionY = index * itemHeight
+        val selectionY2 = selectionY + itemHeight
+
+        val minItemsVisible = itemHeight * 5
+
+        if ((selectionY2 + minItemsVisible) > listScrollPane.height) {
+            listScrollPane.scrollY = (selectionY2 - listScrollPane.height) + minItemsVisible
+        }
+
+        val minScrollY = Math.max(selectionY - minItemsVisible, 0f)
+
+        if (minScrollY < listScrollPane.scrollY) {
+            listScrollPane.scrollY = minScrollY
+        }
+
+
+
+
     }
 
     override fun onDownButton(): Boolean {

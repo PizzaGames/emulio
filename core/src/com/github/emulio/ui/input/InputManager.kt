@@ -16,10 +16,16 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	private val logger = KotlinLogging.logger { }
 	private val DEADZONE: Float = 0.25f
 
-
 	private var elapsedPressedButtonTime = 0f
-
 	private var elapsedPressedKeyTime = 0f
+
+    //delays
+    val povDelay = 0.25f
+    val keyRepeatInterval = 0.10f
+    val keyRepeatTriggerDelay = 0.5f
+
+    val controllerRepeatInterval = 0.3f
+    val controllerTriggerDelay = 0.25f
 
 	class ControllerValues {
 		var button = 0
@@ -91,39 +97,40 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	fun updatePov(cv: ControllerValues, delta: Float) {
 
 		cv.apply {
-			when (povDirection) {
+
+            when (povDirection) {
 				PovDirection.center -> {
 					elapsedPov = 0f
 				}
 				PovDirection.north -> {
-					if (elapsedPov > 0.25f) {
+					if (elapsedPov > povDelay) {
 						listener.onUpButton()
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
 				PovDirection.south -> {
-					if (elapsedPov > 0.25f) {
+					if (elapsedPov > povDelay) {
 						listener.onDownButton()
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
 				PovDirection.west -> {
-					if (elapsedPov > 0.25f) {
+					if (elapsedPov > povDelay) {
 						listener.onLeftButton()
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
 				PovDirection.east -> {
-					if (elapsedPov > 0.25f) {
+					if (elapsedPov > povDelay) {
 						listener.onRightButton()
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
-			}
+            }
 
 
 		}
@@ -149,7 +156,6 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		cv.apply {
 			if (axisLT > 0f) {
 				elapsedAxisLT += delta
-
 				if (elapsedAxisLT > delayByAxisValue(axisLT, delayTime)) {
 					listener.onPageUpButton()
 					elapsedAxisLT = 0f
@@ -240,12 +246,12 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		elapsedPressedKeyTime += delta
 
 		if (pressedKeyRepeat) {
-			if (elapsedPressedKeyTime > 0.15f) {
+            if (elapsedPressedKeyTime > keyRepeatInterval) {
 				fireKeyboardEvent(config.keyboardConfig, pressedkey)
 				elapsedPressedKeyTime = 0f
 			}
 		} else {
-			if (elapsedPressedKeyTime > 1f) {
+            if (elapsedPressedKeyTime > keyRepeatTriggerDelay) {
 				pressedKeyRepeat = true
 				elapsedPressedKeyTime = 0f
 			} else {
@@ -318,7 +324,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		elapsedPressedButtonTime += delta
 
 		if (pressedButtonRepeat) {
-			if (elapsedPressedButtonTime > 0.25f) {
+            if (elapsedPressedButtonTime > controllerTriggerDelay) {
 				controllerValues.forEach { (controller, cv) ->
 					if (cv.button != 0) {
 						fireControllerButtonEvent(cv.button, controller)
@@ -327,7 +333,8 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				elapsedPressedButtonTime = 0f
 			}
 		} else {
-			if (elapsedPressedButtonTime > 0.3f) {
+
+            if (elapsedPressedButtonTime > controllerRepeatInterval) {
 				pressedButtonRepeat = true
 				elapsedPressedButtonTime = 0f
 			} else {
