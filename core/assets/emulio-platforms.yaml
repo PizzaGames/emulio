@@ -10,12 +10,12 @@
 
 # ${esrunner.home} will be expanded to the workdir of esrunner.jar
 
-esrunner.home: f:\emulators\emulationstation
+esrunner.home: f:\emulators
 
 # Define your custom commons paths here
-emulators.home: ${esrunner.home}\emulators
+emulators.home: ${esrunner.home}
 bios.home: ${emulators.home}\bios
-retroarch.home: ${emulators.home}\retroarch150
+retroarch.home: ${emulators.home}\RetroArch170
 retroarch.cores: ${retroarch.home}\cores
 roms.home: "V:"
 

@@ -1,10 +1,13 @@
 package com.github.emulio.runners
 
+import com.github.emulio.model.Game
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Path
 
 
 class PNGConverter {
@@ -35,7 +38,20 @@ class PNGConverter {
 
 //fun main(args: Array<String>) {
 //	val start = System.currentTimeMillis()
-//	PNGConverter().convertFromSVG(File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.svg"), File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.png"), 200f, 200f)
+//
+//    Files.walk(File("G:\\workspace\\emulio\\core\\assets\\images\\resources").toPath()).filter({ path ->
+//        path.toFile().extension.equals("svg")
+//    }).forEach { path ->
+//
+//
+//        val svgFile = path.toFile()
+//        val pngFile = File(svgFile.parentFile.absoluteFile, svgFile.nameWithoutExtension + "_128_128.png")
+//        println("Converting: $svgFile to $pngFile")
+//
+//        PNGConverter().convertFromSVG(svgFile, pngFile, 128f, 128f)
+//    }
+//
+//	//PNGConverter().convertFromSVG(File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.svg"), File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.png"), 128f, 128f)
 //
 //	println("${System.currentTimeMillis() - start}ms")
 //}

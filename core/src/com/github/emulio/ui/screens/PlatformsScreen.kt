@@ -148,7 +148,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			if (gamesCount == 0) {
 				"Loading...".translate()
 			} else {
-				"$gamesCount" + "games available".translate()
+				"$gamesCount " + "games available".translate()
 			}
 		} else {
 			"Loading...".translate()

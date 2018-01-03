@@ -22,25 +22,28 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	val screenHeight = Gdx.graphics.height.toFloat()
 
 	private val freeFontGeneratorCache = mutableMapOf<FileHandle, FreeTypeFontGenerator>()
-	private val fontCache = mutableMapOf<Triple<FileHandle, Int, Color>, BitmapFont>()
+	private val fontCache = mutableMapOf<Triple<FileHandle, Int, Color?>, BitmapFont>()
 
 	val freeTypeFontGenerator = getFreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
 
 	fun getColor(rgba: String?): Color = when {
+        // TODO: Color are resources? we need to cache they like in SWT/Swing lib?
         rgba == null -> Color.BLACK
         rgba.length == 6 -> Color(BigInteger(rgba.toUpperCase() + "FF", 16).toInt())
         rgba.length == 8 -> Color(BigInteger(rgba.toUpperCase(), 16).toInt())
         else -> Color.BLACK
     }
 
-	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color): BitmapFont {
+	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color? = null): BitmapFont {
 		val triple = Triple(fileHandle, fontSize, fontColor)
         return if (fontCache.containsKey(triple)) {
             fontCache[triple]!!
         } else {
             getFreeTypeFontGenerator(fileHandle).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
                 size = fontSize
-                color = fontColor
+                if (fontColor != null) {
+                    color = fontColor
+                }
             }).apply {
                 fontCache[triple] = this
             }

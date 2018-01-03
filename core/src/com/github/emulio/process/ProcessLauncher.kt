@@ -6,7 +6,7 @@ import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 
-class ProcessLauncher {
+object ProcessLauncher {
 
     val logger = KotlinLogging.logger { }
 

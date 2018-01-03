@@ -20,10 +20,14 @@ import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.*
+import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
+import mu.KotlinLogging
 
 class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emulio), InputListener {
+
+    val logger = KotlinLogging.logger { }
 
 	private val inputController: InputManager = InputManager(this, emulio.config, stage)
 
@@ -43,15 +47,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	private fun initGUI() {
-		//TODO read the header, footer, background
-		
 		val theme = emulio.theme[platform]!!
-		
-		
+
+        // TODO choose correctly the basic/detailed view
 		buildBasicView(theme.findView("basic")!!)
 		//buildDetailedView(theme.findView("detailed")!!)
-		
-		
+
+
+
 
 	}
 
@@ -64,7 +67,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		val gamelistView = basicView.findViewItem("gamelist") as TextList
         listView = buildBasicList(gamelistView)
 
-        listScrollPane = ScrollPane(listView, Skin()).apply {
+        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle().apply {
+
+        }).apply {
 
             setFlickScroll(true)
             setScrollBarPositions(false, true)
@@ -76,9 +81,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             setSize(gamelistView)
             setPosition(gamelistView)
         }
-
-
-
 
         stage.addActor(listScrollPane)
 		
@@ -180,28 +182,29 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	private fun buildBasicList(gamelistView: TextList): List<String> {
 		
 		return List<String>(List.ListStyle().apply {
+            fontColorUnselected = getColor(gamelistView.primaryColor)
+            fontColorSelected = getColor(gamelistView.selectedColor)
 
-            //FIXME apparently there is a problem related with ttf fonts?
-            fontColorUnselected = Color.WHITE//getColor(gamelistView.primaryColor)
-            fontColorSelected = Color.WHITE//getColor(gamelistView.selectedColor)
+            /**
+             * color font should not be defined, since it will use the
+             * fontColorUnselected and fontColorSelected definitions above
+             */
+            font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
 
-            font = getFont(
-                    getFontPath(gamelistView),
-                    getFontSize(gamelistView.fontSize),
-                    getColor(gamelistView.primaryColor))
-
-			val selectorTexture = createColorTexture(0x393a3bFF)
+			val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
 			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
+
+            // TODO: alignment of list items?
+            // TODO: horizontal scroll on lists? it is implemented?
+            // of not, how to do? It is possible?
 
 		}).apply {
             setSize(gamelistView)
-
 
             gamelistView.forceUpperCase
             games.forEach { game ->
                 items.add(game.name ?: game.path.name)
             }
-
 		}
 	
 	}
@@ -330,10 +333,33 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onConfirmButton(): Boolean {
+        launchGame()
 		return true
 	}
 
-	override fun onCancelButton(): Boolean {
+    private fun launchGame() {
+
+        val selectedGame = games[listView.selectedIndex]
+        logger.debug { "launchGame: $selectedGame" }
+
+        val command = platform.runCommand.map {
+            when {
+                it.contains("%ROM_RAW%") ->
+                    it.replace("%ROM_RAW%", selectedGame.path.absolutePath)
+                it.contains("%ROM%") ->
+                    it.replace("%ROM%", selectedGame.path.absolutePath) //TODO check emulationstation documentation
+                it.contains("%BASENAME%") ->
+                    it.replace("%BASENAME%", selectedGame.path.nameWithoutExtension)
+                else -> it
+            }
+        }
+        logger.info { "executing: $command" }
+        ProcessLauncher.executeProcess(command.toTypedArray())
+
+        // TODO improve memory usage here, stop all working threads to prefer external process? block instead new thread?
+    }
+
+    override fun onCancelButton(): Boolean {
 		switchScreen(PlatformsScreen(emulio, platform))
 		return true
 	}
@@ -343,17 +369,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		return true
 	}
 
-    private fun selectPrevious() {
-        val prevIndex = listView.selectedIndex - 1
+    private fun selectPrevious(amount: Int = 1) {
+        val prevIndex = listView.selectedIndex - amount
         if (prevIndex < 0) {
-            listView.selectedIndex = listView.items.size - 1
+            listView.selectedIndex = listView.items.size - amount
         } else {
             listView.selectedIndex = prevIndex
         }
     }
 
-    private fun selectNext() {
-        val nextIndex = listView.selectedIndex + 1
+    private fun selectNext(amount: Int = 1) {
+        val nextIndex = listView.selectedIndex + amount
         if (nextIndex >= listView.items.size) {
             listView.selectedIndex = 0
         } else {
@@ -389,10 +415,12 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onPageUpButton(): Boolean {
+        selectPrevious(10)
 		return true
 	}
 
 	override fun onPageDownButton(): Boolean {
+        selectNext(10)
 		return true
 	}
 
