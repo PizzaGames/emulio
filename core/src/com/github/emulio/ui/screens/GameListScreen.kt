@@ -393,7 +393,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 
-
     override fun onLeftButton(): Boolean {
 		return true
 	}

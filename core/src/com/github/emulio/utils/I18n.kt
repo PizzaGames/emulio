@@ -10,7 +10,7 @@ object I18n {
     private val languageMap by lazy {
         val emulio = Gdx.app.applicationListener as Emulio
 
-        YamlUtils().parse(emulio.getLanguageFile())
+        YamlUtils().parse(emulio.getLanguageStream())
     }
 
     fun translate(key: String): String {

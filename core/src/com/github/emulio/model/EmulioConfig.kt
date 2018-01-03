@@ -18,7 +18,6 @@ class EmulioConfig {
 		uiConfig = UIConfig()
 
         languagePath = "languages/emulio-language-en_US.yaml"
-        check(File(languagePath).exists(), {"Language file '$languagePath' not found. Please check your files.."})
 
 		keyboardConfig = InputConfig().apply {
 			type = InputType.KEYBOARD

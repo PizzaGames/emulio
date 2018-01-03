@@ -1,12 +1,11 @@
 package com.github.emulio
 
-import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Game
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.ui.screens.SplashScreen
-import java.io.File
+import java.io.InputStream
 
 
 class Emulio : Game() {
@@ -25,10 +24,11 @@ class Emulio : Game() {
         return games!![platform]?.toList() ?: emptyList()
     }
 
-    fun getLanguageFile(): File {
-        val languageFile = File(config.languagePath)
-        check(languageFile.exists(), {"Unable to find language file. ${languageFile.absolutePath}"})
-        return languageFile
+    fun getLanguageStream(): InputStream {
+        val languageStream = Emulio::class.java.getResourceAsStream(config.languagePath)
+
+        check(languageStream != null, {"Unable to find language file. ${config.languagePath}"})
+        return languageStream
     }
 }
 
