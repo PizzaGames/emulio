@@ -48,7 +48,7 @@
     up: 19,
     usePov: false
   },
-  languagePath: languages/emulio-language-en_US.yaml,
+  languagePath: /languages/emulio-language-en_US.yaml,
   uiConfig: {
     screenSaver: null,
     themeName: null,

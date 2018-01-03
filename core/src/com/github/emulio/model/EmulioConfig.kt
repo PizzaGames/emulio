@@ -17,7 +17,7 @@ class EmulioConfig {
 		graphicsConfig = GraphicsConfig()
 		uiConfig = UIConfig()
 
-        languagePath = "languages/emulio-language-en_US.yaml"
+        languagePath = "/languages/emulio-language-en_US.yaml"
 
 		keyboardConfig = InputConfig().apply {
 			type = InputType.KEYBOARD
