@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -23,7 +24,12 @@ import com.github.emulio.model.theme.*
 import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
+import com.github.emulio.utils.DateHelper
 import mu.KotlinLogging
+import java.io.File
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emulio), InputListener {
 
@@ -33,37 +39,66 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private val interpolation = Interpolation.fade
 
+    private var basicViewOnly: Boolean = true
+
 	private lateinit var root: Group
 	private lateinit var logo: Image
-	
+
 	private var games: kotlin.collections.List<Game>
-	
+
 	init {
 		Gdx.input.inputProcessor = inputController
-		
+
 		games = emulio.games!![platform]?.toList() ?: emptyList<Game>()
-		
+        games = games.sortedBy { it.name }
+
+        checkBasicViewOnly()
+
 		initGUI()
 	}
 
-	private fun initGUI() {
+    private fun checkBasicViewOnly() {
+        for (game in games) {
+            if (game.id != null || game.description != null || game.image != null) {
+                basicViewOnly = false
+                break
+            }
+        }
+    }
+
+    private fun initGUI() {
 		val theme = emulio.theme[platform]!!
 
-        // TODO choose correctly the basic/detailed view
-		buildBasicView(theme.findView("basic")!!)
-		//buildDetailedView(theme.findView("detailed")!!)
+        if (basicViewOnly) {
+            buildBasicView(theme.findView("basic")!!)
+        } else {
+            buildDetailedView(theme.findView("detailed")!!)
+        }
+
 
 
 
 
 	}
 
+    private var selectedGame: Game? = null
+
     private lateinit var listView: List<String>
     private lateinit var listScrollPane: ScrollPane
+    private lateinit var gameImage: Image
+    private lateinit var gameReleaseDate: TextField
+    private lateinit var gameRating: TextField
+    private lateinit var gameDescription: TextField
+    private lateinit var gamePlayCount: TextField
+    private lateinit var gameLastPlayed: TextField
+    private lateinit var gamePlayers: TextField
+    private lateinit var gameGenre: TextField
+    private lateinit var gamePublisher: TextField
+    private lateinit var gameDeveloper: TextField
 
     private fun buildBasicView(basicView: View) {
 		buildCommonComponents(basicView)
-		
+
 		val gamelistView = basicView.findViewItem("gamelist") as TextList
         listView = buildBasicList(gamelistView)
 
@@ -83,11 +118,11 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         stage.addActor(listScrollPane)
-		
+
 	}
-	
-	
-	
+
+
+
 	private fun buildCommonComponents(view: View) {
 		val backgroundView = view.findViewItem("background") as ViewImage?
 		if (backgroundView != null) {
@@ -102,51 +137,152 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 				setFillParent(true)
 			})
 		}
-		
+
 		val footer = view.findViewItem("footer") as ViewImage?
 		if (footer != null) {
 			stage.addActor(buildImage(footer, Scaling.stretch))
 		}
-		
+
 		val header = view.findViewItem("header") as ViewImage?
 		if (header != null) {
 			stage.addActor(buildImage(header, Scaling.stretch))
 		}
-		
+
 		initRoot()
 		initLogoSmall()
-		
+
 		val systemName1 = view.findViewItem("system_name_1")?.let { it as Text }
 		if (systemName1 != null) {
 			stage.addActor(buildTextField(systemName1))
 		}
-		
+
 		val systemName2 = view.findViewItem("system_name_2")?.let { it as Text }
 		if (systemName2 != null) {
 			stage.addActor(buildTextField(systemName2))
 		}
-		
+
 		val logo = view.findViewItem("logo") as ViewImage?
 		if (logo != null) {
 			stage.addActor(buildImage(logo))
 		}
 	}
-	
-	private fun buildDetailedList(textList: TextList): List<Game> {
-		return List<Game>(List.ListStyle(
-			getFont(textList),
-			getColor(textList.selectedColor),
-			getColor(textList.primaryColor),
-			null
-		)).apply {
 
-			val g = games.toTypedArray()
 
-		}
+
+    private fun buildDetailedView(detailedView: View) {
+        buildCommonComponents(detailedView)
+
+        val gamelistView = detailedView.findViewItem("gamelist") as TextList
+        listView = buildBasicList(gamelistView)
+
+        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle().apply {
+
+        }).apply {
+            setFlickScroll(true)
+            setScrollBarPositions(false, true)
+
+            setSmoothScrolling(true)
+
+            isTransform = true
+
+            setSize(gamelistView)
+            setPosition(gamelistView)
+        }
+
+        val imageView = detailedView.findViewItem("md_image") as ViewImage?
+        if (imageView != null) {
+            gameImage = buildImage(imageView)
+            stage.addActor(gameImage)
+        }
+
+        buildLabel(detailedView, "md_lbl_rating", "Rating:")
+        buildLabel(detailedView, "md_lbl_releasedate", "Released:")
+        buildLabel(detailedView, "md_lbl_developer", "Developer:")
+        buildLabel(detailedView, "md_lbl_publisher", "Publisher:")
+        buildLabel(detailedView, "md_lbl_genre", "Genre:")
+        buildLabel(detailedView, "md_lbl_players", "Players:")
+        buildLabel(detailedView, "md_lbl_lastplayed", "Last played:")
+        buildLabel(detailedView, "md_lbl_playcount", "Times played:")
+
+
+
+        val playCountView = detailedView.findViewItem("md_playcount") as Text?
+        if (playCountView != null) {
+            gamePlayCount = buildTextField(playCountView)
+            stage.addActor(gamePlayCount)
+        }
+
+        val lastPlayedView = detailedView.findViewItem("md_lastplayed") as Text?
+        if (lastPlayedView != null) {
+            gameLastPlayed = buildTextField(lastPlayedView)
+            stage.addActor(gameLastPlayed)
+        }
+
+        val playersView = detailedView.findViewItem("md_players") as Text?
+        if (playersView != null) {
+            gamePlayers = buildTextField(playersView)
+            stage.addActor(gamePlayers)
+        }
+
+        val genreView = detailedView.findViewItem("md_genre") as Text?
+        if (genreView != null) {
+            gameGenre = buildTextField(genreView)
+            stage.addActor(gameGenre)
+        }
+
+        val publisherView = detailedView.findViewItem("md_publisher") as Text?
+        if (publisherView != null) {
+            gamePublisher = buildTextField(publisherView)
+            stage.addActor(gamePublisher)
+        }
+
+        val developerView = detailedView.findViewItem("md_developer") as Text?
+        if (developerView != null) {
+            gameDeveloper = buildTextField(developerView)
+            stage.addActor(gameDeveloper)
+        }
+
+        val releaseDateView = detailedView.findViewItem("md_releasedate") as Text?
+        if (releaseDateView != null) {
+            gameReleaseDate = buildTextField(releaseDateView)
+            stage.addActor(gameReleaseDate)
+        }
+
+        val ratingView = detailedView.findViewItem("md_rating") as Text?
+        if (ratingView != null) {
+            gameRating = buildTextField(ratingView)
+            stage.addActor(gameRating)
+        }
+
+        val descriptionView = detailedView.findViewItem("md_description") as Text?
+        if (descriptionView != null) {
+            gameDescription = buildTextField(descriptionView)
+            stage.addActor(gameDescription)
+        }
+
+
+
+        stage.addActor(listScrollPane)
+
 	}
-	
-	private fun buildImage(image: ViewImage, scaling: Scaling = Scaling.fit): Image {
-		val texture = Texture(FileHandle(image.path!!), true)
+
+    private fun buildLabel(detailedView: View, viewName: String, viewText: String) {
+        val lbView = detailedView.findViewItem(viewName) as Text?
+        if (lbView != null) {
+            stage.addActor(buildTextField(lbView).apply {
+                text = viewText
+            })
+        }
+    }
+
+    private fun buildImage(image: ViewImage, scaling: Scaling = Scaling.fit, imagePath: File? = image.path): Image {
+        val texture = if (imagePath != null) {
+            Texture(FileHandle(imagePath), true)
+        } else {
+            val size = getSize(image)
+            Texture(size.first.toInt(), size.second.toInt(), Pixmap.Format.RGB888)
+        }
+
 		texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
 
 		return Image(texture).apply {
@@ -158,7 +294,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			setOrigin(image)
 		}
 	}
-	
+
 	private fun buildTextField(textView: Text): TextField {
 
 		val text = if (textView.forceUpperCase) {
@@ -178,9 +314,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			setPosition(textView)
 		}
 	}
-	
+
 	private fun buildBasicList(gamelistView: TextList): List<String> {
-		
+
 		return List<String>(List.ListStyle().apply {
             fontColorUnselected = getColor(gamelistView.primaryColor)
             fontColorSelected = getColor(gamelistView.selectedColor)
@@ -206,33 +342,55 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
                 items.add(game.name ?: game.path.name)
             }
 		}
-	
+
 	}
-	
+
 	private fun Widget.setOrigin(viewItem: ViewItem) {
 		if (viewItem.originX != null && viewItem.originY != null) {
 			val originX = viewItem.originX!!
 			val originY = viewItem.originY!!
-			
+
 			val offsetX = if (originX == 0f) {
 				0f
 			} else {
 				width * originX
 			}
-			
+
 			val offsetY = when (originY) {
                 0f -> 0f
                 1f -> height
                 else -> height * (1f - viewItem.originY!!)
             }
-			
+
 			setOrigin(offsetX, offsetY)
 
 			x += offsetX
 			y += offsetY
 		}
 	}
-	
+
+    private fun getSize(viewItem: ViewItem): Pair<Float, Float> {
+        var width = if (viewItem.sizeX != null) {
+            screenWidth * viewItem.sizeX!!
+        } else {
+            200f
+        }
+
+        var height = if (viewItem.sizeY != null) {
+            screenHeight * viewItem.sizeY!!
+        } else {
+            200f
+        }
+
+        if (viewItem.maxSizeX != null) {
+            width = Math.min(width, screenWidth * viewItem.maxSizeX!!)
+        }
+        if (viewItem.maxSizeY != null) {
+            height = Math.min(height, screenHeight * viewItem.maxSizeY!!)
+        }
+        return Pair(width, height)
+    }
+
 	private fun Actor.setSize(viewItem: ViewItem) {
 		var width = if (viewItem.sizeX != null) {
 			screenWidth * viewItem.sizeX!!
@@ -245,7 +403,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		} else {
 			this.height
 		}
-		
+
 		if (viewItem.maxSizeX != null) {
 			width = Math.min(width, screenWidth * viewItem.maxSizeX!!)
 		}
@@ -254,22 +412,21 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 		setSize(width, height)
 	}
-	
+
 	private fun Actor.setPosition(view: ViewItem) {
 		val x = screenWidth * view.positionX!!
 		val y = (screenHeight * (1f - view.positionY!!)) - height
-		
+
 		setPosition(x, y)
 	}
-	
+
 	private fun  getTextFieldStyle(textView: Text): TextField.TextFieldStyle {
 		return TextField.TextFieldStyle().apply {
-			val fnt = getFont(textView)
-			font = fnt
-			fontColor = Color(fnt.color)
+			font = getFont(getFontPath(textView), getFontSize(textView.fontSize))
+			fontColor = getColor(textView.textColor ?: textView.color)
 		}
 	}
-	
+
 	private fun getFont(textView: Text): BitmapFont =
             getFont(getFontPath(textView), getFontSize(textView.fontSize), getColor(textView.textColor ?: textView.color))
 
@@ -339,6 +496,10 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     private fun launchGame() {
 
+        if (listView.selectedIndex == -1) {
+            listView.selectedIndex = 0
+        }
+
         val selectedGame = games[listView.selectedIndex]
         logger.debug { "launchGame: $selectedGame" }
 
@@ -369,6 +530,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		return true
 	}
 
+
+
     private fun selectPrevious(amount: Int = 1) {
         val prevIndex = listView.selectedIndex - amount
         if (prevIndex < 0) {
@@ -377,10 +540,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             listView.selectedIndex = prevIndex
         }
 
+        selectedGame = games[listView.selectedIndex]
         checkVisible(prevIndex)
+        updateGameSelected()
     }
 
     private fun selectNext(amount: Int = 1) {
+
+
+
         val nextIndex = listView.selectedIndex + amount
         if (nextIndex >= listView.items.size) {
             listView.selectedIndex = 0
@@ -388,9 +556,53 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             listView.selectedIndex = nextIndex
         }
 
+        selectedGame = games[listView.selectedIndex]
+
         checkVisible(nextIndex)
+        updateGameSelected()
 
     }
+
+    private fun updateGameSelected() {
+
+        if (selectedGame == null) {
+            return
+        }
+
+        val game = selectedGame!!
+
+        val texture = if (game.image != null) {
+            Texture(FileHandle(game.image), true)
+        } else {
+            Texture(0, 0, Pixmap.Format.RGB888)
+        }
+
+        texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+        gameImage.drawable = TextureRegionDrawable(TextureRegion(texture))
+
+
+        gameReleaseDate.text = safeValue(if (game.releaseDate != null) {
+            DateHelper.format(game.releaseDate)
+        } else {
+            null
+        })
+
+        gameDeveloper.text = safeValue(game.developer)
+        gameRating.text = "TODO"//safeValue(game.rating)
+        gameDescription.text = safeValue(game.description)
+        gamePlayCount.text = "TODO"//safeValue(game.playCount)
+        gameLastPlayed.text = "TODO"//safeValue(game.LastPlayed)
+        gamePlayers.text = safeValue(game.players)
+        gameGenre.text = safeValue(game.genre)
+        gamePublisher.text = safeValue(game.publisher)
+        gameDeveloper.text = safeValue(game.developer)
+
+    }
+
+    fun safeValue(string: String?): String {
+        return string ?: "-"
+    }
+
 
     private fun checkVisible(index: Int) {
         val itemHeight = listView.itemHeight
@@ -422,10 +634,31 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
     override fun onLeftButton(): Boolean {
+        val platforms = emulio.platforms
+        val index = platforms.indexOf(platform)
+
+        val previousPlatform = if (index > 0) {
+            index - 1
+        } else {
+            platforms.size - 1
+        }
+
+        switchScreen(GameListScreen(emulio, platforms[previousPlatform]))
+
 		return true
 	}
 
 	override fun onRightButton(): Boolean {
+        val platforms = emulio.platforms
+        val index = platforms.indexOf(platform)
+
+        val previousPlatform = if (index > platforms.size - 2) {
+            0
+        } else {
+            index + 1
+        }
+
+        switchScreen(GameListScreen(emulio, platforms[previousPlatform]))
 		return true
 	}
 

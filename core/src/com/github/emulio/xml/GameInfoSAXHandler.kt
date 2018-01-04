@@ -24,6 +24,8 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 		DEVELOPER("developer"),
 		GENRE("genre"),
 		PLAYERS("players"),
+        PUBLISHER("publisher"),
+        DESC("desc"),
 		NO_STATE(""),
 	}
 
@@ -54,6 +56,10 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			tag = Tag.RELEASE_DATE
 		} else if (qName.equals(Tag.DEVELOPER.value, true)) {
 			tag = Tag.DEVELOPER
+		} else if (qName.equals(Tag.PUBLISHER.value, true)) {
+			tag = Tag.PUBLISHER
+		} else if (qName.equals(Tag.DESC.value, true)) {
+			tag = Tag.DESC
 		} else if (qName.equals(Tag.GENRE.value, true)) {
 			tag = Tag.GENRE
 		} else if (qName.equals(Tag.PLAYERS.value, true)) {
@@ -92,7 +98,7 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			
 			emitter.onNext(
 					Game(id, source, path,
-							name, description, if (image != null) File(image) else null,
+							name, description, if (image != null) File(baseDir, image) else null,
 							releaseDate, developer,
 							publisher, genre,
 							players, platform))
@@ -122,6 +128,8 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			Tag.IMAGE -> {image = String(ch, start, length)}
 			Tag.RELEASE_DATE -> {releaseDate = convertDate(ch, start, length)}
 			Tag.DEVELOPER -> {developer = String(ch, start, length)}
+			Tag.PUBLISHER -> {publisher = String(ch, start, length)}
+			Tag.DESC -> {description = String(ch, start, length)}
 			Tag.GENRE -> {genre = String(ch, start, length)}
 			Tag.PLAYERS -> {players = String(ch, start, length)}
 //            Tag.GAME_LIST -> TODO()
