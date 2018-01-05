@@ -2,21 +2,22 @@ package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
+import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
+import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
@@ -27,24 +28,34 @@ import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.DateHelper
 import mu.KotlinLogging
 import java.io.File
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emulio), InputListener {
 
     val logger = KotlinLogging.logger { }
 
 	private val inputController: InputManager = InputManager(this, emulio.config, stage)
-
 	private val interpolation = Interpolation.fade
+    private var games: kotlin.collections.List<Game>
 
-    private var basicViewOnly: Boolean = true
+    private var selectedGame: Game? = null
 
-	private lateinit var root: Group
-	private lateinit var logo: Image
+    private lateinit var listView: List<String>
+    private lateinit var listScrollPane: ScrollPane
+    private lateinit var descriptionScrollPane: ScrollPane
+    private lateinit var gameImage: Image
+    private lateinit var gameReleaseDate: TextField
+    private lateinit var gameRating: TextField
+    private lateinit var gameDescription: Label
+    private lateinit var gamePlayCount: TextField
+    private lateinit var gameLastPlayed: TextField
+    private lateinit var gamePlayers: TextField
+    private lateinit var gameGenre: TextField
+    private lateinit var gamePublisher: TextField
+    private lateinit var gameDeveloper: TextField
+    private lateinit var root: Group
+    private lateinit var logo: Image
 
-	private var games: kotlin.collections.List<Game>
+    private var lastTimer: Timer.Task? = null
 
 	init {
 		Gdx.input.inputProcessor = inputController
@@ -52,49 +63,22 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		games = emulio.games!![platform]?.toList() ?: emptyList<Game>()
         games = games.sortedBy { it.name }
 
-        checkBasicViewOnly()
-
 		initGUI()
 	}
 
-    private fun checkBasicViewOnly() {
-        for (game in games) {
-            if (game.id != null || game.description != null || game.image != null) {
-                basicViewOnly = false
-                break
-            }
-        }
+    private fun isBasicViewOnly(): Boolean {
+        return games.none { it.id != null || it.description != null || it.image != null }
     }
 
     private fun initGUI() {
 		val theme = emulio.theme[platform]!!
 
-        if (basicViewOnly) {
+        if (isBasicViewOnly()) {
             buildBasicView(theme.findView("basic")!!)
         } else {
             buildDetailedView(theme.findView("detailed")!!)
         }
-
-
-
-
-
 	}
-
-    private var selectedGame: Game? = null
-
-    private lateinit var listView: List<String>
-    private lateinit var listScrollPane: ScrollPane
-    private lateinit var gameImage: Image
-    private lateinit var gameReleaseDate: TextField
-    private lateinit var gameRating: TextField
-    private lateinit var gameDescription: TextField
-    private lateinit var gamePlayCount: TextField
-    private lateinit var gameLastPlayed: TextField
-    private lateinit var gamePlayers: TextField
-    private lateinit var gameGenre: TextField
-    private lateinit var gamePublisher: TextField
-    private lateinit var gameDeveloper: TextField
 
     private fun buildBasicView(basicView: View) {
 		buildCommonComponents(basicView)
@@ -120,8 +104,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         stage.addActor(listScrollPane)
 
 	}
-
-
 
 	private fun buildCommonComponents(view: View) {
 		val backgroundView = view.findViewItem("background") as ViewImage?
@@ -169,19 +151,19 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
 
+
     private fun buildDetailedView(detailedView: View) {
         buildCommonComponents(detailedView)
 
         val gamelistView = detailedView.findViewItem("gamelist") as TextList
         listView = buildBasicList(gamelistView)
 
-        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle().apply {
-
-        }).apply {
+        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle()).apply {
             setFlickScroll(true)
             setScrollBarPositions(false, true)
 
             setSmoothScrolling(true)
+            setForceScroll(false, true)
 
             isTransform = true
 
@@ -203,7 +185,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         buildLabel(detailedView, "md_lbl_players", "Players:")
         buildLabel(detailedView, "md_lbl_lastplayed", "Last played:")
         buildLabel(detailedView, "md_lbl_playcount", "Times played:")
-
 
 
         val playCountView = detailedView.findViewItem("md_playcount") as Text?
@@ -256,8 +237,24 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         val descriptionView = detailedView.findViewItem("md_description") as Text?
         if (descriptionView != null) {
-            gameDescription = buildTextField(descriptionView)
-            stage.addActor(gameDescription)
+
+            gameDescription = buildLabel(descriptionView)
+            gameDescription.setWrap(true)
+
+            descriptionScrollPane = ScrollPane(gameDescription, ScrollPane.ScrollPaneStyle()).apply {
+                setFlickScroll(true)
+                setScrollBarPositions(false, true)
+
+                setSmoothScrolling(true)
+                setForceScroll(false, true)
+
+                isTransform = true
+
+                setSize(descriptionView)
+                setPosition(descriptionView)
+            }
+
+            stage.addActor(descriptionScrollPane)
         }
 
 
@@ -303,7 +300,10 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			textView.text ?: ""
 		}
 
-		return TextField(text, getTextFieldStyle(textView)).apply {
+		return TextField(text, TextField.TextFieldStyle().apply {
+            font = getFont(getFontPath(textView), getFontSize(textView.fontSize))
+            fontColor = getColor(textView.textColor ?: textView.color)
+        }).apply {
 			setAlignment(when(textView.alignment) {
 				TextAlignment.LEFT -> Align.left
 				TextAlignment.RIGHT -> Align.right
@@ -314,6 +314,24 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			setPosition(textView)
 		}
 	}
+
+    private fun buildLabel(textView: Text): Label {
+        val text = if (textView.forceUpperCase) {
+            textView.text?.toUpperCase() ?: ""
+        } else {
+            textView.text ?: ""
+        }
+
+        return Label(text, Label.LabelStyle().apply {
+            font = getFont(getFontPath(textView), getFontSize(textView.fontSize))
+            fontColor = getColor(textView.textColor ?: textView.color)
+        }).apply {
+
+            setAlignment(Align.topLeft)
+            setSize(textView)
+            setPosition(textView)
+        }
+    }
 
 	private fun buildBasicList(gamelistView: TextList): List<String> {
 
@@ -420,16 +438,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		setPosition(x, y)
 	}
 
-	private fun  getTextFieldStyle(textView: Text): TextField.TextFieldStyle {
-		return TextField.TextFieldStyle().apply {
-			font = getFont(getFontPath(textView), getFontSize(textView.fontSize))
-			fontColor = getColor(textView.textColor ?: textView.color)
-		}
-	}
-
-	private fun getFont(textView: Text): BitmapFont =
-            getFont(getFontPath(textView), getFontSize(textView.fontSize), getColor(textView.textColor ?: textView.color))
-
 	private fun getFontPath(textView: Text): FileHandle {
         return if (textView.fontPath != null) {
             FileHandle(textView.fontPath!!.absolutePath)
@@ -440,7 +448,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private fun getFontSize(fontSize: Float?): Int {
         return if (fontSize == null) {
-            30
+            90
         } else {
             (fontSize * screenHeight).toInt()
         }
@@ -517,7 +525,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         logger.info { "executing: $command" }
         ProcessLauncher.executeProcess(command.toTypedArray())
 
-        // TODO improve memory usage here, stop all working threads to prefer external process? block instead new thread?
+        // TODO improve memory usage here, stop all working threads to prefer external process? block instead creating new thread?
     }
 
     override fun onCancelButton(): Boolean {
@@ -546,9 +554,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     }
 
     private fun selectNext(amount: Int = 1) {
-
-
-
         val nextIndex = listView.selectedIndex + amount
         if (nextIndex >= listView.items.size) {
             listView.selectedIndex = 0
@@ -564,14 +569,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     }
 
     private fun updateGameSelected() {
+        lastTimer?.cancel()
 
-        if (selectedGame == null) {
+        if (selectedGame == null || isBasicViewOnly()) {
             return
         }
 
         val game = selectedGame!!
 
-        val texture = if (game.image != null) {
+        val texture = if (game.image != null && game.image.isFile) {
             Texture(FileHandle(game.image), true)
         } else {
             Texture(0, 0, Pixmap.Format.RGB888)
@@ -579,7 +585,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
         gameImage.drawable = TextureRegionDrawable(TextureRegion(texture))
-
 
         gameReleaseDate.text = safeValue(if (game.releaseDate != null) {
             DateHelper.format(game.releaseDate)
@@ -589,7 +594,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         gameDeveloper.text = safeValue(game.developer)
         gameRating.text = "TODO"//safeValue(game.rating)
-        gameDescription.text = safeValue(game.description)
+
         gamePlayCount.text = "TODO"//safeValue(game.playCount)
         gameLastPlayed.text = "TODO"//safeValue(game.LastPlayed)
         gamePlayers.text = safeValue(game.players)
@@ -597,12 +602,42 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         gamePublisher.text = safeValue(game.publisher)
         gameDeveloper.text = safeValue(game.developer)
 
+        gameDescription.setText(safeValue(game.description, "Empty description"))
+
+        animateDescription()
+
     }
 
-    fun safeValue(string: String?): String {
-        return string ?: "-"
+    private fun animateDescription() {
+        lastTimer = Timer.schedule(object : Timer.Task() {
+            override fun run() {
+
+                if (gameDescription.height <= descriptionScrollPane.height) {
+                    return
+                }
+
+                logger.debug { "animation detected!!! ${selectedGame!!.name}" }
+
+                val scrollAmount = gameDescription.height - descriptionScrollPane.height
+                val actionTime = scrollAmount * 0.05f
+
+
+                val sequenceAction = SequenceAction(
+                        ScrollByAction(0f, scrollAmount, actionTime),
+                        Actions.delay(2f),
+                        ScrollByAction(0f, -scrollAmount, actionTime)
+                )
+
+                sequenceAction.addAction(Actions.run { descriptionScrollPane.addAction(sequenceAction) })
+
+                descriptionScrollPane.addAction(sequenceAction)
+            }
+        }, 2.5f)
     }
 
+    private fun safeValue(string: String?, defaultText: String = "---"): String {
+        return string?.trim() ?: defaultText
+    }
 
     private fun checkVisible(index: Int) {
         val itemHeight = listView.itemHeight
@@ -611,6 +646,16 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         val selectionY2 = selectionY + itemHeight
 
         val minItemsVisible = itemHeight * 5
+
+        if (listView.selectedIndex == games.size - 1) {
+            listScrollPane.scrollY = listView.height - listScrollPane.height
+            return
+        }
+
+        if (listView.selectedIndex == 0) {
+            listScrollPane.scrollY = 0f
+            return
+        }
 
         if ((selectionY2 + minItemsVisible) > listScrollPane.height) {
             listScrollPane.scrollY = (selectionY2 - listScrollPane.height) + minItemsVisible
@@ -621,10 +666,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         if (minScrollY < listScrollPane.scrollY) {
             listScrollPane.scrollY = minScrollY
         }
-
-
-
-
     }
 
     override fun onDownButton(): Boolean {
@@ -688,4 +729,23 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		return true
 	}
 
+}
+
+class ScrollByAction(private val endScrollX: Float, private val endScrollY: Float, duration: Float) : TemporalAction(duration) {
+
+    private lateinit var scrollPane: ScrollPane
+
+    private var startScrollX: Float = -1f
+    private var startScrollY: Float = -1f
+
+    override fun begin() {
+        scrollPane = target as ScrollPane
+        startScrollX = scrollPane.scrollX
+        startScrollY = scrollPane.scrollY
+    }
+
+    override fun update(percent: Float) {
+        scrollPane.scrollX = startScrollX + (endScrollX - startScrollX) * percent
+        scrollPane.scrollY = startScrollY + (endScrollY - startScrollY) * percent
+    }
 }

@@ -113,13 +113,13 @@ class XMLReader {
 			val viewItemName = attributes?.getNamedItem("name")?.nodeValue!!
 			
 			if (viewItemName.contains(",")) {
-				viewItemName.split(",").forEach { splittedName ->
-					val viewItemName = splittedName.trim()
+				viewItemName.split(",").forEach { splicedName ->
+					val itemName = splicedName.trim()
 					
-					val foundView = itemsByName[viewItemName]
+					val foundView = itemsByName[itemName]
 					
-					itemsByName[viewItemName] = readViewItem(viewItemName, foundView, node, xmlFile).apply {
-						name = viewItemName
+					itemsByName[itemName] = readViewItem(itemName, foundView, node, xmlFile).apply {
+						name = itemName
 					}
 				}
 			} else {
@@ -203,7 +203,9 @@ class XMLReader {
 					"fontPath" -> {
 						text.fontPath = File(xmlFile.parentFile, child.textContent)
 					}
-					"fontSize" -> { text.fontSize = child.textContent.toFloat() }
+					"fontSize" -> {
+                        text.fontSize = child.textContent.toFloat()
+                    }
 				}
 			}
 			
@@ -220,10 +222,36 @@ class XMLReader {
 				val child = childNodes.item(i) ?: continue
                 if (child.textContent != null) {
                     when (child.nodeName) {
-                        "selectorColor" -> { textList.selectorColor = child.textContent }
-                        "selectedColor" -> { textList.selectedColor = child.textContent }
-                        "primaryColor" -> { textList.primaryColor = child.textContent }
-                        "secondaryColor" -> { textList.secondaryColor = child.textContent }
+                        "selectorColor" -> {
+                            textList.selectorColor = child.textContent
+                        }
+                        "selectedColor" -> {
+                            textList.selectedColor = child.textContent
+                        }
+                        "primaryColor" -> {
+                            textList.primaryColor = child.textContent
+                        }
+                        "secondaryColor" -> {
+                            textList.secondaryColor = child.textContent
+                        }
+                        "color" -> {
+                            textList.color = child.textContent
+                        }
+                        "alignment" -> {
+                            textList.alignment = when(child.textContent) {
+                                "center" -> TextAlignment.CENTER
+                                "left" -> TextAlignment.LEFT
+                                "justify" -> TextAlignment.JUSTIFY
+                                "right" -> TextAlignment.RIGHT
+                                else -> TextAlignment.LEFT
+                            }
+                        }
+                        "fontPath" -> {
+                            textList.fontPath = File(xmlFile.parentFile, child.textContent)
+                        }
+                        "fontSize" -> {
+                            textList.fontSize = child.textContent.toFloat()
+                        }
                     }
                 }
 			}
@@ -237,24 +265,28 @@ class XMLReader {
 	}
 	
 	private fun readDatetime(node: Node, xmlFile: File, foundView: Text?, name: String): DateTime {
-		val dateTime = if (foundView != null) {
-			if (foundView is DateTime) {
-				DateTime(foundView)
-			} else {
-				DateTime(foundView)
-			}
-		} else { DateTime() }
+        val dateTime = if (foundView != null) { DateTime(foundView) } else { DateTime() }
+
 		if (node.hasChildNodes()) {
 			val childNodes = node.childNodes
-			for (i in 0..childNodes.length) {
-				val child = childNodes.item(i) ?: continue
-				when (child.nodeName) {
-					"date" -> { dateTime.date = SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(child.textContent) }
-					"color" -> { dateTime.color = child.textContent }
-					"fontpath" -> { dateTime.fontPath = File(xmlFile.parentFile, child.textContent) }
-					"fontsize" -> { dateTime.fontSize = child.textContent?.toFloat() }
-				}
-			}
+
+            for (i in 0..childNodes.length) {
+                val child = childNodes.item(i) ?: continue
+                when (child.nodeName) {
+                    "date" -> {
+                        dateTime.date = SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(child.textContent)
+                    }
+                    "color" -> {
+                        dateTime.color = child.textContent
+                    }
+                    "fontPath" -> {
+                        dateTime.fontPath = File(xmlFile.parentFile, child.textContent)
+                    }
+                    "fontSize" -> {
+                        dateTime.fontSize = child.textContent.toFloat()
+                    }
+                }
+            }
 			
 		}
 		return dateTime.readViewItem(node)

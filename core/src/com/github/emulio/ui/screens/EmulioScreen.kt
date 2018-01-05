@@ -22,7 +22,7 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	val screenHeight = Gdx.graphics.height.toFloat()
 
 	private val freeFontGeneratorCache = mutableMapOf<FileHandle, FreeTypeFontGenerator>()
-	private val fontCache = mutableMapOf<Triple<FileHandle, Int, Color?>, BitmapFont>()
+	private val fontCache = mutableMapOf<Pair<FileHandle, Int>, BitmapFont>()
 
 	val freeTypeFontGenerator = getFreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
 
@@ -34,18 +34,16 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
         else -> Color.BLACK
     }
 
-	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color? = null): BitmapFont {
-		val triple = Triple(fileHandle, fontSize, fontColor)
-        return if (fontCache.containsKey(triple)) {
-            fontCache[triple]!!
+	fun getFont(fileHandle: FileHandle, fontSize: Int): BitmapFont {
+		val pair = Pair(fileHandle, fontSize)
+
+        return if (fontCache.containsKey(pair)) {
+            fontCache[pair]!!
         } else {
             getFreeTypeFontGenerator(fileHandle).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
                 size = fontSize
-                if (fontColor != null) {
-                    color = fontColor
-                }
             }).apply {
-                fontCache[triple] = this
+                fontCache[pair] = this
             }
         }
 

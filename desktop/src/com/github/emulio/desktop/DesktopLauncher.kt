@@ -17,7 +17,6 @@ object DesktopLauncher {
 //            height = 1080
             width = 1280
             height = 720
-
 //			fullscreen = true
 //            width = 1600
 //            height = 1200

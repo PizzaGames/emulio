@@ -123,15 +123,15 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 
 	override fun characters(ch: CharArray, start: Int, length: Int) {
 		when (tag) {
-			Tag.PATH -> {path = String(ch, start, length)}
-			Tag.NAME -> {name = String(ch, start, length)}
-			Tag.IMAGE -> {image = String(ch, start, length)}
+			Tag.PATH -> {path = String(ch, start, length).trim()}
+			Tag.NAME -> {name = String(ch, start, length).trim()}
+			Tag.IMAGE -> {image = String(ch, start, length).trim()}
 			Tag.RELEASE_DATE -> {releaseDate = convertDate(ch, start, length)}
-			Tag.DEVELOPER -> {developer = String(ch, start, length)}
-			Tag.PUBLISHER -> {publisher = String(ch, start, length)}
-			Tag.DESC -> {description = String(ch, start, length)}
-			Tag.GENRE -> {genre = String(ch, start, length)}
-			Tag.PLAYERS -> {players = String(ch, start, length)}
+			Tag.DEVELOPER -> {developer = String(ch, start, length).trim()}
+			Tag.PUBLISHER -> {publisher = String(ch, start, length).trim()}
+			Tag.DESC -> {description = String(ch, start, length).trim()}
+			Tag.GENRE -> {genre = String(ch, start, length).trim()}
+			Tag.PLAYERS -> {players = String(ch, start, length).trim()}
 //            Tag.GAME_LIST -> TODO()
 //            Tag.GAME -> TODO()
 //            Tag.NO_STATE -> TODO()
