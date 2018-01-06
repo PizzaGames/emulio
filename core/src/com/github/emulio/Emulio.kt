@@ -5,11 +5,10 @@ import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.ui.screens.SplashScreen
-import sun.plugin.util.EventMulticaster
 import java.io.InputStream
 
 
-class Emulio : Game() {
+class Emulio(val minimizeApplication: () -> Unit, val restoreAplication: () -> Unit) : Game() {
 
 	override fun create() {
 		screen = SplashScreen(this)

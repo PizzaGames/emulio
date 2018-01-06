@@ -22,28 +22,40 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	val screenHeight = Gdx.graphics.height.toFloat()
 
 	private val freeFontGeneratorCache = mutableMapOf<FileHandle, FreeTypeFontGenerator>()
-	private val fontCache = mutableMapOf<Pair<FileHandle, Int>, BitmapFont>()
+	private val fontCache = mutableMapOf<Triple<FileHandle, Int, Color?>, BitmapFont>()
 
 	val freeTypeFontGenerator = getFreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
 
 	fun getColor(rgba: String?): Color = when {
-        // TODO: Color are resources? we need to cache they like in SWT/Swing lib?
+//        // TODO: Color are resources? we need to cache they like in SWT/Swing lib?
         rgba == null -> Color.BLACK
         rgba.length == 6 -> Color(BigInteger(rgba.toUpperCase() + "FF", 16).toInt())
         rgba.length == 8 -> Color(BigInteger(rgba.toUpperCase(), 16).toInt())
         else -> Color.BLACK
     }
 
-	fun getFont(fileHandle: FileHandle, fontSize: Int): BitmapFont {
-		val pair = Pair(fileHandle, fontSize)
+	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color? = null): BitmapFont {
+		val triple = Triple(fileHandle, fontSize, fontColor)
 
-        return if (fontCache.containsKey(pair)) {
-            fontCache[pair]!!
+        return if (fontCache.containsKey(triple)) {
+            fontCache[triple]!!
         } else {
-            getFreeTypeFontGenerator(fileHandle).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+            val parameter = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
                 size = fontSize
-            }).apply {
-                fontCache[pair] = this
+
+                if (fontColor != null) {
+                    color = fontColor
+                    borderWidth = 0.5f
+                    borderColor = fontColor
+                }
+
+                shadowColor = Color(0.3f, 0.3f, 0.3f, 0.3f)
+                shadowOffsetX = 1
+                shadowOffsetY = 1
+            }
+
+            getFreeTypeFontGenerator(fileHandle).generateFont(parameter).apply {
+                fontCache[triple] = this
             }
         }
 
@@ -53,19 +65,26 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
         return if (freeFontGeneratorCache.containsKey(fileHandle)) {
             freeFontGeneratorCache[fileHandle]!!
         } else {
-            FreeTypeFontGenerator(fileHandle).apply { freeFontGeneratorCache[fileHandle] = this }
+            FreeTypeFontGenerator(fileHandle).apply { freeFontGeneratorCache[fileHandle] = this  }
         }
 	}
 
 	override fun show() {
 		stage.root.color.a = 0f
-		stage.root.addAction(Actions.fadeIn(0.5f))
+		stage.root.addAction(SequenceAction(
+            Actions.fadeIn(0.5f),
+            Actions.run { onScreenLoad() })
+        )
 	}
 
-	fun createColorTexture(rgba: Int): Texture {
-		val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888).apply {
+    open fun onScreenLoad() {
+
+    }
+
+    fun createColorTexture(rgba: Int, width: Int = 1, height: Int = 1): Texture {
+		val pixmap = Pixmap(width, height, Pixmap.Format.RGBA8888).apply {
 			setColor(rgba)
-			fillRectangle(0, 0, 1, 1)
+			fillRectangle(0, 0, width, height)
 		}
 		val texture = Texture(pixmap)
 
@@ -83,8 +102,8 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 		sequenceAction.addAction(Actions.fadeOut(0.5f))
 		sequenceAction.addAction(Actions.run({
 			emulio.screen = newScreen
-			dispose()
-		}))
+            dispose()
+        }))
 		stage.root.addAction(sequenceAction)
 	}
 }
