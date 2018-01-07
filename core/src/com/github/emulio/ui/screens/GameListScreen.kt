@@ -39,12 +39,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	private val inputController: InputManager = InputManager(this, emulio.config, stage)
 	private val interpolation = Interpolation.fade
+
     private var games: kotlin.collections.List<Game>
+    private lateinit var filteredGames: kotlin.collections.List<Game>
 
     private var selectedGame: Game? = null
 
     private lateinit var listView: List<String>
     private lateinit var listScrollPane: ScrollPane
+
     private lateinit var descriptionScrollPane: ScrollPane
     private lateinit var gameImage: Image
     private lateinit var gameReleaseDate: TextField
@@ -62,8 +65,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     private var lastTimer: Timer.Task? = null
     private var lastSequenceAction: SequenceAction? = null
+    private var needSelectionView: Boolean = false
 
-	init {
+    init {
 		Gdx.input.inputProcessor = inputController
 
 		val gamesFound = emulio.games!![platform]?.toList() ?: emptyList()
@@ -100,6 +104,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         games = gamesMap.values.sortedBy { it.displayName!!.toLowerCase() }
+        needSelectionView = games.size > emulio.config.maxGamesList &&
+                emulio.config.maxGamesList != -1
 
 		initGUI()
 	}
@@ -131,16 +137,22 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         if (games.size > 1) {
             listView.selectedIndex = 0
-            selectedGame = games[0]
-            updateGameSelected()
+            if (!needSelectionView) {
+                selectedGame = games[0]
+                updateGameSelected()
+            }
         }
     }
 
     private fun buildBasicView(basicView: View) {
 
-		val gamelistView = basicView.findViewItem("gamelist") as TextList
-        listView = buildListView(gamelistView)
+		gamelistView = basicView.findViewItem("gamelist") as TextList
+        buildListScrollPane { buildListView() }
 
+	}
+
+    private fun buildListScrollPane(builder: () -> List<String>) {
+        listView = builder()
         listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle().apply {
 
         }).apply {
@@ -157,11 +169,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         stage.addActor(listScrollPane)
+    }
 
-
-	}
-
-	private fun buildCommonComponents(view: View) {
+    private fun buildCommonComponents(view: View) {
 		val backgroundView = view.findViewItem("background") as ViewImage?
 		if (backgroundView != null) {
 			stage.addActor(buildImage(backgroundView).apply {
@@ -223,6 +233,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         buildHelpHuds(footerY, footerHeight)
 	}
 
+    private lateinit var gamelistView: TextList
+
     private fun buildDetailedView(detailedView: View) {
 
         val descriptionView = detailedView.findViewItem("md_description") as Text?
@@ -247,23 +259,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             stage.addActor(descriptionScrollPane)
         }
 
-        val gamelistView = detailedView.findViewItem("gamelist") as TextList
-        listView = buildListView(gamelistView)
-
-        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle()).apply {
-            setFlickScroll(true)
-            setScrollBarPositions(false, true)
-
-            setSmoothScrolling(true)
-            setForceScroll(false, true)
-
-            isTransform = true
-
-            setSize(gamelistView)
-            setPosition(gamelistView)
-        }
-        stage.addActor(listScrollPane)
-
+        gamelistView = detailedView.findViewItem("gamelist") as TextList
+        buildListScrollPane { buildListView() }
 
         val imageView = detailedView.findViewItem("md_image") as ViewImage?
         if (imageView != null) {
@@ -462,28 +459,86 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
     }
 
-	private fun buildListView(gamelistView: TextList): List<String> {
+	private fun buildListView(): List<String> {
+        return if (needSelectionView) {
+            buildSelectionListView()
+        } else {
+            buildGameListView(gamelistView, games)
+        }
+	}
 
-		return List<String>(List.ListStyle().apply {
+    private fun buildSelectionListView(): List<String> {
+
+        isSelectionListView = true
+
+        return List<String>(List.ListStyle().apply {
             fontColorUnselected = getColor(gamelistView.primaryColor)
             fontColorSelected = getColor(gamelistView.selectedColor)
             font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
 
-			val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
-			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
+            val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
+            selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
-		}).apply {
+        }).apply {
             setSize(gamelistView)
 
-            gamelistView.forceUpperCase
-            games.forEach { game ->
+            listOf(
+                    "Games starting with Numbers...",
+                    "Games starting with A...",
+                    "Games starting with B...",
+                    "Games starting with C...",
+                    "Games starting with D...",
+                    "Games starting with E...",
+                    "Games starting with F...",
+                    "Games starting with G...",
+                    "Games starting with H...",
+                    "Games starting with I...",
+                    "Games starting with J...",
+                    "Games starting with K...",
+                    "Games starting with L...",
+                    "Games starting with M...",
+                    "Games starting with N...",
+                    "Games starting with O...",
+                    "Games starting with P...",
+                    "Games starting with Q...",
+                    "Games starting with R...",
+                    "Games starting with S...",
+                    "Games starting with T...",
+                    "Games starting with U...",
+                    "Games starting with V...",
+                    "Games starting with W...",
+                    "Games starting with X...",
+                    "Games starting with Y...",
+                    "Games starting with Z..."
+            ).forEach { items.add(it) }
+
+
+        }
+    }
+
+    private var isSelectionListView: Boolean = false
+
+    private fun buildGameListView(gamelistView: TextList, selectedGames: kotlin.collections.List<Game>): List<String> {
+        isSelectionListView = false
+
+        return List<String>(List.ListStyle().apply {
+            fontColorUnselected = getColor(gamelistView.primaryColor)
+            fontColorSelected = getColor(gamelistView.selectedColor)
+            font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
+
+            val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
+            selection = TextureRegionDrawable(TextureRegion(selectorTexture))
+
+        }).apply {
+            setSize(gamelistView)
+
+            selectedGames.forEach { game ->
                 items.add(game.name ?: game.path.name)
             }
-		}
+        }
+    }
 
-	}
-
-	private fun Widget.setOrigin(viewItem: ViewItem) {
+    private fun Widget.setOrigin(viewItem: ViewItem) {
 		if (viewItem.originX != null && viewItem.originY != null) {
 			val originX = viewItem.originX!!
 			val originY = viewItem.originY!!
@@ -627,17 +682,18 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             error("No game was selected")
         }
 
-        val selectedGame = games[listView.selectedIndex]
-        logger.info { "launchGame: ${selectedGame.path.name}" }
+        val game = selectedGame!!
+
+        logger.info { "launchGame: ${game.path.name}" }
 
         val command = platform.runCommand.map {
             when {
                 it.contains("%ROM_RAW%") ->
-                    it.replace("%ROM_RAW%", selectedGame.path.absolutePath)
+                    it.replace("%ROM_RAW%", game.path.absolutePath)
                 it.contains("%ROM%") ->
-                    it.replace("%ROM%", selectedGame.path.absolutePath) //TODO check emulationstation documentation
+                    it.replace("%ROM%", game.path.absolutePath) //TODO check emulationstation documentation
                 it.contains("%BASENAME%") ->
-                    it.replace("%BASENAME%", selectedGame.path.nameWithoutExtension)
+                    it.replace("%BASENAME%", game.path.nameWithoutExtension)
                 else -> it
             }
         }
@@ -666,11 +722,18 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             }
         }
 
-        selectedGame = games[listView.selectedIndex]
+        if (!isSelectionListView) {
+            val list = if (needSelectionView) {
+                filteredGames
+            } else {
+                games
+            }
+
+            selectedGame = list[listView.selectedIndex]
+            updateGameSelected()
+        }
 
         checkVisible(nextIndex)
-        updateGameSelected()
-
     }
 
     private fun updateGameSelected() {
@@ -684,7 +747,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         if (selectedGame == null) {
-            gameImage.isVisible = false
+            clearDetailedView()
             return
         }
 
@@ -775,6 +838,27 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         animateDescription()
 
+    }
+
+    private fun clearDetailedView() {
+        gameImage.isVisible = false
+        ratingImages.apply {
+            ratingImg1.color = Color.CLEAR
+            ratingImg2.color = Color.CLEAR
+            ratingImg3.color = Color.CLEAR
+            ratingImg4.color = Color.CLEAR
+            ratingImg5.color = Color.CLEAR
+        }
+        gameDeveloper.text = ""
+        gamePlayCount.text = ""
+        gameLastPlayed.text = ""
+        gamePlayers.text = ""
+        gameGenre.text = ""
+        gamePublisher.text = ""
+        gameDeveloper.text = ""
+        gameReleaseDate.text = ""
+
+        gameDescription.setText("")
     }
 
     private fun animateDescription() {
@@ -946,9 +1030,48 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
     }
 
-
     override fun onConfirmButton(): Boolean {
-        launchGame()
+        if (isSelectionListView) {
+            filteredGames = when(listView.selectedIndex) {
+                0 -> games.filter { it.displayName!![0].isDigit() }
+                1 -> games.filter { it.displayName!!.toUpperCase().startsWith("A") }
+                2 -> games.filter { it.displayName!!.toUpperCase().startsWith("B") }
+                3 -> games.filter { it.displayName!!.toUpperCase().startsWith("C") }
+                4 -> games.filter { it.displayName!!.toUpperCase().startsWith("D") }
+                5 -> games.filter { it.displayName!!.toUpperCase().startsWith("E") }
+                6 -> games.filter { it.displayName!!.toUpperCase().startsWith("F") }
+                7 -> games.filter { it.displayName!!.toUpperCase().startsWith("G") }
+                8 -> games.filter { it.displayName!!.toUpperCase().startsWith("H") }
+                9 -> games.filter { it.displayName!!.toUpperCase().startsWith("I") }
+                10 -> games.filter { it.displayName!!.toUpperCase().startsWith("J") }
+                11 -> games.filter { it.displayName!!.toUpperCase().startsWith("K") }
+                12 -> games.filter { it.displayName!!.toUpperCase().startsWith("L") }
+                13 -> games.filter { it.displayName!!.toUpperCase().startsWith("M") }
+                14 -> games.filter { it.displayName!!.toUpperCase().startsWith("N") }
+                15 -> games.filter { it.displayName!!.toUpperCase().startsWith("O") }
+                16 -> games.filter { it.displayName!!.toUpperCase().startsWith("P") }
+                17 -> games.filter { it.displayName!!.toUpperCase().startsWith("Q") }
+                18 -> games.filter { it.displayName!!.toUpperCase().startsWith("R") }
+                19 -> games.filter { it.displayName!!.toUpperCase().startsWith("S") }
+                20 -> games.filter { it.displayName!!.toUpperCase().startsWith("T") }
+                21 -> games.filter { it.displayName!!.toUpperCase().startsWith("U") }
+                22 -> games.filter { it.displayName!!.toUpperCase().startsWith("V") }
+                23 -> games.filter { it.displayName!!.toUpperCase().startsWith("W") }
+                24 -> games.filter { it.displayName!!.toUpperCase().startsWith("X") }
+                25 -> games.filter { it.displayName!!.toUpperCase().startsWith("Y") }
+                26 -> games.filter { it.displayName!!.toUpperCase().startsWith("Z") }
+                else -> games
+            }
+
+            listView.remove()
+            listScrollPane.remove()
+            buildListScrollPane({ buildGameListView(gamelistView, filteredGames) })
+            listView.selectedIndex = 0
+            selectedGame = filteredGames[0]
+            updateGameSelected()
+        } else {
+            launchGame()
+        }
         return true
     }
 
@@ -956,7 +1079,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     override fun onCancelButton(): Boolean {
         if (!guiready) return false
 
-        switchScreen(PlatformsScreen(emulio, platform))
+        if (needSelectionView && !isSelectionListView) {
+            listView.remove()
+            listScrollPane.remove()
+            buildListScrollPane({ buildSelectionListView()})
+            listView.selectedIndex = 0
+            selectedGame = null
+            updateGameSelected()
+        } else {
+            switchScreen(PlatformsScreen(emulio, platform))
+        }
+
         return true
     }
 

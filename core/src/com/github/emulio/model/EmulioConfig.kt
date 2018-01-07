@@ -85,10 +85,10 @@ class UIConfig {
 }
 
 class GraphicsConfig {
-	var screenWidth: Int? = null
-	var screenHeight: Int? = null
-	var fullscreen: Boolean? = null
-	var vsync: Boolean? = null
+	var screenWidth: Int? = 1280
+	var screenHeight: Int? = 720
+	var fullscreen: Boolean? = false
+	var vsync: Boolean? = true
 }
 
 enum class InputType {

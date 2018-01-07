@@ -23,10 +23,10 @@
     }
   },
   graphicsConfig: {
-    fullscreen: null,
-    screenHeight: null,
-    screenWidth: null,
-    vsync: null
+    fullscreen: false,
+    screenHeight: 720,
+    screenWidth: 1280,
+    vsync: true
   },
   keyboardConfig: {
     axisTrigger: -1,
