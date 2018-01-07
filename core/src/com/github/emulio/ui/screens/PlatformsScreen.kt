@@ -645,7 +645,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onExitButton(): Boolean {
-		lbLoading.setText("onExitButton ${System.currentTimeMillis()}")
+        showCloseDialog()
 		return false
 	}
 

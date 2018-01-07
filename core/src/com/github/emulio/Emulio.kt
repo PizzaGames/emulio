@@ -1,6 +1,8 @@
 package com.github.emulio
 
 import com.badlogic.gdx.Game
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
@@ -19,6 +21,10 @@ class Emulio(val minimizeApplication: () -> Unit, val restoreApplication: () -> 
 	lateinit var theme: MutableMap<Platform, Theme>
 	lateinit var platforms: List<Platform>
 	lateinit var config: EmulioConfig
+
+    val skin: Skin by lazy {
+        Skin(Gdx.files.internal("skin/emulio-skin.json"))
+    }
 
     fun listGames(platform: Platform): List<com.github.emulio.model.Game> {
         return games!![platform]?.toList() ?: emptyList()

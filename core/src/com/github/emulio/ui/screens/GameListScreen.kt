@@ -12,11 +12,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.List
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
@@ -25,6 +27,7 @@ import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.*
+import com.github.emulio.process.ProcessException
 import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
@@ -32,6 +35,7 @@ import com.github.emulio.utils.DateHelper
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.io.File
+
 
 class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emulio), InputListener {
 
@@ -151,8 +155,29 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	}
 
+    private var lastSelectedIndex: Int = -1
+
     private fun buildListScrollPane(builder: () -> List<String>) {
         listView = builder()
+
+        listView.addListener(object : ClickListener() {
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                val newIndex = listView.selectedIndex
+
+                if (lastSelectedIndex == newIndex) {
+                    onConfirmButton()
+                    return
+                }
+
+                if (!isSelectionListView) {
+                    selectedGame = filteredGames[newIndex]
+                    updateGameSelected()
+                }
+                
+                lastSelectedIndex = listView.selectedIndex
+            }
+        })
+
         listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle().apply {
 
         }).apply {
@@ -160,6 +185,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             setFlickScroll(true)
             setScrollBarPositions(false, true)
 
+            setScrollingDisabled(true, false)
             setSmoothScrolling(true)
 
             isTransform = true
@@ -480,6 +506,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
         }).apply {
+
             setSize(gamelistView)
 
             listOf(
@@ -682,6 +709,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             error("No game was selected")
         }
 
+
         val game = selectedGame!!
 
         logger.info { "launchGame: ${game.path.name}" }
@@ -699,7 +727,12 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         emulio.minimizeApplication()
-        ProcessLauncher.executeProcess(command.toTypedArray())
+        try {
+            ProcessLauncher.executeProcess(command.toTypedArray())
+        } catch (ex: ProcessException) {
+            showErrorDialog("There was a problem launching this game. Check your config".translate())
+        }
+
         emulio.restoreApplication()
     }
 
@@ -1178,6 +1211,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	override fun onExitButton(): Boolean {
         logger.debug { "onExitButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return false
+
+        showCloseDialog()
+
 		return true
 	}
 

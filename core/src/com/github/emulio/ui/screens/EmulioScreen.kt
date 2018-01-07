@@ -1,6 +1,7 @@
 package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
@@ -8,13 +9,17 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.github.emulio.Emulio
+import com.github.emulio.ui.input.InputManager
+import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.math.BigInteger
-import javax.swing.DebugGraphics
 
 abstract class EmulioScreen(val emulio: Emulio) : Screen {
 
@@ -109,24 +114,173 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 
 	fun switchScreen(newScreen: Screen) {
         logger.debug { "switchScreen" }
-
 		stage.root.color.a = 1f
 
         release()
-
-//        val sequenceAction = SequenceAction()
-//		sequenceAction.addAction(Actions.fadeOut(0.5f))
-//		sequenceAction.addAction(Actions.run({
-            dispose()
-
-//            logger.debug { "screen = newScreen" }
-            emulio.screen = newScreen
-//        }))
-//		stage.root.addAction(sequenceAction)
+        dispose()
+        emulio.screen = newScreen
 	}
+
+    fun showCloseDialog() {
+
+        object : YesNoDialog("Quit Emulio?".translate(), "Are you sure you want to quit emulio?".translate(), emulio) {
+            override fun onCancelDialog() {
+                logger.debug { "onCancelDialog" }
+            }
+
+            override fun onConfirmDialog() {
+                Gdx.app.exit()
+            }
+        }.show(stage)
+
+    }
+
+    fun showInfoDialog(message: String) {
+        InfoDialog("Info", message, emulio).show(stage)
+    }
+
+    fun showErrorDialog(message: String) {
+        InfoDialog("Error", message, emulio).show(stage)
+    }
+
+
 }
 
-fun main(args: Array<String>) {
-
-    print(Integer.toHexString(BigInteger("97999b" + "FF", 16).toInt()))
+fun Button.addClickListener(clickListener: () -> Unit) {
+    addListener(object : ClickListener() {
+        override fun clicked(event: InputEvent?, x: Float, y: Float) {
+            clickListener()
+        }
+    })
 }
+
+abstract class EmulioDialog(title: String, val emulio: Emulio) : Dialog(title, emulio.skin, "default"), com.github.emulio.ui.input.InputListener {
+
+    private lateinit var oldProcessor: InputProcessor
+    private lateinit var inputController: InputManager
+
+    override fun show(stage: Stage): Dialog {
+        oldProcessor = Gdx.input.inputProcessor
+        inputController = InputManager(this, emulio.config, stage)
+
+        Gdx.input.inputProcessor = inputController
+        return super.show(stage)
+    }
+
+    fun closeDialog() {
+        hide()
+        remove()
+        inputController.dispose()
+        Gdx.input.inputProcessor = oldProcessor
+    }
+
+    override fun onUpButton(): Boolean {
+        return false
+    }
+
+    override fun onDownButton(): Boolean {
+        return false
+    }
+
+    override fun onLeftButton(): Boolean {
+        return false
+    }
+
+    override fun onRightButton(): Boolean {
+        return false
+    }
+
+    override fun onFindButton(): Boolean {
+        return false
+    }
+
+    override fun onOptionsButton(): Boolean {
+        return false
+    }
+
+    override fun onSelectButton(): Boolean {
+        return false
+    }
+
+    override fun onPageUpButton(): Boolean {
+        return false
+    }
+
+    override fun onPageDownButton(): Boolean {
+        return false
+    }
+
+    override fun onExitButton(): Boolean {
+        return false
+    }
+
+}
+
+abstract class YesNoDialog(title: String, val dialogMessage: String, emulio: Emulio) : EmulioDialog(title, emulio) {
+
+    init {
+        initGUI()
+    }
+
+    abstract fun onConfirmDialog()
+    abstract fun onCancelDialog()
+
+    private fun initGUI() {
+        add(Table().apply {
+            add(Label(dialogMessage, emulio.skin)).minHeight(100f).expand()
+            row()
+            add(ImageTextButton("Yes".translate(), emulio.skin, "confirm").apply {
+                addClickListener {
+                    onConfirmButton()
+                }
+            }).expandX().right()
+            add(ImageTextButton("No".translate(), emulio.skin, "cancel").apply {
+                addClickListener {
+                    onCancelButton()
+                }
+            }).expandX().left()
+        }).expand()
+    }
+
+    override fun onConfirmButton(): Boolean {
+        onConfirmDialog()
+        closeDialog()
+        return false
+    }
+
+    override fun onCancelButton(): Boolean {
+        onCancelDialog()
+        closeDialog()
+        return false
+    }
+}
+
+class InfoDialog(title: String, val dialogMessage: String, emulio: Emulio) : EmulioDialog(title, emulio) {
+
+    init {
+        initGUI()
+    }
+
+    private fun initGUI() {
+        add(Table().apply {
+            add(Label(dialogMessage, emulio.skin)).minHeight(100f).expand()
+            row()
+            add(ImageTextButton("Ok".translate(), emulio.skin, "confirm").apply {
+                addClickListener {
+                    onConfirmButton()
+                }
+            }).expandX().right()
+        }).expand()
+    }
+
+    override fun onConfirmButton(): Boolean {
+        closeDialog()
+        return false
+    }
+
+    override fun onCancelButton(): Boolean {
+        closeDialog()
+        return false
+    }
+}
+
