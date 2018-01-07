@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
+import com.github.emulio.model.theme.HelpSystem
 import com.github.emulio.model.theme.View
 import com.github.emulio.model.theme.ViewImage
 import com.github.emulio.runners.GameScanner
@@ -32,22 +33,25 @@ import mu.KotlinLogging
 
 class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platforms[0]): EmulioScreen(emulio), InputListener {
 
-	val logger = KotlinLogging.logger { }
+	private val logger = KotlinLogging.logger { }
 
 	private val inputController: InputManager
 
-	private var whiteTexture: Texture
-	private var grayTexture: Texture
-	private var loadingFont: BitmapFont
-	private var gameCountFont: BitmapFont
+    private var whiteTexture: Texture
+    private var grayTexture: Texture
 
-	private lateinit var lbCount: Label
-	private lateinit var lbLoading: Label
-	private lateinit var root: Group
-	private lateinit var bgBlack: Image
-	private lateinit var groupPlatforms: Group
+    private var loadingFont: BitmapFont
+    private var gameCountFont: BitmapFont
 
+    private lateinit var groupPlatforms: Group
+    private lateinit var root: Group
+
+    private lateinit var lbCount: Label
+    private lateinit var lbLoading: Label
+
+    private lateinit var bgBlack: Image
 	private var bgLastPlatform: Image? = null
+
 	private var currentPlatform = initialPlatform
 	private var currentIdx: Int
 
@@ -60,15 +64,16 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	private val expandWidth = screenWidth / 4f
 
 	private val groupPlatformsHeight = screenHeight / 3.5f
+
 	private var platformImages = arrayListOf<Image>()
 	private var platformOriginalX = arrayListOf<Float>()
 
 	private var platformOriginalWidth = arrayListOf<Float>()
-	val paddingWidth = expandWidth / 3
+	private val paddingWidth = expandWidth / 3
+
 	private var platformWidth = widthPerPlatform - paddingWidth * 2
 
-
-	init {
+    init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
 
 		inputController = InputManager(this, emulio.config, stage)
@@ -85,7 +90,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		gameCountFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 26
-			color = Color.BLACK
+			color = Color.DARK_GRAY
+            color.a = 0.8f
 		})
 
 		initGUI()
@@ -111,6 +117,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		initGroupPlatforms()
 		initGroupPlatformCount()
+
+        initHelpHuds(0f, screenHeight * 0.065f)
 	}
 
 	private lateinit var groupCount: Table
@@ -164,34 +172,129 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		val platformTheme = getTheme(platform)
 		val systemView = checkNotNull(platformTheme.findView("system"), { "System tag of theme ${platform.platformName} not found." })
+
 		val background = systemView.findViewItem("background")!! as ViewImage
 		val backgroundTexture = Texture(FileHandle(background.path!!))
 		initBgPlatform(backgroundTexture)
-
-
-		//TODO
-//		val helpSystem = systemView.findViewItem("help")
-//		if (helpSystem != null) {
-//			helpSystem as HelpSystem
-//
-//			val textColor = helpSystem.textColor
-//			if (textColor != null) {
-//				val argb = Integer.parseInt(textColor, 16)
-//				loadingFont.color = Color()
-//			}
-//		} else {
-//			loadingFont.color = Color.WHITE
-//		}
-
-
 
 		groupPlatforms.zIndex = 10
 		lbLoading.zIndex = 10
 		logo.zIndex = 10
 		groupCount.zIndex = 9
+
+        updateHelpHuds(systemView)
 	}
-	
-	private fun initGroupPlatforms() {
+
+    private fun updateHelpHuds(systemView: View) {
+
+        val helpSystemView = systemView.findViewItem("help") as HelpSystem?
+
+        if (helpSystemView == null) {
+            helpHuds.imgChoose.color.a = 0f
+            helpHuds.txtChoose.color.a = 0f
+            helpHuds.imgMenu.color.a = 0f
+            helpHuds.txtMenu.color.a = 0f
+            helpHuds.imgSelect.color.a = 0f
+            helpHuds.txtSelect.color.a = 0f
+
+            return
+        }
+
+        val alpha = 0.4f
+
+        val iconColor = getColor(helpSystemView.iconColor)
+        val textColor = getColor(helpSystemView.textColor)
+
+        helpHuds.imgChoose.color = iconColor
+        helpHuds.imgChoose.color.a = alpha
+
+        helpHuds.txtChoose.color = textColor
+        helpHuds.txtChoose.color.a = alpha
+
+        helpHuds.imgMenu.color = iconColor
+        helpHuds.imgMenu.color.a = alpha
+
+        helpHuds.txtMenu.color = textColor
+        helpHuds.txtMenu.color.a = alpha
+
+        helpHuds.imgSelect.color = iconColor
+        helpHuds.imgSelect.color.a = alpha
+
+        helpHuds.txtSelect.color = textColor
+        helpHuds.txtSelect.color.a = alpha
+
+        lbLoading.color = textColor
+        lbLoading.color.a = alpha
+    }
+
+    data class HelpHuds(
+        val imgMenu: Image,
+        val txtMenu: Label,
+        val imgSelect: Image,
+        val txtSelect: Label,
+        val imgChoose: Image,
+        val txtChoose: Label
+    )
+    private lateinit var helpHuds: HelpHuds
+
+    private fun initHelpHuds(initialY: Float, height: Float) {
+
+        val calculatedHeight = height * 0.55f
+
+        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+            size = calculatedHeight.toInt()
+            color = Color.WHITE
+            color.a = 1f
+        })
+
+        // Calculate the size according resolution???
+        val imgWidth = calculatedHeight
+        val imgHeight = calculatedHeight
+        val padding = 5f
+
+        val lineHeight = helpFont.lineHeight
+
+        val y = initialY - 2f + ((height - lineHeight) / 2)
+        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
+
+        val imgStart = buildImage("images/resources/help/button_start_128_128.png", imgWidth, imgHeight, 10f, imageY)
+        stage.addActor(imgStart)
+        val txtMenu = buildText("Menu".translate().toUpperCase(), helpFont, imgStart.x + imgWidth + padding, y)
+        stage.addActor(txtMenu)
+
+        val imgA = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtMenu.x + txtMenu.width + (padding * 3), imageY)
+        stage.addActor(imgA)
+        val txtSelect = buildText("Select".translate().toUpperCase(), helpFont, imgA.x + imgWidth + padding, y)
+        stage.addActor(txtSelect)
+
+        val imgDPadLeftRight = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
+        stage.addActor(imgDPadLeftRight)
+        val txtChoose = buildText("Choose".translate().toUpperCase(), helpFont, imgDPadLeftRight.x + imgWidth + padding, y)
+        stage.addActor(txtChoose)
+
+        helpHuds = HelpHuds(imgStart, txtMenu, imgA, txtSelect, imgDPadLeftRight, txtChoose)
+    }
+
+    private fun buildText(text: String, txtFont: BitmapFont, x: Float, y: Float): Label {
+        return Label(text, Label.LabelStyle().apply {
+            font = txtFont
+        }).apply {
+            setPosition(x, y)
+            color = Color.WHITE
+        }
+    }
+
+    private fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
+        val imgButtonStart = Image(Texture(Gdx.files.internal(imgPath), true).apply {
+            setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+        })
+        imgButtonStart.setSize(imgWidth, imgHeight)
+        imgButtonStart.x = x
+        imgButtonStart.y = y
+        return imgButtonStart
+    }
+
+    private fun initGroupPlatforms() {
 
 
 		groupPlatforms = Group().apply {
@@ -269,8 +372,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			font = loadingFont
 		})
 
-		lbLoading.x = 20f
-		lbLoading.y = 20f
+		lbLoading.x = 10f
+		lbLoading.y = screenHeight - 10f
 		root.addActor(lbLoading)
 	}
 
@@ -355,10 +458,9 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	}
 
-	override fun dispose() {
-		super.dispose()
-		inputController.dispose()
-	}
+    override fun release() {
+        inputController.dispose()
+    }
 
 	private fun observeGameScanner(platforms: List<Platform>) {
 

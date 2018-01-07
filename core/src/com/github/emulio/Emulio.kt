@@ -8,7 +8,7 @@ import com.github.emulio.ui.screens.SplashScreen
 import java.io.InputStream
 
 
-class Emulio(val minimizeApplication: () -> Unit, val restoreAplication: () -> Unit) : Game() {
+class Emulio(val minimizeApplication: () -> Unit, val restoreApplication: () -> Unit) : Game() {
 
 	override fun create() {
 		screen = SplashScreen(this)

@@ -11,6 +11,9 @@ class EmulioConfig {
     lateinit var languagePath: String
 	lateinit var keyboardConfig: InputConfig
 	lateinit var gamepadConfig: Map<String, InputConfig>
+
+    var maxGamesList: Int = -1
+
 	var debug: Boolean = true
 	
 	fun loadDefaults() {
@@ -18,6 +21,7 @@ class EmulioConfig {
 		uiConfig = UIConfig()
 
         languagePath = "/languages/emulio-language-en_US.yaml"
+        maxGamesList = 200
 
 		keyboardConfig = InputConfig().apply {
 			type = InputType.KEYBOARD

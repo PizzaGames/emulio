@@ -60,18 +60,6 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 		}).forEach { path ->
 			observableEmitter.onNext(Game(path.toFile(), platform))
 		}
-//		if (root.isDirectory) {
-//			root.listFiles().forEach {
-//				scanFiles(it, observableEmitter, pathSet, platform)
-//			}
-//		} else {
-//			if (root.isFile) {
-//				if (!pathSet.contains(root.absolutePath)) {
-//					println(root.absolutePath)
-//					observableEmitter.onNext(Game(root, platform))
-//				}
-//			}
-//		}
 	}
 
 }

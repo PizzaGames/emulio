@@ -17,20 +17,21 @@ object DesktopLauncher {
             setDecorated(true)
             setInitialBackgroundColor(Color(0x000000FF))
             setTitle("Emulio")
-//            setWindowedMode(1280, 720)
-            setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode())
+//            setWindowedMode(1920, 1000)
+            setWindowedMode(1280, 720)
+//            setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode())
         }
 
         config.setWindowIcon(Files.FileType.Internal, "images/32-icon.png")
 
-		Lwjgl3Application(Emulio({ minimizeApplication() }, { restoreAplication() }), config)
+		Lwjgl3Application(Emulio(DesktopLauncher::minimizeApplication, DesktopLauncher::restoreAplication), config)
     }
 
-    fun minimizeApplication() {
+    private fun minimizeApplication() {
         (Gdx.graphics as Lwjgl3Graphics).window.iconifyWindow()
     }
 
-    fun restoreAplication() {
+    private fun restoreAplication() {
         (Gdx.graphics as Lwjgl3Graphics).window.restoreWindow()
     }
 

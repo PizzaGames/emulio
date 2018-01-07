@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D
 import java.io.File
 import java.io.FileInputStream
 
-const val FORCE_PNG_CONVERSION = true
+const val FORCE_PNG_CONVERSION = false
 
 class ThemeReader {
 	
@@ -29,7 +29,7 @@ class ThemeReader {
 		
 		var theme = Flowable.empty<Theme>()
 		platforms.forEach { platform ->
-			logger.debug { "reading theme for platform: ${platform.platformName} " }
+			logger.debug { "reading theme for platform: ${platform.platformName}" }
 			theme = theme.concatWith(readPlatformTheme(platform, themeDir))
 		}
 		return theme

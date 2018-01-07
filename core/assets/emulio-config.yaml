@@ -49,6 +49,7 @@
     usePov: false
   },
   languagePath: /languages/emulio-language-en_US.yaml,
+  maxGamesList: 200,
   uiConfig: {
     screenSaver: null,
     themeName: null,

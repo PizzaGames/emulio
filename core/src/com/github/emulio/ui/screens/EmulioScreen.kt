@@ -12,9 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.github.emulio.Emulio
+import mu.KotlinLogging
 import java.math.BigInteger
+import javax.swing.DebugGraphics
 
 abstract class EmulioScreen(val emulio: Emulio) : Screen {
+
+    private val logger = KotlinLogging.logger { }
 
 	val stage: Stage = Stage()
 
@@ -45,11 +49,11 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 
                 if (fontColor != null) {
                     color = fontColor
-                    borderWidth = 0.5f
+                    borderWidth = 0.4f
                     borderColor = fontColor
                 }
 
-                shadowColor = Color(0.3f, 0.3f, 0.3f, 0.3f)
+                shadowColor = Color(0.2f, 0.2f, 0.2f, 0.2f)
                 shadowOffsetX = 1
                 shadowOffsetY = 1
             }
@@ -70,16 +74,23 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	}
 
 	override fun show() {
-		stage.root.color.a = 0f
+        logger.debug { "show" }
+        stage.root.actions.forEach { it.reset() }
+
+        stage.root.color.a = 0f
+
+        onScreenLoad()
+
 		stage.root.addAction(SequenceAction(
-            Actions.fadeIn(0.5f),
-            Actions.run { onScreenLoad() })
-        )
+            Actions.fadeIn(0.5f)
+        ))
 	}
 
     open fun onScreenLoad() {
 
     }
+
+    abstract fun release()
 
     fun createColorTexture(rgba: Int, width: Int = 1, height: Int = 1): Texture {
 		val pixmap = Pixmap(width, height, Pixmap.Format.RGBA8888).apply {
@@ -97,14 +108,21 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	}
 
 	fun switchScreen(newScreen: Screen) {
+        logger.debug { "switchScreen" }
+
 		stage.root.color.a = 1f
-		val sequenceAction = SequenceAction()
-		sequenceAction.addAction(Actions.fadeOut(0.5f))
-		sequenceAction.addAction(Actions.run({
-			emulio.screen = newScreen
+
+        release()
+
+//        val sequenceAction = SequenceAction()
+//		sequenceAction.addAction(Actions.fadeOut(0.5f))
+//		sequenceAction.addAction(Actions.run({
             dispose()
-        }))
-		stage.root.addAction(sequenceAction)
+
+//            logger.debug { "screen = newScreen" }
+            emulio.screen = newScreen
+//        }))
+//		stage.root.addAction(sequenceAction)
 	}
 }
 

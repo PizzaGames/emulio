@@ -24,6 +24,7 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 		DEVELOPER("developer"),
 		GENRE("genre"),
 		PLAYERS("players"),
+        RATING("rating"),
         PUBLISHER("publisher"),
         DESC("desc"),
 		NO_STATE(""),
@@ -64,7 +65,9 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			tag = Tag.GENRE
 		} else if (qName.equals(Tag.PLAYERS.value, true)) {
 			tag = Tag.PLAYERS
-		}
+        } else if (qName.equals(Tag.RATING.value, true)) {
+            tag = Tag.RATING
+        }
 	}
 
 	var id: String? = null
@@ -78,6 +81,7 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 	var publisher: String? = null
 	var genre: String? = null
 	var players: String? = null
+    var rating: Float? = null
 
 	override fun endElement(uri: String?, localName: String?, qName: String?) {
 		if (qName.equals(Tag.GAME.value, true)) {
@@ -93,15 +97,30 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 			}
 			
 			
-			val path = getFile(baseDir, path!!)
-			pathSet.add(path.absolutePath)
+			val gamePath = getFile(baseDir, path!!)
+			pathSet.add(gamePath.absolutePath)
 			
 			emitter.onNext(
-					Game(id, source, path,
+					Game(id, source, gamePath,
 							name, description, if (image != null) File(baseDir, image) else null,
 							releaseDate, developer,
 							publisher, genre,
-							players, platform))
+							players, rating, platform))
+
+            name = null
+            id = null
+            source = null
+            path = null
+            image = null
+            releaseDate = null
+            developer = null
+            publisher = null
+            genre = null
+            players = null
+            rating = null
+
+
+            description = null
 		}
 		
 		if (qName.equals(Tag.GAME_LIST.value, true)) {
@@ -123,22 +142,45 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 
 	override fun characters(ch: CharArray, start: Int, length: Int) {
 		when (tag) {
-			Tag.PATH -> {path = String(ch, start, length).trim()}
-			Tag.NAME -> {name = String(ch, start, length).trim()}
+			Tag.PATH -> {
+                if (path == null) {
+                    path = String(ch, start, length)
+                } else {
+                    path += String(ch, start, length)
+                }
+            }
+			Tag.NAME -> {
+                if (name == null) {
+                    name = String(ch, start, length)
+                } else {
+                    name += String(ch, start, length)
+                }
+            }
 			Tag.IMAGE -> {image = String(ch, start, length).trim()}
 			Tag.RELEASE_DATE -> {releaseDate = convertDate(ch, start, length)}
 			Tag.DEVELOPER -> {developer = String(ch, start, length).trim()}
 			Tag.PUBLISHER -> {publisher = String(ch, start, length).trim()}
-			Tag.DESC -> {description = String(ch, start, length).trim()}
+			Tag.DESC -> {
+                if (description != null) {
+                    description += String(ch, start, length)
+                } else {
+                    description = String(ch, start, length)
+                }
+            }
 			Tag.GENRE -> {genre = String(ch, start, length).trim()}
 			Tag.PLAYERS -> {players = String(ch, start, length).trim()}
+            Tag.RATING -> {rating = readFloat(String(ch, start, length).trim())}
 //            Tag.GAME_LIST -> TODO()
 //            Tag.GAME -> TODO()
 //            Tag.NO_STATE -> TODO()
         }
 	}
 
-	fun convertDate(ch: CharArray, start: Int, length: Int): Date {
+    private fun readFloat(value: String): Float {
+        return value.toFloat()
+    }
+
+    fun convertDate(ch: CharArray, start: Int, length: Int): Date {
 		val calendar = GregorianCalendar.getInstance()
 
 		var currentOffset = start

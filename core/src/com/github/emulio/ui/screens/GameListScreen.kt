@@ -2,10 +2,13 @@ package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
@@ -26,6 +29,7 @@ import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.DateHelper
+import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.io.File
 
@@ -44,7 +48,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     private lateinit var descriptionScrollPane: ScrollPane
     private lateinit var gameImage: Image
     private lateinit var gameReleaseDate: TextField
-    private lateinit var gameRating: TextField
     private lateinit var gameDescription: Label
     private lateinit var gamePlayCount: TextField
     private lateinit var gameLastPlayed: TextField
@@ -55,6 +58,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     private lateinit var root: Group
     private lateinit var logo: Image
     private lateinit var imageView: ViewImage
+    private lateinit var ratingImages: GameListScreen.RatingImages
 
     private var lastTimer: Timer.Task? = null
     private var lastSequenceAction: SequenceAction? = null
@@ -62,8 +66,40 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	init {
 		Gdx.input.inputProcessor = inputController
 
-		games = emulio.games!![platform]?.toList() ?: emptyList<Game>()
-        games = games.toList().sortedBy { it.name }
+		val gamesFound = emulio.games!![platform]?.toList() ?: emptyList()
+
+
+        val supportedExtensions = platform.romsExtensions
+        val gamesMap = mutableMapOf<String, Game>()
+        gamesFound.forEach { game ->
+
+            val gameFound: Game? = gamesMap[game.path.nameWithoutExtension]
+            if (gameFound != null) {
+                if (gameFound.path.name != game.path.nameWithoutExtension) {
+                    gamesMap[game.path.nameWithoutExtension] = game
+                    game.displayName = game.path.nameWithoutExtension
+
+                } else if (gameFound.path.name == game.path.nameWithoutExtension) {
+
+                    val idxFound = supportedExtensions.indexOf(gameFound.path.extension)
+                    val idxGame = supportedExtensions.indexOf(game.path.extension)
+
+                    if (idxGame < idxFound) {
+                        val key = game.name!!
+
+                        gamesMap[key] = game
+                        game.displayName = key
+                    }
+                }
+            } else {
+                val key = game.name ?: game.path.name
+                game.displayName = key
+                gamesMap[key] = game
+
+            }
+        }
+
+        games = gamesMap.values.sortedBy { it.displayName!!.toLowerCase() }
 
 		initGUI()
 	}
@@ -76,20 +112,31 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     private fun initGUI() {
 		val theme = emulio.theme[platform]!!
+        val basicViewOnly = isBasicViewOnly()
 
-        if (isBasicViewOnly()) {
-            buildBasicView(theme.findView("basic")!!)
+        val view = theme.findView(if (basicViewOnly) "basic" else "detailed")!!
+
+        buildCommonComponents(view)
+
+        if (basicViewOnly) {
+            buildBasicView(view)
         } else {
-            buildDetailedView(theme.findView("detailed")!!)
+            buildDetailedView(view)
         }
 	}
 
     override fun onScreenLoad() {
+        logger.debug { "onScreenLoad" }
         guiready = true
+
+        if (games.size > 1) {
+            listView.selectedIndex = 0
+            selectedGame = games[0]
+            updateGameSelected()
+        }
     }
 
     private fun buildBasicView(basicView: View) {
-		buildCommonComponents(basicView)
 
 		val gamelistView = basicView.findViewItem("gamelist") as TextList
         listView = buildListView(gamelistView)
@@ -111,6 +158,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         stage.addActor(listScrollPane)
 
+
 	}
 
 	private fun buildCommonComponents(view: View) {
@@ -129,9 +177,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		}
 
 		val footer = view.findViewItem("footer") as ViewImage?
-		if (footer != null) {
-			stage.addActor(buildImage(footer, Scaling.stretch))
-		}
+        val imgFooter: Image?
+
+        if (footer != null) {
+            imgFooter = buildImage(footer, Scaling.stretch)
+            stage.addActor(imgFooter)
+		} else {
+            imgFooter = null
+        }
 
 		val header = view.findViewItem("header") as ViewImage?
 		if (header != null) {
@@ -155,10 +208,22 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		if (logo != null) {
 			stage.addActor(buildImage(logo))
 		}
+
+        val footerHeight: Float
+        val footerY: Float
+        if (imgFooter != null) {
+            footerHeight = imgFooter.height
+            footerY = imgFooter.y
+        } else {
+            footerHeight = 10f
+            footerY = 10f
+        }
+
+
+        buildHelpHuds(footerY, footerHeight)
 	}
 
     private fun buildDetailedView(detailedView: View) {
-        buildCommonComponents(detailedView)
 
         val descriptionView = detailedView.findViewItem("md_description") as Text?
         if (descriptionView != null) {
@@ -207,7 +272,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             this.imageView = imageView
         }
 
-        buildLabel(detailedView, "md_lbl_rating", "Rating:")
+        val lbRating = buildLabel(detailedView, "md_lbl_rating", "Rating:")
         buildLabel(detailedView, "md_lbl_releasedate", "Released:")
         buildLabel(detailedView, "md_lbl_developer", "Developer:")
         buildLabel(detailedView, "md_lbl_publisher", "Publisher:")
@@ -215,6 +280,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         buildLabel(detailedView, "md_lbl_players", "Players:")
         buildLabel(detailedView, "md_lbl_lastplayed", "Last played:")
         buildLabel(detailedView, "md_lbl_playcount", "Times played:")
+
 
         val playCountView = detailedView.findViewItem("md_playcount") as Text?
         if (playCountView != null) {
@@ -258,22 +324,77 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             stage.addActor(gameReleaseDate)
         }
 
-        val ratingView = detailedView.findViewItem("md_rating") as Text?
+        val ratingView = detailedView.findViewItem("md_rating") as Rating?
         if (ratingView != null) {
-            gameRating = buildTextField(ratingView)
-            stage.addActor(gameRating)
+            buildRatingImages(ratingView, lbRating!!)
         }
 
 	}
 
-    private fun buildLabel(detailedView: View, viewName: String, viewText: String) {
+    data class RatingImages(
+        val ratingImg1: Image,
+        val ratingImg2: Image,
+        val ratingImg3: Image,
+        val ratingImg4: Image,
+        val ratingImg5: Image,
+        val ratingUnFilledTexture: Texture,
+        val ratingFilledTexture: Texture,
+        val ratingColor: Color
+    )
+
+
+
+    private fun buildRatingImages(ratingView: Rating, lbRating: Label) {
+        val ratingTexture = buildTexture("images/resources/star_unfilled_128_128.png")
+
+        val ratingFilledTexture = buildTexture("images/resources/star_filled_128_128.png")
+
+        val ratingWidth = lbRating.height
+        val ratingHeight = lbRating.height
+
+        val ratingImg1 = Image(ratingTexture).apply {
+            setSize(ratingWidth, ratingHeight)
+            val (viewX, viewY) = getPosition(ratingView)
+
+            x = viewX
+            y = viewY + 6f
+        }
+
+        stage.addActor(ratingImg1)
+        val ratingImg2 = buildImage(ratingTexture, ratingWidth, ratingHeight, ratingImg1.x + ratingImg1.width, ratingImg1.y)
+        stage.addActor(ratingImg2)
+        val ratingImg3 = buildImage(ratingTexture, ratingWidth, ratingHeight, ratingImg2.x + ratingImg2.width, ratingImg1.y)
+        stage.addActor(ratingImg3)
+        val ratingImg4 = buildImage(ratingTexture, ratingWidth, ratingHeight, ratingImg3.x + ratingImg3.width, ratingImg1.y)
+        stage.addActor(ratingImg4)
+        val ratingImg5 = buildImage(ratingTexture, ratingWidth, ratingHeight, ratingImg4.x + ratingImg4.width, ratingImg1.y)
+        stage.addActor(ratingImg5)
+
+        val color = getColor(ratingView.color)
+
+        ratingImages = RatingImages(
+            ratingImg1,
+            ratingImg2,
+            ratingImg3,
+            ratingImg4,
+            ratingImg5,
+            ratingTexture,
+            ratingFilledTexture,
+            color
+        )
+    }
+
+    private fun buildLabel(detailedView: View, viewName: String, viewText: String): Label? {
         val lbView = detailedView.findViewItem(viewName) as Text?
         if (lbView != null) {
-            stage.addActor(buildLabel(lbView).apply {
-
+            val lbl = buildLabel(lbView).apply {
                 setText(viewText)
-            })
+            }
+            stage.addActor(lbl)
+
+            return lbl
         }
+        return null
     }
 
     private fun buildImage(image: ViewImage, scaling: Scaling = Scaling.fit, imagePath: File? = image.path): Image {
@@ -291,7 +412,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 			setSize(image)
 			setPosition(image)
-
 			setOrigin(image)
 
 
@@ -331,13 +451,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             textView.text ?: ""
         }
 
-        val color = getColor(textView.textColor ?: textView.color)
-        val font = getFont(getFontPath(textView), getFontSize(textView.fontSize), color)
+        val lbColor = getColor(textView.textColor ?: textView.color)
+        val font = getFont(getFontPath(textView), getFontSize(textView.fontSize))
 
-        return Label(text, Label.LabelStyle(font, color)).apply {
+        return Label(text, Label.LabelStyle(font, lbColor)).apply {
             setAlignment(Align.topLeft)
             setSize(textView)
             setPosition(textView)
+            color = lbColor
         }
     }
 
@@ -346,31 +467,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 		return List<String>(List.ListStyle().apply {
             fontColorUnselected = getColor(gamelistView.primaryColor)
             fontColorSelected = getColor(gamelistView.selectedColor)
-
-            /**
-             * color font should not be defined, since it will use the
-             * fontColorUnselected and fontColorSelected definitions above
-             */
             font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
 
 			val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
 			selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
-            // TODO: alignment of list items?
-            // TODO: horizontal marquee on lists? it is implemented?
-            // of not, how to do? It is possible?
-
 		}).apply {
             setSize(gamelistView)
 
             gamelistView.forceUpperCase
-
-//            games.forEach { game ->
-//                items.add(game.name ?: game.path.name)
-//            }
-
-            games.forEachIndexed() { idx, game ->
-                items.add("$idx ${game.name ?: game.path.name}")
+            games.forEach { game ->
+                items.add(game.name ?: game.path.name)
             }
 		}
 
@@ -445,13 +552,18 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	private fun Actor.setPosition(view: ViewItem) {
-		val x = screenWidth * view.positionX!!
-		val y = (screenHeight * (1f - view.positionY!!)) - height
+        val (x, y) = getPosition(view)
 
 		setPosition(x, y)
 	}
 
-	private fun getFontPath(textView: Text): FileHandle {
+    private fun Actor.getPosition(view: ViewItem): Pair<Float, Float> {
+        val x = screenWidth * view.positionX!!
+        val y = (screenHeight * (1f - view.positionY!!)) - height
+        return Pair(x, y)
+    }
+
+    private fun getFontPath(textView: Text): FileHandle {
         return if (textView.fontPath != null) {
             FileHandle(textView.fontPath!!.absolutePath)
         } else{
@@ -505,15 +617,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	override fun resize(width: Int, height: Int) {
 	}
 
-	override fun dispose() {
-        super.dispose()
+    override fun release() {
         inputController.dispose()
-	}
+    }
 
     private fun launchGame() {
 
         if (listView.selectedIndex == -1) {
-            listView.selectedIndex = 0
+            error("No game was selected")
         }
 
         val selectedGame = games[listView.selectedIndex]
@@ -533,7 +644,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         emulio.minimizeApplication()
         ProcessLauncher.executeProcess(command.toTypedArray())
-        emulio.restoreAplication()
+        emulio.restoreApplication()
     }
 
     private fun selectNext(amount: Int = 1) {
@@ -566,6 +677,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         lastTimer?.cancel()
         lastSequenceAction?.reset()
 
+        logger.debug { if (selectedGame != null) { "updateGameSelected [${selectedGame!!.name}] [${selectedGame!!.path.name}]" } else { "no game" } }
+
         if (isBasicViewOnly()) {
             return
         }
@@ -574,6 +687,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             gameImage.isVisible = false
             return
         }
+
 
         val game = selectedGame!!
 
@@ -595,8 +709,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         })
 
         gameDeveloper.text = safeValue(game.developer)
-        gameRating.text = "x"//safeValue(game.rating)
-
         gamePlayCount.text = "0"
         gameLastPlayed.text = "Never"
         gamePlayers.text = safeValue(game.players)
@@ -606,6 +718,60 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         descriptionScrollPane.scrollY = 0f
         gameDescription.setText(safeValue(game.description, ""))
+
+        val gameRating = game.rating
+        if (gameRating != null) {
+            val rating = game.rating
+            ratingImages.apply {
+                ratingImg1.drawable = if (rating > 0.05) {
+                    TextureRegionDrawable(TextureRegion(ratingFilledTexture))
+                } else {
+                    TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                }
+                ratingImg2.drawable = if (rating > 0.25) {
+                    TextureRegionDrawable(TextureRegion(ratingFilledTexture))
+                } else {
+                    TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                }
+                ratingImg3.drawable = if (rating > 0.45) {
+                    TextureRegionDrawable(TextureRegion(ratingFilledTexture))
+                } else {
+                    TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                }
+                ratingImg4.drawable = if (rating > 0.65) {
+                    TextureRegionDrawable(TextureRegion(ratingFilledTexture))
+                } else {
+                    TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                }
+                ratingImg5.drawable = if (rating > 0.90) {
+                    TextureRegionDrawable(TextureRegion(ratingFilledTexture))
+                } else {
+                    TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                }
+
+                ratingImg1.color = ratingColor
+                ratingImg2.color = ratingColor
+                ratingImg3.color = ratingColor
+                ratingImg4.color = ratingColor
+                ratingImg5.color = ratingColor
+            }
+
+        } else {
+
+            ratingImages.apply {
+                ratingImg1.drawable = TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                ratingImg2.drawable = TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                ratingImg3.drawable = TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                ratingImg4.drawable = TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+                ratingImg5.drawable = TextureRegionDrawable(TextureRegion(ratingUnFilledTexture))
+
+                ratingImg1.color = ratingColor
+                ratingImg2.color = ratingColor
+                ratingImg3.color = ratingColor
+                ratingImg4.color = ratingColor
+                ratingImg5.color = ratingColor
+            }
+        }
 
         animateDescription()
 
@@ -649,7 +815,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         val minItemsVisible = itemHeight * 5
 
-        if (listView.selectedIndex == games.size - 1) {
+        val itemsPerView = listScrollPane.height / itemHeight
+
+        if (listView.selectedIndex > (games.size - itemsPerView)) {
             listScrollPane.scrollY = listView.height - listScrollPane.height
             return
         }
@@ -669,6 +837,115 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             listScrollPane.scrollY = minScrollY
         }
     }
+
+    private fun buildHelpHuds(initialY: Float, height: Float) {
+
+        val calculatedHeight = height * 0.55f
+
+        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+            size = calculatedHeight.toInt()
+            color = Color.WHITE
+            color.a = 1f
+        })
+
+        // Calculate the size according resolution???
+        val imgWidth = calculatedHeight
+        val imgHeight = calculatedHeight
+        val padding = 5f
+
+        val lineHeight = helpFont.lineHeight
+
+        val y = initialY - 2f + ((height - lineHeight) / 2)
+        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
+
+        val imgOptions = buildImage("images/resources/help/button_select_128_128.png", imgWidth, imgHeight, 10f, imageY)
+        stage.addActor(imgOptions)
+        val txtOptions = buildText("Options".translate().toUpperCase(), helpFont, imgOptions.x + imgWidth + padding, y)
+        stage.addActor(txtOptions)
+
+        val imgStart = buildImage("images/resources/help/button_start_128_128.png", imgWidth, imgHeight, txtOptions.x + txtOptions.width + (padding * 3), imageY)
+        stage.addActor(imgStart)
+        val txtMenu = buildText("Menu".translate().toUpperCase(), helpFont, imgStart.x + imgWidth + padding, y)
+        stage.addActor(txtMenu)
+
+        val imgB = buildImage("images/resources/help/button_start_128_128.png", imgWidth, imgHeight, txtMenu.x + txtMenu.width + (padding * 3), imageY)
+        stage.addActor(imgB)
+        val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgB.x + imgWidth + padding, y)
+        stage.addActor(txtBack)
+
+        val imgA = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
+        stage.addActor(imgA)
+        val txtSelect = buildText("Launch".translate().toUpperCase(), helpFont, imgA.x + imgWidth + padding, y)
+        stage.addActor(txtSelect)
+
+        val imgDPadUpDown = buildImage("images/resources/help/dpad_updown_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
+        stage.addActor(imgDPadUpDown)
+        val txtSystem = buildText("System".translate().toUpperCase(), helpFont, imgDPadUpDown.x + imgWidth + padding, y)
+        stage.addActor(txtSystem)
+
+        val imgDPadLeftRight = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSystem.x + txtSystem.width + (padding * 3), imageY)
+        stage.addActor(imgDPadLeftRight)
+        val txtChoose = buildText("Choose".translate().toUpperCase(), helpFont, imgDPadLeftRight.x + imgWidth + padding, y)
+        stage.addActor(txtChoose)
+
+        val alpha = 0.4f
+        val imgColor = Color.BLACK
+        val txtColor = Color.BLACK
+
+        imgOptions.color = imgColor
+        imgOptions.color.a = alpha
+        txtOptions.color = txtColor
+        txtOptions.color.a = alpha
+        imgStart.color = imgColor
+        imgStart.color.a = alpha
+        txtMenu.color = txtColor
+        txtMenu.color.a = alpha
+        imgB.color = imgColor
+        imgB.color.a = alpha
+        txtBack.color = txtColor
+        txtBack.color.a = alpha
+        imgA.color = imgColor
+        imgA.color.a = alpha
+        txtSelect.color = txtColor
+        txtSelect.color.a = alpha
+        imgDPadUpDown.color = imgColor
+        imgDPadUpDown.color.a = alpha
+        txtSystem.color = txtColor
+        txtSystem.color.a = alpha
+        imgDPadLeftRight.color = imgColor
+        imgDPadLeftRight.color.a = alpha
+        txtChoose.color = txtColor
+        txtChoose.color.a = alpha
+
+    }
+
+    private fun buildText(text: String, txtFont: BitmapFont, x: Float, y: Float): Label {
+        return Label(text, Label.LabelStyle().apply {
+            font = txtFont
+        }).apply {
+            setPosition(x, y)
+            color = Color.WHITE
+        }
+    }
+
+    private fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
+        return buildImage(buildTexture(imgPath), imgWidth, imgHeight, x, y)
+    }
+
+    private fun buildImage(texture: Texture, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
+        val imgButtonStart = Image(texture)
+        imgButtonStart.setSize(imgWidth, imgHeight)
+        imgButtonStart.x = x
+        imgButtonStart.y = y
+        return imgButtonStart
+    }
+
+    private fun buildTexture(imgPath: String): Texture {
+        return Texture(Gdx.files.internal(imgPath), true).apply {
+            setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+        }
+    }
+
 
     override fun onConfirmButton(): Boolean {
         launchGame()
@@ -734,6 +1011,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	override fun onFindButton(): Boolean {
         logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
+
         if (!guiready) return false
 		return true
 	}
@@ -769,6 +1047,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         if (!guiready) return false
 		return true
 	}
+
 
 }
 

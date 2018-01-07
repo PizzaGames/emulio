@@ -244,9 +244,8 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		stage.viewport.update(width, height, true)
 	}
 
-	override fun dispose() {
-		stage.dispose()
-	}
+    override fun release() {
+    }
 
 	override fun hide() {
 
