@@ -33,4 +33,4 @@ deploy:
     tags: true
     repo: PizzaGames/emulio
     branches: master
-    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$"
+    condition: '$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$'
