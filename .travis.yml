@@ -8,53 +8,29 @@ jdk: oraclejdk8
 # Cache gradle dependencies (should be faster to download them from cache)
 cache:
   directories:
-  - $HOME/.gradle/wrapper
-  - $HOME/.gradle/caches/modules-2/files-2.1
+    - $HOME/.gradle/wrapper
+    - $HOME/.gradle/caches/modules-2/files-2.1
 
 # Setup environment
 before_install:
-- chmod a+x gradlew
-- chmod a+x gradle/wrapper/gradle-wrapper.jar
+  - chmod a+x gradlew
+  - chmod a+x gradle/wrapper/gradle-wrapper.jar
 
 # Default gradle task will be run automatically on build, no need to define it
 
 # Deployment to GitHub-releases
 before_deploy:
-  # Generate a packaged jar for the desktop-project and rename it to include the tag
-- ./gradlew desktop:dist
-- mv desktop/build/libs/emulio.jar desktop/build/libs/emulio-$TRAVIS_TAG.jar
-  # Generate a packaged apk for the android-project and rename it (this apk is unsigned/unaligned)
-#- ./gradlew android:assembleRelease
-#- mv android/build/outputs/apk/android-release-unsigned.apk android/build/outputs/apk/{PROJECT_NAME}-$TRAVIS_TAG-unaligned.apk
-#  # Generate and zip deployment files for the HTML project
-#- ./gradlew html:dist
-#- zip -r {PROJECT_NAME}-$TRAVIS_TAG.zip ./html/build/dist/
+  - ./gradlew desktop:dist
+  - mv desktop/build/libs/emulio.jar desktop/build/libs/emulio-$TRAVIS_TAG.jar
 
 deploy:
   provider: releases
   api_key:
     secure: T5Br07Z06r4o92aIxFndXw3Cy/JiCnv+4DuAUvXQAgo/WsLGUVUi2/MuSiQNmi5lWKczvVQLvUoIC9C1P8gxv99w9XhqodR7c/n+SPdFqM8sY7X1zaIOkCkLxYPPgMCdBHGGFcgn7rzzIzQ/jhHKRqJqOwI7wHM7AJYBOkXK3AvnxMRfkPDimR3gXgnUImb/TiHlaN6PtWC1uyc3Khy2LK2/vQSa2cduzY/AIh9MX5Qk/uyxrQmINzPx1n1dufJDqgVz7c5lxIsdTb+rTPk9WmV3TgKIb6NLieLe7dZyXWuQKMxkgnwLgEleI/TldIiXXKBZRL/fvkFD5M8zyOFypFbL1EWFLNi2wFh9Masv4WsGdW2OZOErkVRaEC/gPN/Lg84KX7GN6YhnczFbINstP1Om0EQxCImVmglyWBxW3xcyrqfX+3h1OcsugkUtiSFDWVFiKC8j1KDDQRT2QHaX+L8oISuYeAXLuInpxzq3fb2snXE43frU1lmN9PX41tWy3WrWKdFA5STwHB7GVxkR1bvDuFQzGFCb4zPZNRqiyvvt+osUk4NVeWJQU66mqsj+nGg05c46tBVtBETNqszvAB3xAHb27E/W4IGzEdAZPdN4tL3z4UqKoUWI/rA4ARRCKs237wLeZ9NeApI7PhgNPnhGMaQvYP8kNtXgDZyMqxI=
   file:
-  - desktop/build/libs/emulio-$TRAVIS_TAG.jar
-#  - {PROJECT_NAME}-$TRAVIS_TAG.zip
+    - desktop/build/libs/emulio-$TRAVIS_TAG.jar
   on:
     tags: true
     repo: PizzaGames/emulio
     branches: master
-    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$" # Only deploy tags that match something like v1.0.0
-
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: {DEPLOYMENT_KEY}
-#  file:
-#    # Define which files should be deployed to GitHub
-#  - desktop/build/libs/{PROJECT_NAME}-$TRAVIS_TAG.jar
-#  - android/build/outputs/apk/{PROJECT_NAME}-$TRAVIS_TAG-unaligned.apk
-#  - {PROJECT_NAME}-$TRAVIS_TAG.zip
-#  on:
-#    tags: true
-#    repo: {GITHUB_USER}/{PROJECT_NAME}
-#    branches: master
-#    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$" # Only deploy tags that match something like v1.0.0
-
+    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$"
