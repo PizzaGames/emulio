@@ -7,27 +7,27 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
 import com.github.emulio.Emulio
+import com.github.emulio.EmulioOptions
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.GraphicsConfig
 import com.github.emulio.yaml.YamlUtils
+import mu.KotlinLogging
+import org.apache.commons.cli.*
 import java.io.File
+
+val logger = KotlinLogging.logger { }
 
 object DesktopLauncher {
 
-    private fun initializeEmulioConfig(): EmulioConfig {
-        return EmulioConfig().apply {
-            loadDefaults()
-        }
-    }
-
     @JvmStatic fun main(arg: Array<String>) {
+
+        val options = getEmulioOptions(arg) ?: return
 
         val yamlUtils = YamlUtils()
         val configFile = File("emulio-config.yaml")
 
         val graphicsConfig = if (configFile.exists()) {
-            val emulioConfig = yamlUtils.parseEmulioConfig(configFile)
-            emulioConfig.graphicsConfig
+            yamlUtils.parseEmulioConfig(configFile).graphicsConfig
         } else {
             GraphicsConfig().apply {
                 screenWidth = 1280
@@ -44,30 +44,64 @@ object DesktopLauncher {
             setInitialBackgroundColor(Color(0x000000FF))
             setTitle("Emulio")
 
-//            setWindowedMode(1920, 1000)
             if (!graphicsConfig.fullscreen!!) {
-                setWindowedMode(1280, 720)
+                setWindowedMode(graphicsConfig.screenWidth!!, graphicsConfig.screenHeight!!)
             } else {
                 val displayMode = Lwjgl3ApplicationConfiguration.getDisplayModes().firstOrNull {
                     (it.width == graphicsConfig.screenWidth && it.height == graphicsConfig.screenHeight)
                 } ?: Lwjgl3ApplicationConfiguration.getDisplayMode()
 
-
                 setFullscreenMode(displayMode)
-
             }
         }
 
         config.setWindowIcon(Files.FileType.Internal, "images/32-icon.png")
 
-		Lwjgl3Application(Emulio(DesktopLauncher::minimizeApplication, DesktopLauncher::restoreAplication), config)
+
+		Lwjgl3Application(Emulio(options), config)
+    }
+
+    private fun getEmulioOptions(arg: Array<String>): EmulioOptions? {
+        val parser = DefaultParser()
+        val options = Options().apply {
+            addOption("h", "help", false, "Help message")
+            addOption("w", "workdir", true,
+                    "Override the default workdir \n(default: ${File(".").absolutePath})")
+            addOption("x", "width", true, "Override the screen width")
+            addOption("y", "height", true, "Override the screen height")
+            addOption("f", "fullscreen", true, "Override the fullscreen value")
+            addOption("l", "languagefile", true, "Sets language file as the main emulio language")
+        }
+
+        val cmdLine = parser.parse(options, arg)
+
+        if (cmdLine.hasOption("h")) {
+            val help = HelpFormatter()
+            help.printHelp("emulio", options)
+            return null
+        }
+
+        val workdir = if (cmdLine.hasOption("w")) {
+            File(cmdLine.getOptionValue("w"))
+        } else {
+            File(".").absoluteFile
+        }
+
+        check(workdir.isDirectory, { "Workdir must exist to continue. Check your parameters. (workdir: ${workdir.absolutePath})" })
+
+        logger.debug { "workdir: ${workdir.absolutePath}" }
+
+        return EmulioOptions(
+                workdir,
+                DesktopLauncher::minimizeApplication,
+                DesktopLauncher::restoreApplication)
     }
 
     private fun minimizeApplication() {
         (Gdx.graphics as Lwjgl3Graphics).window.iconifyWindow()
     }
 
-    private fun restoreAplication() {
+    private fun restoreApplication() {
         (Gdx.graphics as Lwjgl3Graphics).window.restoreWindow()
     }
 

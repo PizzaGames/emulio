@@ -23,6 +23,7 @@ task debug(dependsOn: classes, type: JavaExec) {
     debug = true
 }
 
+
 task dist(type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
@@ -32,6 +33,9 @@ task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
+
+    archiveName = "emulio.jar"
+
 }
 
 dist.dependsOn classes
@@ -70,4 +74,5 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.slf4j:jul-to-slf4j:1.7.7'
     compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'commons-cli:commons-cli:1.4'
 }

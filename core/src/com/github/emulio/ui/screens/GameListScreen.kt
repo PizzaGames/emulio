@@ -728,14 +728,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             }
         }
 
-        emulio.minimizeApplication()
+        emulio.options.minimizeApplication()
         try {
             ProcessLauncher.executeProcess(command.toTypedArray())
         } catch (ex: ProcessException) {
             showErrorDialog("There was a problem launching this game. Check your config".translate())
         }
 
-        emulio.restoreApplication()
+        emulio.options.restoreApplication()
     }
 
     private fun selectNext(amount: Int = 1) {

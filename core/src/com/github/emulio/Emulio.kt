@@ -7,14 +7,17 @@ import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.ui.screens.SplashScreen
+import java.io.File
 import java.io.InputStream
 
 
-class Emulio(val minimizeApplication: () -> Unit, val restoreApplication: () -> Unit) : Game() {
+class Emulio(val options: EmulioOptions) : Game() {
 
 	override fun create() {
 		screen = SplashScreen(this)
 	}
+
+    val workdir = options.workdir
 
 	var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
 
@@ -39,3 +42,9 @@ class Emulio(val minimizeApplication: () -> Unit, val restoreApplication: () -> 
     }
 }
 
+
+data class EmulioOptions(
+    val workdir: File,
+    val minimizeApplication: () -> Unit,
+    val restoreApplication: () -> Unit
+)

@@ -81,9 +81,8 @@ class EmulioConfig {
 }
 
 class UIConfig {
-	var themeName: String? = null
+	var themeName: String? = "simple"
 	var screenSaver: Boolean? = null
-	var transitionsType: String? = null
 }
 
 class GraphicsConfig {

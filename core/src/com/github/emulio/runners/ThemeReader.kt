@@ -1,6 +1,7 @@
 package com.github.emulio.runners
 
 import com.badlogic.gdx.Gdx
+import com.github.emulio.Emulio
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.model.theme.ViewImage
@@ -17,12 +18,67 @@ import org.apache.batik.util.XMLResourceDescriptor
 import java.awt.geom.Rectangle2D
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.zip.ZipInputStream
 
 const val FORCE_PNG_CONVERSION = false
 
-class ThemeReader {
+object ThemeReader {
 	
 	private val logger = KotlinLogging.logger {}
+
+    fun extractSimpleTheme(themedir: File, themeName: String, emulio: Emulio): Flowable<Pair<Float, File>> {
+        return Flowable.create({ emitter ->
+
+            val start = System.currentTimeMillis()
+
+            if (!themedir.isDirectory && !themedir.mkdirs()) {
+                error("Error creating '${themedir.absolutePath}'. Please check your file permissions.")
+            }
+
+            val themeStream = Emulio::class.java.getResourceAsStream("/compressed/simple-theme.zip")
+            val zipSize = 10 * 1024 * 1024f
+
+            val buffer = ByteArray(4 * 1024)
+
+            ZipInputStream(themeStream).use { zis ->
+
+                var current = 0f
+
+                var entry = zis.nextEntry
+                while (entry != null) {
+                    current += entry.compressedSize
+
+                    val extractedFile = File(themedir.parentFile.absolutePath + File.separator + entry.name)
+                    if (entry.isDirectory) {
+                        if (!extractedFile.isDirectory && !extractedFile.mkdirs()) {
+                            error("Error creating '${extractedFile.absolutePath}'. Please check your file permissions.")
+                        }
+                        entry = zis.nextEntry
+                        continue
+                    }
+
+
+                    FileOutputStream(extractedFile).use { fos ->
+                        var length = zis.read(buffer)
+                        while (length > 0) {
+                            fos.write(buffer, 0, length)
+                            length = zis.read(buffer)
+                        }
+                    }
+
+                    emitter.onNext(Pair(current / zipSize * 100f, extractedFile))
+                    zis.closeEntry()
+                    entry = zis.nextEntry
+                }
+
+            }
+
+            logger.info { "Theme extracted in ${System.currentTimeMillis() - start}ms " }
+            emitter.onComplete()
+        }, BackpressureStrategy.DROP)
+    }
+
 
 	fun readTheme(platforms: List<Platform>, themeDir: File): Flowable<Theme> {
 		logger.info("Reading theme from all platforms")
@@ -176,6 +232,8 @@ class ThemeReader {
 			root.primitiveBounds
 		}
 	}
+
+
 
 }
 

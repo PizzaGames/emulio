@@ -19,9 +19,8 @@ import com.github.emulio.runners.PlatformReader
 import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
-import com.github.emulio.utils.gdxutils.glClearColor
-import com.github.emulio.utils.translate
 import com.github.emulio.yaml.YamlUtils
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
@@ -132,9 +131,10 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	private fun observeConfig() {
 		val observable: Observable<EmulioConfig> = Observable.create({ subscriber ->
 			val yamlUtils = YamlUtils()
-			val configFile = File("emulio-config.yaml")
+			val configFile = File(emulio.workdir, "emulio-config.yaml")
 			
 			if (!configFile.exists()) {
+                logger.info { "Configuration file not found, creating a default" }
 				yamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
 			}
 			
@@ -163,7 +163,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	
 	private fun observePlatforms() {
 		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
-			val platforms = PlatformReader().invoke()
+			val platforms = PlatformReader(emulio).invoke()
 			subscriber.onNext(platforms)
 			subscriber.onComplete()
 		})
@@ -179,10 +179,14 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	private fun onError(exception: Throwable) {
 
-		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.")
+        val message = exception.message ?: "An internal error have occurred, please check your configuration files."
+
+        lbLoading.setText(message)
 		lbLoading.setPosition(10f, 20f)
 
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
+
+        showErrorDialog(message)
 		// Exit app on keypress?
 	}
 
@@ -196,45 +200,75 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 		val themesMap = mutableMapOf<Platform, Theme>()
 
-		ThemeReader()
-			.readTheme(platforms, File("../../sample-files/theme/simple"))
-			.subscribeOn(Schedulers.computation())
-			.observeOn(GdxScheduler)
-			.Subscribe(
-				onNext = { theme ->
-					val platform = theme.platform!!
-					val platformName = platform.platformName
-					logger.debug { "theme read for platform '$platformName'" }
-					lbLoading.setText("Loading theme for platform $platformName")
-					
-					themesMap.put(platform, theme)
-				},
-				onError =  { ex ->
-					onError(ex)
-				},
-				onComplete = {
-					logger.debug { "theme loaded in ${System.currentTimeMillis() - start}ms " }
-					
-					lbLoading.setText("Loading...")
-					emulio.theme = themesMap
+        val themeName = emulio.config.uiConfig.themeName
+        val themesFolder = File(emulio.workdir, "themes")
 
-					//TODO improve the implementation below..
-                    // here we need to detect if the animation is already done
-                    // before we call the switch screen method.. In this way
-                    // emulio is taking 1 second longer on loading screen.
+        val themedir = File(themesFolder, themeName)
 
-					Timer.schedule(object : Timer.Task() {
-						override fun run() {
-							switchScreen(PlatformsScreen(emulio))
-						}
-					}, 2f)
+        if (themeName == "simple" && !themedir.isDirectory) {
+            ThemeReader
+                .extractSimpleTheme(themedir, themeName, emulio)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(GdxScheduler)
+                    .Subscribe(
+                        onNext = { pair ->
+                            val (percentual, file) = pair
+                            lbLoading.setText("Extracting initial theme. ${percentual.toInt()}% completed (${file.name})")
+                        },
+                        onError =  { ex ->
+                            onError(ex)
+                        },
+                        onComplete = {
+                            loadTheme(platforms, themedir, themesMap, start)
+                    })
+        } else {
+            if (!themedir.isDirectory) {
+                error("Theme '$themeName' not found in the ${themesFolder.absolutePath}, please check your theme files.")
+            }
 
-				})
+            loadTheme(platforms, themedir, themesMap, start)
+        }
 	}
 
+    private fun loadTheme(platforms: List<Platform>, themedir: File, themesMap: MutableMap<Platform, Theme>, start: Long) {
+        ThemeReader
+                .readTheme(platforms, themedir)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(GdxScheduler)
+                .Subscribe(
+                        onNext = { theme ->
+                            val platform = theme.platform!!
+                            val platformName = platform.platformName
+                            logger.debug { "theme read for platform '$platformName'" }
+                            lbLoading.setText("Loading theme for platform $platformName")
+
+                            themesMap.put(platform, theme)
+                        },
+                        onError = { ex ->
+                            onError(ex)
+                        },
+                        onComplete = {
+                            logger.debug { "theme loaded in ${System.currentTimeMillis() - start}ms " }
+
+                            lbLoading.setText("Loading...")
+                            emulio.theme = themesMap
+
+                            //TODO improve the implementation below..
+                            // here we need to detect if the animation is already done
+                            // before we call the switch screen method.. In this way
+                            // emulio is taking 1 second longer on loading screen.
+
+                            Timer.schedule(object : Timer.Task() {
+                                override fun run() {
+                                    switchScreen(PlatformsScreen(emulio))
+                                }
+                            }, 2f)
+
+                        })
+    }
 
 
-	override fun render(delta: Float) {
+    override fun render(delta: Float) {
 		//Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))

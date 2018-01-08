@@ -73,6 +73,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	private var platformWidth = widthPerPlatform - paddingWidth * 2
 
+    private var loaded: Boolean = false
+
     init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
 
@@ -154,12 +156,12 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		val text = if (emulio.games != null) {
 			val gamesCount = emulio.games!![platform]?.size ?: 0
 			if (gamesCount == 0) {
-				"Loading...".translate()
+                loadingString()
 			} else {
 				"$gamesCount " + "games available".translate()
 			}
 		} else {
-			"Loading...".translate()
+            loadingString()
 		}
 		lbCount.setText(text)
 
@@ -184,6 +186,14 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
         updateHelpHuds(systemView)
 	}
+
+    private fun loadingString(): String {
+        return if (!loaded) {
+            "Loading...".translate()
+        } else {
+            "No games found".translate()
+        }
+    }
 
     private fun updateHelpHuds(systemView: View) {
 
@@ -462,7 +472,9 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
         inputController.dispose()
     }
 
-	private fun observeGameScanner(platforms: List<Platform>) {
+
+
+    private fun observeGameScanner(platforms: List<Platform>) {
 
 		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
 		emulio.games = gamesMap
@@ -499,6 +511,8 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 						},
 						onComplete = {
 							lbLoading.addAction(Actions.fadeOut(0.5f))
+                            loaded = true
+                            updatePlatformBg(currentPlatform)
 						})
 	}
 
@@ -508,14 +522,15 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		lbLoading.setPosition(10f, 20f)
 
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
-		// Exit app on keypress?
 	}
 
 	override fun onConfirmButton(): Boolean {
 
         val currentGames = emulio.listGames(currentPlatform)
         if (currentGames.isEmpty()) {
-            lbCount.setText("Still loading this section...".translate())
+            if (!loaded) {
+                lbCount.setText("Still loading this section...".translate())
+            }
             return true
         }
 		switchScreen(GameListScreen(emulio, currentPlatform))
