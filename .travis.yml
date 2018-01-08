@@ -20,15 +20,8 @@ before_install:
 
 # Deployment to GitHub-releases
 before_deploy:
-  # Generate a packaged jar for the desktop-project and rename it to include the tag
 - ./gradlew desktop:dist
-- mv desktop/build/libs/emulio.jar desktop/build/libs/{PROJECT_NAME}-$TRAVIS_TAG.jar
-  # Generate a packaged apk for the android-project and rename it (this apk is unsigned/unaligned)
-#- ./gradlew android:assembleRelease
-#- mv android/build/outputs/apk/android-release-unsigned.apk android/build/outputs/apk/{PROJECT_NAME}-$TRAVIS_TAG-unaligned.apk
-#  # Generate and zip deployment files for the HTML project
-#- ./gradlew html:dist
-#- zip -r {PROJECT_NAME}-$TRAVIS_TAG.zip ./html/build/dist/
+- mv desktop/build/libs/emulio.jar desktop/build/libs/emulio-$TRAVIS_TAG.jar
 
 deploy:
   provider: releases
@@ -38,19 +31,3 @@ deploy:
   on:
     tags: true
     repo: PizzaGames/emulio
-
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: {DEPLOYMENT_KEY}
-#  file:
-#    # Define which files should be deployed to GitHub
-#  - desktop/build/libs/{PROJECT_NAME}-$TRAVIS_TAG.jar
-#  - android/build/outputs/apk/{PROJECT_NAME}-$TRAVIS_TAG-unaligned.apk
-#  - {PROJECT_NAME}-$TRAVIS_TAG.zip
-#  on:
-#    tags: true
-#    repo: {GITHUB_USER}/{PROJECT_NAME}
-#    branches: master
-#    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$" # Only deploy tags that match something like v1.0.0
-
