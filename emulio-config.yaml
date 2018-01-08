@@ -1,9 +1,8 @@
 !!com.github.emulio.model.EmulioConfig {
   debug: true,
   gamepadConfig: {
-    Xbox Controller: {
-      axisLeftTrigger: 4,
-      axisRightTrigger: 5,
+    Controller (XBOX 360 For Windows): {
+      axisTrigger: 4,
       axisX: 0,
       axisY: 1,
       cancel: 1,
@@ -12,7 +11,7 @@
       exit: -1,
       find: 3,
       left: 13,
-      name: Xbox Controller,
+      name: Controller (XBOX 360 For Windows),
       options: 7,
       pageDown: 5,
       pageUp: 4,
@@ -24,14 +23,13 @@
     }
   },
   graphicsConfig: {
-    fullscreen: true,
-    screenHeight: 1080,
-    screenWidth: 1920,
+    fullscreen: false,
+    screenHeight: 720,
+    screenWidth: 1280,
     vsync: true
   },
   keyboardConfig: {
-    axisLeftTrigger: -1,
-    axisRightTrigger: -1,
+    axisTrigger: -1,
     axisX: -1,
     axisY: -1,
     cancel: 52,

@@ -1,0 +1,263 @@
+# esrunner.yaml
+
+# All variables with: ${} will be expanded. You can reuse
+
+# see more: http://www.emulationstation.org/gettingstarted.html
+# ${rom.raw} will be expanded to the actual rom file (%ROM_RAW%).
+# ${rom.file} will be expanded to the actual rom file (%ROM_RAW%).
+# ${rom} will be expanded to the actual rom file (%ROM%).
+# ${basename} will be expanded to the actual rom file (%BASENAME%).
+
+# ${esrunner.home} will be expanded to the workdir of esrunner.jar
+
+esrunner.home: f:\emulators
+
+# Define your custom commons paths here
+emulators.home: ${esrunner.home}
+bios.home: ${emulators.home}\bios
+retroarch.home: ${emulators.home}\RetroArch170
+retroarch.cores: ${retroarch.home}\cores
+roms.home: "V:"
+
+emulationstation.home: ${esrunner.home}\.emulationstation
+emulationstation.command:
+  - ${esrunner.home}\emulationstation\emulationstation.exe
+  # - java
+  # - -jar
+  # - ${esrunner.home}\emulationstation2.jar
+  - --vsync
+  - '1'
+
+# Define your custom roms paths here
+systems:
+  atari2600:
+    roms.path: ${roms.home}\Atari 2600
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\stella_libretro.dll
+      - ${rom.file}
+    roms.extensions: [.zip]
+    platform.name: Atari 2100
+  atari5200:
+    roms.path: ${roms.home}\Atari 5200
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\prosystem_libretro.dll
+    roms.extensions: [.zip]
+    platform.name: Atari 5200
+  atari7800:
+    roms.path: ${roms.home}\Atari 7800
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\prosystem_libretro.dll
+      - ${rom.file}
+    platform.name: Atari 7800
+    roms.extensions: [.zip]
+  atarijaguar:
+    roms.path: ${roms.home}\Atari Jaguar
+    roms.extensions: [.zip]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\virtualjaguar_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\jaguar\virtualjaguar\virtualjaguar.exe ${rom.file}
+    platform.name: Atari Jaguar
+  nes:
+    roms.path: ${roms.home}\Nintendo NES\roms\good
+    roms.extensions: [.zip, .nes]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\fceumm_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\nes\fceux-2.2.2-win32\fceux.exe ${rom.file}
+    platform.name: Nintendo Entertainment System
+  mastersystem:
+    roms.path: ${roms.home}\Sega Master System\roms
+    roms.extensions: [.zip]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\genesis_plus_gx_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\genesis_sms\Fusion364\Fusion.exe ${rom.file} -sms -fullscreen
+    platform.name: Sega Master System
+  pcengine:
+    roms.path: ${roms.home}\NEC Turbografx-16\roms
+    roms.extensions: [.zip .pce]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\mednafen_pce_fast_libretro.dll
+      - ${rom.file}
+    platform.name: TurboGrafx-16
+  snes:
+    roms.path: ${roms.home}\Nintendo SNES\roms
+    roms.extensions: [.zip, .sfc, .smc]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      #- ${retroarch.cores}\bsnes_performance_libretro.dll
+      - ${retroarch.cores}\snes9x_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\snes\snes9x-1.53-win32-x64\snes9x-x64.exe -fullscreen ${rom.file}
+    platform.name: Super Nintendo Entertainment System
+  genesis:
+    roms.path: ${roms.home}\Sega Genesis\roms
+    roms.extensions: [.zip]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\genesis_plus_gx_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\genesis_sms\Fusion364\Fusion.exe ${rom.file} -gen -fullscreen
+    platform.name: Sega Genesis
+  segacd:
+    roms.path: ${roms.home}\Sega Genesis\segacd
+    roms.extensions: [.cue, .iso, .ccd, .mds]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\genesis_plus_gx_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\genesis_sms\Fusion364\Fusion.exe ${rom.file} -scd -fullscreen
+    platform.name: Sega CD
+  sega32x:
+    roms.path: ${roms.home}\Sega Genesis\32x\good
+    roms.extensions: [.zip]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\picodrive_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\genesis_sms\Fusion364\Fusion.exe ${rom.file} -32x -fullscreen
+    platform.name: Sega 32x
+  neogeo:
+    roms.path: ${roms.home}\Neo Geo
+    roms.extensions: [.zip]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\fbalpha2012_neogeo_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\mame_neogeo\nebula225b\nebula.cmd ${rom.file}
+    platform.name: Neo Geo
+  saturn:
+    roms.path: ${roms.home}\Sega Saturn
+    roms.extensions: [.cue]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      #- ${retroarch.cores}\yabause_libretro.dll
+      - ${retroarch.cores}\mednafen_saturn_libretro.dll
+      - ${rom.file}
+    # run.command: %RUNNER_HOME%scripts\ssf_custom.cmd ${rom.file}
+    platform.name: Sega Saturn
+  psx:
+    roms.path: ${roms.home}\Sony Playstation
+    roms.extensions: [.cue, .iso, .ccd, .mds]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\mednafen_psx_libretro.dll
+      - ${rom.file}
+    # run.command: %RUNNER_HOME%scripts\epsxe_custom.cmd ${rom.file}
+    platform.name: Sony Playstation
+  n64:
+    roms.path: ${roms.home}\Nintendo 64\roms
+    roms.extensions: [.zip, .v64, .z64]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\mupen64plus_libretro.dll
+      - ${rom.file}
+    platform.name: Nintendo 64
+  dreamcast:
+    roms.path: ${roms.home}\Sega Dreamcast
+    roms.extensions: [.cdi]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\reicast_libretro.dll
+      - ${rom.file}
+#      - ${emulators.home}\dreamcast\nulldc104\nullDC_Win32_Release-NoTrace.exe
+#      - -config
+#      - nullDC:Emulator.Autostart=1
+#      - -config
+#      - ImageReader:LoadDefaultImage=1
+#      - -config
+#      - Fullscreen.Enabled=1
+#      - -config
+#      - ImageReader:DefaultImage=${rom.file}
+    # run.command: ${retroarch.home}\retroarch.exe -L "${retroarch.cores}\reicast_libretro.dll" ${rom.file}= "${emulators.home}\dreamcast\NullDC 1.0.4\nullDC_Win32_Release-NoTrace.exe" -config nullDC:Emulator.Autostart=1 -config ImageReader:LoadDefaultImage=1 -config Fullscreen.Enabled=1 -config ImageReader:DefaultImage=${rom.file}
+    platform.name: Sega Dreamcast
+  gc:
+    roms.path: ${roms.home}\Nintendo Gamecube
+    roms.extensions: [.cue, .iso, .ccd, .img, .mds]
+    run.command: ${emulators.home}\wii_gc\dolphin5\dolphin.exe --batch --exec ${rom.file}
+    platform.name: Gamecube
+  ps2:
+    roms.path: W:\DVD
+    roms.extensions: [.iso, .cue, .mdf, .ccd]
+    run.command: ${emulators.home}\playstation2\pcsx2-1.2.1-r5875\pcsx2-r5875.exe --fullscreen --nogui ${rom.file}
+    platform.name: Playstation 2
+  wii:
+    roms.path: ${roms.home}\Nintendo Wii
+    roms.extensions: [.iso, .ccd, .img, .mds]
+    run.command: ${emulators.home}\wii_gc\dolphin5\dolphin.exe --batch --exec ${rom.file}
+    platform.name: Wii
+  wiiu:
+    roms.path: ${roms.home}\Nintendo WiiU
+    roms.extensions: [.rpx, .wux, .wul]
+    run.command: ${emulators.home}\WiiU\cemu_1.7.4d\cemu.exe -g ${rom.file}
+    platform.name: WiiU
+  scummvm:
+    roms.path: ${roms.home}\SCUMM
+    roms.extensions: [.svm]
+    run.command:
+      #${roms.home}\scumm\scummvm\scummvm.cmd ${basename}
+      - ${emulators.home}\scummvm\scummvm-1.7.0-win32\scummvm.cmd ${basename}
+    platform.name: ScummVM
+  gbc:
+    roms.path: ${roms.home}\Nintendo GameBoy Advance\roms\gameboy
+    roms.extensions: [.zip]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\gambatte_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\gameboy\VisualBoyAdvance-M-WX-2.0.0-beta2\VisualBoyAdvance-M-WX.exe -f ${rom.file}
+    platform.name: Game Boy Color
+  ngpc:
+    roms.path: ${roms.home}\Neo Geo Pocket\roms
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\mednafen_ngp_libretro.dll
+      - ${rom.file}
+    platform.name: Neo Geo Pocket
+    roms.extensions: [.zip]
+  gba:
+    roms.path: ${roms.home}\Nintendo GameBoy Advance\roms\gba
+    roms.extensions: [.zip, .gba]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\mgba_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\gameboy\VisualBoyAdvance-M-WX-2.0.0-beta2\VisualBoyAdvance-M-WX.exe -f ${rom.file}
+    platform.name: Game Boy Advance
+  nds:
+    roms.path: ${roms.home}\Nintendo DS
+    roms.extensions: [.zip, .nds]
+    run.command:
+      - ${retroarch.home}\retroarch.exe
+      - -L
+      - ${retroarch.cores}\desmume_libretro.dll
+      - ${rom.file}
+    # run.command: ${emulators.home}\nds\DeSmuME_0.9.11_x86.exe ${rom.file}
+    platform.name: Nintendo DS

@@ -2,6 +2,7 @@ package com.github.emulio.model
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.controllers.Controller
+import org.apache.batik.util.XBLConstants
 import java.io.File
 
 
@@ -46,9 +47,9 @@ class EmulioConfig {
 			
 			exit = Keys.ESCAPE
 		}
-		gamepadConfig = mapOf("Controller (XBOX 360 For Windows)" to InputConfig().apply {
+		gamepadConfig = mapOf("Xbox Controller" to InputConfig().apply {
 			type = InputType.JOYSTICK
-			name = "Controller (XBOX 360 For Windows)"
+			name = "Xbox Controller"
 
 			confirm = Xbox.A
 			cancel = Xbox.B
@@ -69,7 +70,8 @@ class EmulioConfig {
 
 			//exit = Xbox.ESCAPE
 
-			axisTrigger = Xbox.AXIS_TRIGGER
+			axisLeftTrigger = Xbox.AXIS_LEFT_TRIGGER
+            axisRightTrigger = Xbox.AXIS_RIGHT_TRIGGER
 
 			axisX = Xbox.AXIS_LEFT_X
 			axisY = Xbox.AXIS_LEFT_Y
@@ -112,9 +114,10 @@ class InputConfig {
 	
 	var axisX: Int = -1
 	var axisY: Int = -1
-	
-	var axisTrigger: Int = -1
-	
+
+    var axisLeftTrigger: Int = -1
+    var axisRightTrigger: Int = -1
+
 	var find: Int = -1
 	
 	var options: Int = -1
@@ -169,7 +172,8 @@ object Xbox {
 	val AXIS_LEFT_X = 0 //-1 is left | +1 is right
 	val AXIS_RIGHT_X = 2 //-1 is left | +1 is right
 	val AXIS_RIGHT_Y = 3 //-1 is up | +1 is down
-	val AXIS_TRIGGER = 4 //value 0 to 1f (for left) ||value 0 to -1f
+    val AXIS_LEFT_TRIGGER = 4 //-1 for released | 1 for pressed
+    val AXIS_RIGHT_TRIGGER = 5 //-1 for released | 1 for pressed
 
 	/** @return whether the [Controller] is an Xbox controller
 	 */

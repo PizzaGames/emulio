@@ -14,16 +14,17 @@ import mu.KotlinLogging
 class InputManager(val listener: InputListener, val config: EmulioConfig, val stage: Stage) : InputProcessor, ControllerAdapter() {
 
 	private val logger = KotlinLogging.logger { }
-	private val DEADZONE: Float = 0.25f
+	private val DEADZONE: Float = 0.35f
 
 	private var elapsedPressedButtonTime = 0f
 	private var elapsedPressedKeyTime = 0f
+
+    private var paused = false
 
     //delays
     val povDelay = 0.25f
     val keyRepeatInterval = 0.10f
     val keyRepeatTriggerDelay = 0.5f
-
     val controllerRepeatInterval = 0.3f
     val controllerTriggerDelay = 0.25f
 
@@ -61,7 +62,6 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 
 	private var pressedKeyRepeat = false
 	private var pressedButtonRepeat = false
-
 
 
 	init {
@@ -238,10 +238,20 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		Controllers.removeListener(this)
 	}
 
+    fun pause() {
+        paused = true
+    }
+
+    fun resume() {
+        paused = false
+    }
+
 	/////////////////////////////////////////////////////////////////////////////
 	// Keyboard handling
 	//
 	private fun updatePressedKey(delta: Float) {
+        if (paused) return
+
 		elapsedPressedKeyTime += delta
 
 		if (pressedKeyRepeat) {
@@ -320,6 +330,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	// Controller, Joystick handling
 	//
 	private fun updatePressedButton(delta: Float) {
+        if (paused) return
 		elapsedPressedButtonTime += delta
 
 		if (pressedButtonRepeat) {
@@ -345,12 +356,16 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	private fun getControllerConfig(controller: Controller) = config.gamepadConfig[controller.name]
 
 	override fun buttonUp(controller: Controller, buttonCode: Int): Boolean {
+        if (paused) return false
+
 		controllerValues[controller]!!.button = 0
 		pressedButton = controllerValues.map { (_, value) -> value }.any { it.button != 0 } // any button pressed?
 		return true
 	}
 
 	override fun buttonDown(controller: Controller, buttonCode: Int): Boolean {
+        if (paused) return false
+
 		controllerValues[controller]!!.button = buttonCode
 		pressedButton = true
 		elapsedPressedButtonTime = 0f
@@ -412,51 +427,49 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	override fun axisMoved(controller: Controller, axisCode: Int, value: Float): Boolean {
-		val cfg = getControllerConfig(controller) ?: return true
+        if (paused) return false
+        val cfg = getControllerConfig(controller) ?: return true
 
-		if (cfg.axisX == axisCode) { // up or down, left or right
-			axisLeftRightMoved(controllerValues[controller]!!, value)
-		} else if (cfg.axisY == axisCode) {
-			axisUpDownMoved(controllerValues[controller]!!, value)
-		} else if (cfg.axisTrigger == axisCode) {
-			axisLTRTMoved(controllerValues[controller]!!, value)
-		} else {
-			// no axis valid value, do something here?
-		}
+        when (axisCode) {
+            cfg.axisX ->
+                axisLeftRightMoved(controllerValues[controller]!!, value)
+            cfg.axisY ->
+                axisUpDownMoved(controllerValues[controller]!!, -value)
+            cfg.axisLeftTrigger -> axisLTMoved(controllerValues[controller]!!, value)
+            cfg.axisRightTrigger -> axisRTMoved(controllerValues[controller]!!, value)
+        }
 		return true
 	}
 
-	private fun axisLTRTMoved(cv: ControllerValues, value: Float) {
+	private fun axisLTMoved(cv: ControllerValues, value: Float) {
 		cv.apply {
-			if (value > 0.01f && value < 1f) { // Left trigger
+			if (value > -1f) { // Left trigger
 				if (!axisLTTriggered) {
 					listener.onPageUpButton()
 				}
-
 				axisLT = value
-				axisRT = -1f
-
 				axisLTTriggered = true
-				axisRTTriggered = false
-			} else if (value < -0.01f && value >= -1f) { // Right trigger
-				if (!axisRTTriggered) {
-					listener.onPageDownButton()
-				}
-
-				axisLT = -1f
-				axisRT = -value
-
-				axisLTTriggered = false
-				axisRTTriggered = true
 			} else {
 				axisLT = -1f
-				axisRT = -1f
-
 				axisLTTriggered = false
-				axisRTTriggered = false
 			}
 		}
 	}
+
+    private fun axisRTMoved(cv: ControllerValues, value: Float) {
+        cv.apply {
+            if (value > -1f) { // Right trigger
+                if (!axisRTTriggered) {
+                    listener.onPageDownButton()
+                }
+                axisRT = value
+                axisRTTriggered = true
+            } else {
+                axisRT = -1f
+                axisRTTriggered = false
+            }
+        }
+    }
 
 	private fun axisUpDownMoved(cv: ControllerValues, value: Float) {
 		cv.apply {
@@ -535,6 +548,8 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	override fun povMoved(controller: Controller, povCode: Int, value: PovDirection): Boolean {
+        if (paused) return false
+
 		controllerValues[controller]!!.apply {
 			povDirection = value
 			elapsedPov = 0f

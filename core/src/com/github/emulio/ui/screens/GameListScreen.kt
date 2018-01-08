@@ -76,7 +76,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 		val gamesFound = emulio.games!![platform]?.toList() ?: emptyList()
 
-
         val supportedExtensions = platform.romsExtensions
         val gamesMap = mutableMapOf<String, Game>()
         gamesFound.forEach { game ->

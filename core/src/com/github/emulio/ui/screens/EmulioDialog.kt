@@ -29,6 +29,10 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
 
     override fun show(stage: Stage): Dialog {
         oldProcessor = Gdx.input.inputProcessor
+        if (oldProcessor is InputManager) {
+            (oldProcessor as InputManager).pause()
+        }
+
         inputController = InputManager(this, emulio.config, stage)
 
         Gdx.input.inputProcessor = inputController
@@ -50,6 +54,9 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
         overlay.addAction(SequenceAction(Actions.fadeOut(0.5f), Actions.run { overlay.remove() }))
 
         inputController.dispose()
+        if (oldProcessor is InputManager) {
+            (oldProcessor as InputManager).resume()
+        }
         Gdx.input.inputProcessor = oldProcessor
     }
 
