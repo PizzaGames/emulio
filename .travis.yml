@@ -38,7 +38,10 @@ deploy:
   - desktop/build/libs/{PROJECT_NAME}-$TRAVIS_TAG.jar
 #  - {PROJECT_NAME}-$TRAVIS_TAG.zip
   on:
+    tags: true
     repo: PizzaGames/emulio
+    branches: master
+    condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$" # Only deploy tags that match something like v1.0.0
 
 #deploy:
 #  provider: releases
