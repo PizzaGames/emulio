@@ -9,6 +9,9 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	emulio-text-big-inverted: {
 		file: emulio-text-big-inverted.fnt
 	}
+	emulio-text-huge: {
+		file: emulio-text-huge.fnt
+	}
 	emulio-text-inverted: {
 		file: emulio-text-inverted.fnt
 	}
@@ -32,16 +35,16 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	}
 }
 com.badlogic.gdx.graphics.Color: {
-	RGBA_55_66_74_255: {
-		r: 0.21568628
-		g: 0.25882354
-		b: 0.2901961
-		a: 1
-	}
 	color: {
 		r: 1
 		g: 1
 		b: 1
+		a: 1
+	}
+	RGBA_55_66_74_255: {
+		r: 0.21568628
+		g: 0.25882354
+		b: 0.2901961
 		a: 1
 	}
 	selection: {
@@ -49,6 +52,12 @@ com.badlogic.gdx.graphics.Color: {
 		g: 0.70333326
 		b: 0.70333326
 		a: 1
+	}
+	transparent: {
+		r: 0
+		g: 0
+		b: 0
+		a: 0
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -400,6 +409,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: emulio-text
 		fontColor: color
 	}
+	huge: {
+		font: emulio-text-huge
+		fontColor: color
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
@@ -408,6 +421,12 @@ com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 		fontColorUnselected: color
 		selection: color
 		background: list-c
+	}
+	menu: {
+		font: emulio-text-big
+		fontColorSelected: color
+		fontColorUnselected: color
+		selection: emulio-menu-list-selection
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
@@ -536,6 +555,11 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	main: {
 		background: window-main-c
 		titleFont: font
+		titleFontColor: color
+	}
+	naked: {
+		background: emulio-naked-window
+		titleFont: emulio-text-huge
 		titleFontColor: color
 	}
 }

@@ -170,7 +170,11 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
                 }
 
                 if (!isSelectionListView) {
-                    selectedGame = filteredGames[newIndex]
+                    selectedGame = if (needSelectionView) {
+                        filteredGames[newIndex]
+                    } else {
+                        games[newIndex]
+                    }
                     updateGameSelected()
                 }
                 
@@ -494,7 +498,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
     private fun buildSelectionListView(): List<String> {
-
         isSelectionListView = true
 
         return List<String>(List.ListStyle().apply {
@@ -934,9 +937,22 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
         val itemsPerView = listScrollPane.height / itemHeight
 
-        if (listView.selectedIndex > (games.size - itemsPerView)) {
-            listScrollPane.scrollY = listView.height - listScrollPane.height
-            return
+        if (isSelectionListView) {
+            if (listView.selectedIndex > (27 - itemsPerView)) {
+                listScrollPane.scrollY = listView.height - listScrollPane.height
+                return
+            }
+        } else {
+            val gamesList = if (needSelectionView) {
+                filteredGames
+            } else {
+                games
+            }
+
+            if (listView.selectedIndex > (gamesList.size - itemsPerView)) {
+                listScrollPane.scrollY = listView.height - listScrollPane.height
+                return
+            }
         }
 
         if (listView.selectedIndex == 0) {
@@ -985,7 +1001,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         val txtMenu = buildText("Menu".translate().toUpperCase(), helpFont, imgStart.x + imgWidth + padding, y)
         stage.addActor(txtMenu)
 
-        val imgB = buildImage("images/resources/help/button_start_128_128.png", imgWidth, imgHeight, txtMenu.x + txtMenu.width + (padding * 3), imageY)
+        val imgB = buildImage("images/resources/help/button_b_128_128.png", imgWidth, imgHeight, txtMenu.x + txtMenu.width + (padding * 3), imageY)
         stage.addActor(imgB)
         val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgB.x + imgWidth + padding, y)
         stage.addActor(txtBack)
@@ -1183,8 +1199,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
     
 	override fun onOptionsButton(): Boolean {
-        logger.debug { "onOptionsButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        showMainMenu()
 		return true
 	}
 

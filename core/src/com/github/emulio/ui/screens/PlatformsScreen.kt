@@ -543,7 +543,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onOptionsButton(): Boolean {
-		lbLoading.setText("onOptionsButton ${System.currentTimeMillis()}")
+		showMainMenu()
 		return true
 	}
 

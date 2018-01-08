@@ -222,11 +222,12 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
                     // here we need to detect if the animation is already done
                     // before we call the switch screen method.. In this way
                     // emulio is taking 1 second longer on loading screen.
+
 					Timer.schedule(object : Timer.Task() {
 						override fun run() {
 							switchScreen(PlatformsScreen(emulio))
 						}
-					}, 1f)
+					}, 2f)
 
 				})
 	}

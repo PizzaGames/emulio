@@ -97,16 +97,6 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 
     abstract fun release()
 
-    fun createColorTexture(rgba: Int, width: Int = 1, height: Int = 1): Texture {
-		val pixmap = Pixmap(width, height, Pixmap.Format.RGBA8888).apply {
-			setColor(rgba)
-			fillRectangle(0, 0, width, height)
-		}
-		val texture = Texture(pixmap)
-
-		pixmap.dispose()
-		return texture
-	}
 
 	override fun dispose() {
 		stage.dispose()
@@ -122,18 +112,10 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
 	}
 
     fun showCloseDialog() {
-
-        object : YesNoDialog("Quit Emulio?".translate(), "Are you sure you want to quit emulio?".translate(), emulio) {
-            override fun onCancelDialog() {
-                logger.debug { "onCancelDialog" }
-            }
-
-            override fun onConfirmDialog() {
-                Gdx.app.exit()
-            }
-        }.show(stage)
-
+        showExitConfirmation(emulio, stage)
     }
+
+
 
     fun showInfoDialog(message: String) {
         InfoDialog("Info", message, emulio).show(stage)
@@ -143,7 +125,31 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
         InfoDialog("Error", message, emulio).show(stage)
     }
 
+    fun showMainMenu() {
+        MainMenuDialog(emulio, stage).show(stage)
+    }
 
+}
+
+fun showExitConfirmation(emulio: Emulio, stage: Stage) {
+    object : YesNoDialog("Quit Emulio?".translate(), "Are you sure you want to quit emulio?".translate(), emulio) {
+        override fun onCancelDialog() {
+        }
+        override fun onConfirmDialog() {
+            Gdx.app.exit()
+        }
+    }.show(stage)
+}
+
+fun createColorTexture(rgba: Int, width: Int = 1, height: Int = 1): Texture {
+    val pixmap = Pixmap(width, height, Pixmap.Format.RGBA8888).apply {
+        setColor(rgba)
+        fillRectangle(0, 0, width, height)
+    }
+    val texture = Texture(pixmap)
+
+    pixmap.dispose()
+    return texture
 }
 
 fun Button.addClickListener(clickListener: () -> Unit) {
@@ -152,135 +158,5 @@ fun Button.addClickListener(clickListener: () -> Unit) {
             clickListener()
         }
     })
-}
-
-abstract class EmulioDialog(title: String, val emulio: Emulio) : Dialog(title, emulio.skin, "default"), com.github.emulio.ui.input.InputListener {
-
-    private lateinit var oldProcessor: InputProcessor
-    private lateinit var inputController: InputManager
-
-    override fun show(stage: Stage): Dialog {
-        oldProcessor = Gdx.input.inputProcessor
-        inputController = InputManager(this, emulio.config, stage)
-
-        Gdx.input.inputProcessor = inputController
-        return super.show(stage)
-    }
-
-    fun closeDialog() {
-        hide()
-        remove()
-        inputController.dispose()
-        Gdx.input.inputProcessor = oldProcessor
-    }
-
-    override fun onUpButton(): Boolean {
-        return false
-    }
-
-    override fun onDownButton(): Boolean {
-        return false
-    }
-
-    override fun onLeftButton(): Boolean {
-        return false
-    }
-
-    override fun onRightButton(): Boolean {
-        return false
-    }
-
-    override fun onFindButton(): Boolean {
-        return false
-    }
-
-    override fun onOptionsButton(): Boolean {
-        return false
-    }
-
-    override fun onSelectButton(): Boolean {
-        return false
-    }
-
-    override fun onPageUpButton(): Boolean {
-        return false
-    }
-
-    override fun onPageDownButton(): Boolean {
-        return false
-    }
-
-    override fun onExitButton(): Boolean {
-        return false
-    }
-
-}
-
-abstract class YesNoDialog(title: String, val dialogMessage: String, emulio: Emulio) : EmulioDialog(title, emulio) {
-
-    init {
-        initGUI()
-    }
-
-    abstract fun onConfirmDialog()
-    abstract fun onCancelDialog()
-
-    private fun initGUI() {
-        add(Table().apply {
-            add(Label(dialogMessage, emulio.skin)).minHeight(100f).expand()
-            row()
-            add(ImageTextButton("Yes".translate(), emulio.skin, "confirm").apply {
-                addClickListener {
-                    onConfirmButton()
-                }
-            }).expandX().right()
-            add(ImageTextButton("No".translate(), emulio.skin, "cancel").apply {
-                addClickListener {
-                    onCancelButton()
-                }
-            }).expandX().left()
-        }).expand()
-    }
-
-    override fun onConfirmButton(): Boolean {
-        onConfirmDialog()
-        closeDialog()
-        return false
-    }
-
-    override fun onCancelButton(): Boolean {
-        onCancelDialog()
-        closeDialog()
-        return false
-    }
-}
-
-class InfoDialog(title: String, val dialogMessage: String, emulio: Emulio) : EmulioDialog(title, emulio) {
-
-    init {
-        initGUI()
-    }
-
-    private fun initGUI() {
-        add(Table().apply {
-            add(Label(dialogMessage, emulio.skin)).minHeight(100f).expand()
-            row()
-            add(ImageTextButton("Ok".translate(), emulio.skin, "confirm").apply {
-                addClickListener {
-                    onConfirmButton()
-                }
-            }).expandX().right()
-        }).expand()
-    }
-
-    override fun onConfirmButton(): Boolean {
-        closeDialog()
-        return false
-    }
-
-    override fun onCancelButton(): Boolean {
-        closeDialog()
-        return false
-    }
 }
 
