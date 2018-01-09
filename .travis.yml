@@ -21,7 +21,7 @@ before_install:
 # Deployment to GitHub-releases
 before_deploy:
 - ./gradlew desktop:dist
-- mv desktop/build/libs/emulio.jar desktop/build/libs/emulio-${TRAVIS_TAG}.jar
+#- mv desktop/build/libs/emulio.jar desktop/build/libs/emulio-${TRAVIS_TAG}.jar
 
 deploy:
   provider: releases
