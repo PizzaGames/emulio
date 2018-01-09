@@ -2,17 +2,16 @@ package com.github.emulio.desktop
 
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
-import com.github.emulio.Emulio
 import com.github.emulio.EmulioOptions
-import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.GraphicsConfig
 import com.github.emulio.yaml.YamlUtils
 import mu.KotlinLogging
-import org.apache.commons.cli.*
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
 import java.io.File
 
 val logger = KotlinLogging.logger { }
@@ -24,7 +23,7 @@ object DesktopLauncher {
         val options = getEmulioOptions(arg) ?: return
 
         val yamlUtils = YamlUtils()
-        val configFile = File("emulio-config.yaml")
+        val configFile = File(options.workdir, "emulio-config.yaml")
 
         val graphicsConfig = if (configFile.exists()) {
             yamlUtils.parseEmulioConfig(configFile).graphicsConfig
@@ -57,8 +56,9 @@ object DesktopLauncher {
 
         config.setWindowIcon(Files.FileType.Internal, "images/32-icon.png")
 
+//		Lwjgl3Application(Emulio(options), config)
 
-		Lwjgl3Application(Emulio(options), config)
+//        LwjglApplication(Emulio(options), "Emulio", 1920, 720)
     }
 
     private fun getEmulioOptions(arg: Array<String>): EmulioOptions? {
@@ -71,6 +71,8 @@ object DesktopLauncher {
             addOption("y", "height", true, "Override the screen height")
             addOption("f", "fullscreen", true, "Override the fullscreen value")
             addOption("l", "languagefile", true, "Sets language file as the main emulio language")
+            addOption(null, "forceWorkdirCreation", false, "Force workdir creation upon start")
+
         }
 
         val cmdLine = parser.parse(options, arg)
@@ -87,7 +89,18 @@ object DesktopLauncher {
             File(".").absoluteFile
         }
 
-        check(workdir.isDirectory, { "Workdir must exist to continue. Check your parameters. (workdir: ${workdir.absolutePath})" })
+        if (!workdir.exists()) {
+            workdir.mkdirs()
+        }
+
+        if (!workdir.isDirectory) {
+            if (options.hasLongOption("forceWorkdirCreation")) {
+                workdir.mkdirs()
+            } else {
+                error { "Workdir must exist to continue. Check your parameters. (workdir: ${workdir.absolutePath})" }
+            }
+        }
+
 
         logger.debug { "workdir: ${workdir.absolutePath}" }
 

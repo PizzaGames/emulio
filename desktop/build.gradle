@@ -11,6 +11,10 @@ task run(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
+
+    //args Eval.me(appArgsWhatEverIWant)
+    args = ["-workdir", "temp", "--forceWorkdirCreation"]
+
     ignoreExitValue = true
 }
 

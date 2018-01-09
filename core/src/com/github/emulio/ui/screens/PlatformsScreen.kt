@@ -331,11 +331,11 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		root.addActor(groupPlatforms)
 	}
-	
+
 	private fun initPlatform(platform: Platform, widthPerPlatform: Float, paddingWidth: Float, currentX: Float): Float {
 		val theme = getTheme(platform)
 		val systemView = checkNotNull(theme.findView("system"), { "System tag of theme ${platform.platformName} not found. please check your theme files." })
-		
+
 		val image = getImageFromSystem(systemView, 1f).apply {
 			//height = Math.max(groupPlatforms.height - paddingHeight, height)
 			width = platformWidth //widthPerPlatform - paddingWidth * 2
@@ -347,7 +347,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 			name = platform.platformName
 
-			setScaling(Scaling.fit)
+			setScaling(Scaling.fillX)
 		}
 
 		if (image.height > groupPlatformsHeight - 20f) {
@@ -357,7 +357,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 				y = (groupPlatforms.height - height) / 2
 			}
 		}
-		
+
 		platformImages.add(image)
 		platformOriginalX.add(image.x)
 		platformOriginalWidth.add(image.width)
