@@ -117,46 +117,46 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		stage.addActor(lbLoading)
 
 		// load main configurations/games and all stuff.. from mongo?
-		
+
 		lbLoading.setText("Loading configurations")
 
 		observeConfig()
 
 	}
-	
+
 	private fun observeConfig() {
 		val observable: Observable<EmulioConfig> = Observable.create({ subscriber ->
 			val yamlUtils = YamlUtils()
 			val configFile = File(emulio.workdir, "emulio-config.yaml")
-			
+
 			if (!configFile.exists()) {
                 logger.info { "Configuration file not found, creating a default" }
 				yamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
 			}
-			
+
 			subscriber.onNext(yamlUtils.parseEmulioConfig(configFile))
 			subscriber.onComplete()
 		})
-		
+
 		observable
 				.subscribeOn(Schedulers.computation())
 				.observeOn(GdxScheduler)
 				.subscribe({ config ->
-					
+
 					emulio.config = config
-					
+
 					lbLoading.setText("Loading platforms")
 					observePlatforms()
 				}, { onError(it) })
 	}
-	
+
 	private fun initializeEmulioConfig(): EmulioConfig {
 		return EmulioConfig().apply {
 			loadDefaults()
 		}
 	}
-	
-	
+
+
 	private fun observePlatforms() {
 		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
 			val platforms = PlatformReader(emulio).invoke()
@@ -292,4 +292,3 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	}
 
 }
-

@@ -1,6 +1,17 @@
-# emulio-platforms-template.yaml
+#    ______     __    __     __  __     __         __     ______
+#   /\  ___\   /\ "-./  \   /\ \/\ \   /\ \       /\ \   /\  __ \
+#   \ \  __\   \ \ \-./\ \  \ \ \_\ \  \ \ \____  \ \ \  \ \ \/\ \
+#    \ \_____\  \ \_\ \ \_\  \ \_____\  \ \_____\  \ \_\  \ \_____\
+#     \/_____/   \/_/  \/_/   \/_____/   \/_____/   \/_/   \/_____/
+#
+
+
 
 # make sure to rename this file into emulio-platforms.yaml before start emulio again
+
+# emulio-platforms-template.yaml
+
+
 
 # All variables with: ${} will be expanded. You can reuse
 
@@ -31,7 +42,7 @@ systems:
       - ${retroarch.cores}\stella_libretro.dll
       - ${rom.file}
     roms.extensions: [.zip]
-    platform.name: Atari 2100
+    platform.name: Atari 2600
   atari5200:
     roms.path: ${roms.home}\Atari 5200
     run.command:

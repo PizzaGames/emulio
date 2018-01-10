@@ -12,7 +12,7 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
         val platformsFile = File(emulio.workdir, "emulio-platforms.yaml")
 
         if (!platformsFile.exists()) {
-            val template = Emulio::class.java.getResourceAsStream("/emulio-platforms-template.yaml")
+            val template = Emulio::class.java.getResourceAsStream("/initialsetup/emulio-platforms-template.yaml")
 
             val templateName = "${platformsFile.nameWithoutExtension}-template.yaml"
             val templateFile = File(platformsFile.parentFile, templateName)
@@ -36,4 +36,3 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
         return YamlUtils().parsePlatforms(platformsFile)
     }
 }
-

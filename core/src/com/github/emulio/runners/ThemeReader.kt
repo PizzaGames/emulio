@@ -24,7 +24,7 @@ import java.util.zip.ZipInputStream
 const val FORCE_PNG_CONVERSION = false
 
 object ThemeReader {
-	
+
 	private val logger = KotlinLogging.logger {}
 
     fun extractSimpleTheme(themedir: File, themeName: String, emulio: Emulio): Flowable<Pair<Float, File>> {
@@ -36,7 +36,7 @@ object ThemeReader {
                 error("Error creating '${themedir.absolutePath}'. Please check your file permissions.")
             }
 
-            val themeStream = Emulio::class.java.getResourceAsStream("/compressed/simple-theme.zip")
+            val themeStream = Emulio::class.java.getResourceAsStream("/initialsetup/simple-theme.zip")
             val zipSize = 10 * 1024 * 1024f
 
             val buffer = ByteArray(4 * 1024)
@@ -82,7 +82,7 @@ object ThemeReader {
 
 	fun readTheme(platforms: List<Platform>, themeDir: File): Flowable<Theme> {
 		logger.info("Reading theme from all platforms")
-		
+
 		var theme = Flowable.empty<Theme>()
 		platforms.forEach { platform ->
 			logger.debug { "reading theme for platform: ${platform.platformName}" }
@@ -94,27 +94,27 @@ object ThemeReader {
 	private fun readPlatformTheme(platform: Platform, themeDir: File): Flowable<Theme> {
 		return Flowable.create({ emitter ->
 			val start = System.currentTimeMillis()
-			
+
 			val xmlFile = File(File(themeDir, platform.platformName), "theme.xml")
 			logger.debug { "readPlatformTheme: reading theme from file '${xmlFile.absolutePath}'" }
 
 			val theme = XMLReader().parseTheme(xmlFile).apply {
 				this.platform = platform
 			}
-			
+
 			convertImages(theme)
 			emitter.onNext(theme)
-			
+
 			logger.info { "Theme of '${platform.platformName}' read in ${System.currentTimeMillis() - start}ms " }
 			emitter.onComplete()
 		}, BackpressureStrategy.BUFFER)
 	}
-	
+
 	private fun convertImages(theme: Theme) {
 		if (theme.includeTheme != null) {
 			convertImages(theme.includeTheme!!)
 		}
-		
+
 		theme.views?.forEach { view ->
 			view.viewItems?.forEach { viewItem ->
 				if (viewItem is ViewImage) {
@@ -123,24 +123,24 @@ object ThemeReader {
 			}
 		}
 	}
-	
+
 	private val pngConverter = PNGConverter()
-	
+
 	private fun convertImage(viewImage: ViewImage) {
 		val imgFile = viewImage.path ?: return
-		
+
 		if (!imgFile.exists()) {
 			return
 		}
-		
+
 		if (imgFile.extension.toLowerCase() == "svg") {
-			
+
 			val sizeX = viewImage.sizeX?.toDouble()
 			val sizeY = viewImage.sizeY?.toDouble()
-			
+
 			val maxSizeX = viewImage.maxSizeX?.toDouble()
 			val maxSizeY = viewImage.maxSizeY?.toDouble()
-			
+
 			val graphics = Gdx.graphics
 			val screenWidth = graphics.width.toDouble()
 			val screenHeight = graphics.height.toDouble()
@@ -156,7 +156,7 @@ object ThemeReader {
 			} else {
 				preferredWidthCeil
 			}
-			
+
 			if (maxSizeX != null) {
 				width = Math.ceil(Math.min(width, (screenWidth * maxSizeX)))
 			}
@@ -167,7 +167,7 @@ object ThemeReader {
 			} else {
 				preferredHeightCeil
 			}
-			
+
 			if (maxSizeY != null) {
 				height = Math.ceil(Math.min(height, (screenHeight * maxSizeY)))
 			}
@@ -177,7 +177,7 @@ object ThemeReader {
 
             width *= 2
             height *= 2
-			
+
 			if (desiredRatio != preferredRatio) {
 				println("Outside ratio!")
 
@@ -206,7 +206,7 @@ object ThemeReader {
 			} else {
 				"${imgFile.nameWithoutExtension}_${width.toInt()}x${height.toInt()}.png"
 			}
-			
+
 			val pngFile = File(imgFile.parentFile, imgName)
 
             if (!pngFile.exists() || FORCE_PNG_CONVERSION) {
@@ -240,4 +240,3 @@ object ThemeReader {
 
 
 }
-
