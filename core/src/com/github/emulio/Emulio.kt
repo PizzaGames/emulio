@@ -2,6 +2,7 @@ package com.github.emulio
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Cursor
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
@@ -15,7 +16,10 @@ class Emulio(val options: EmulioOptions) : Game() {
 
 	override fun create() {
 		screen = SplashScreen(this)
-	}
+//        Gdx.input.isCursorCatched = true
+//        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair)
+
+    }
 
     val workdir = options.workdir
 
@@ -44,7 +48,9 @@ class Emulio(val options: EmulioOptions) : Game() {
 
 
 data class EmulioOptions(
-    val workdir: File,
-    val minimizeApplication: () -> Unit,
-    val restoreApplication: () -> Unit
+        val workdir: File,
+        val minimizeApplication: () -> Unit,
+        val restoreApplication: () -> Unit,
+        val screenSize: Pair<Int, Int>?,
+        val fullscreen: Boolean
 )

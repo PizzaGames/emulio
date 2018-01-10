@@ -174,6 +174,9 @@ object ThemeReader {
 
 			val preferredRatio = preferredWidthCeil / preferredHeightCeil
 			val desiredRatio = width / height
+
+            width *= 2
+            height *= 2
 			
 			if (desiredRatio != preferredRatio) {
 				println("Outside ratio!")
@@ -196,6 +199,7 @@ object ThemeReader {
                 }
 
 			}
+
 
 			val imgName = if (width == preferredWidth && height == preferredHeight) {
 				"${imgFile.nameWithoutExtension}.png"

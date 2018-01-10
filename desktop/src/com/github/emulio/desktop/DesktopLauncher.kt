@@ -2,9 +2,11 @@ package com.github.emulio.desktop
 
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
+import com.github.emulio.Emulio
 import com.github.emulio.EmulioOptions
 import com.github.emulio.model.GraphicsConfig
 import com.github.emulio.yaml.YamlUtils
@@ -19,7 +21,6 @@ val logger = KotlinLogging.logger { }
 object DesktopLauncher {
 
     @JvmStatic fun main(arg: Array<String>) {
-
         val options = getEmulioOptions(arg) ?: return
 
         val yamlUtils = YamlUtils()
@@ -36,6 +37,7 @@ object DesktopLauncher {
             }
         }
 
+        overrideResolution(graphicsConfig, options)
 
         val config = Lwjgl3ApplicationConfiguration().apply {
             setResizable(false)
@@ -56,9 +58,19 @@ object DesktopLauncher {
 
         config.setWindowIcon(Files.FileType.Internal, "images/32-icon.png")
 
-//		Lwjgl3Application(Emulio(options), config)
+		Lwjgl3Application(Emulio(options), config)
+    }
 
-//        LwjglApplication(Emulio(options), "Emulio", 1920, 720)
+    private fun overrideResolution(gc: GraphicsConfig, options: EmulioOptions) {
+        val overrideScreenSize = options.screenSize
+        if (overrideScreenSize != null) {
+            gc.screenWidth = overrideScreenSize.first
+            gc.screenHeight = overrideScreenSize.second
+        }
+
+        if (options.fullscreen) {
+            gc.fullscreen = true
+        }
     }
 
     private fun getEmulioOptions(arg: Array<String>): EmulioOptions? {
@@ -69,7 +81,7 @@ object DesktopLauncher {
                     "Override the default workdir \n(default: ${File(".").absolutePath})")
             addOption("x", "width", true, "Override the screen width")
             addOption("y", "height", true, "Override the screen height")
-            addOption("f", "fullscreen", true, "Override the fullscreen value")
+            addOption("f", "fullscreen", false, "Override the fullscreen value")
             addOption("l", "languagefile", true, "Sets language file as the main emulio language")
             addOption(null, "forceWorkdirCreation", false, "Force workdir creation upon start")
 
@@ -94,11 +106,17 @@ object DesktopLauncher {
         }
 
         if (!workdir.isDirectory) {
-            if (options.hasLongOption("forceWorkdirCreation")) {
+            if (cmdLine.hasOption("forceWorkdirCreation")) {
                 workdir.mkdirs()
             } else {
                 error { "Workdir must exist to continue. Check your parameters. (workdir: ${workdir.absolutePath})" }
             }
+        }
+
+        val screenSize = if (cmdLine.hasOption("x") && cmdLine.hasOption("y")) {
+            cmdLine.getOptionValue("x").toInt() to cmdLine.getOptionValue("y").toInt()
+        } else {
+            null
         }
 
 
@@ -107,7 +125,9 @@ object DesktopLauncher {
         return EmulioOptions(
                 workdir,
                 DesktopLauncher::minimizeApplication,
-                DesktopLauncher::restoreApplication)
+                DesktopLauncher::restoreApplication,
+                screenSize,
+                cmdLine.hasOption("f"))
     }
 
     private fun minimizeApplication() {

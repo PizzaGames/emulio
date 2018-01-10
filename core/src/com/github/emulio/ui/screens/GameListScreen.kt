@@ -245,7 +245,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 		val logo = view.findViewItem("logo") as ViewImage?
 		if (logo != null) {
-			stage.addActor(buildImage(logo))
+            val platformImage = buildImage(logo, Scaling.fit)
+
+            stage.addActor(platformImage)
 		}
 
         val footerHeight: Float
@@ -440,6 +442,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			setPosition(image)
 			setOrigin(image)
 
+            setAlign(Align.left)
 
             isVisible = imagePath != null
 		}
@@ -679,6 +682,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 			y = (height / 2) - 5f
 			addAction(Actions.moveTo(screenWidth - width - 15f, y, 0.5f, interpolation))
 		}
+
 		root.addActor(logo)
 	}
 

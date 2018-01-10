@@ -1,13 +1,10 @@
 package com.github.emulio.runners
 
-import com.github.emulio.model.Game
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.Files
-import java.nio.file.Path
 
 
 class PNGConverter {

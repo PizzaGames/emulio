@@ -14,7 +14,8 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
         if (!platformsFile.exists()) {
             val template = Emulio::class.java.getResourceAsStream("/emulio-platforms-template.yaml")
 
-            val templateFile = File(platformsFile.parentFile, "${platformsFile.nameWithoutExtension}-template.yaml")
+            val templateName = "${platformsFile.nameWithoutExtension}-template.yaml"
+            val templateFile = File(platformsFile.parentFile, templateName)
             try {
 
                 BufferedWriter(FileWriter(templateFile)).use { writer ->
@@ -29,7 +30,8 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
             }
 
 
-            error("${platformsFile.name} not found in workdir, a template file is now copied so you can change it.")
+            error("${platformsFile.canonicalPath} not found, a template ('${templateFile.name}') \n " +
+                    "file was created so you can change and rename it.")
         }
         return YamlUtils().parsePlatforms(platformsFile)
     }

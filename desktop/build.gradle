@@ -13,7 +13,7 @@ task run(dependsOn: classes, type: JavaExec) {
     workingDir = project.assetsDir
 
     //args Eval.me(appArgsWhatEverIWant)
-    args = ["-workdir", "temp", "--forceWorkdirCreation"]
+    args = ["-workdir", "../../temp", "--forceWorkdirCreation"]
 
     ignoreExitValue = true
 }

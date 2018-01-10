@@ -337,17 +337,15 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		val systemView = checkNotNull(theme.findView("system"), { "System tag of theme ${platform.platformName} not found. please check your theme files." })
 
 		val image = getImageFromSystem(systemView, 1f).apply {
-			//height = Math.max(groupPlatforms.height - paddingHeight, height)
-			width = platformWidth //widthPerPlatform - paddingWidth * 2
-
-			color.a = platformDisabledAlpha
+			width = platformWidth // this is the small size
+			color.a = platformDisabledAlpha // this is the small alpha
 
 			x = currentX + ((widthPerPlatform - width) / 2)
 			y = (groupPlatforms.height - height) / 2
 
 			name = platform.platformName
 
-			setScaling(Scaling.fillX)
+			setScaling(Scaling.fit)
 		}
 
 		if (image.height > groupPlatformsHeight - 20f) {
@@ -576,7 +574,10 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 			val originalWidth = platformOriginalWidth[i]
 			if (image.name == currentPlatform.platformName) {
 				image.x = originalX - (expandWidth / 2f)
-				image.width = Math.max((screenWidth / 3), originalWidth + expandWidth)
+
+                //this is the bigger size
+				image.width = originalWidth * 2.5f
+                // this is the bigger alpha
 				image.color.a = 1f
 			} else {
 				image.x = originalX

@@ -20,16 +20,12 @@ import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.yaml.YamlUtils
-import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 import java.io.File
 
 
-/**
- *
- */
 class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	val logger = KotlinLogging.logger { }
@@ -43,6 +39,8 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	init {
 		logger.debug { "create()" }
 
+
+
 		stage.addActor(Image(createColorTexture(0x6FBBDBFF)).apply {
 			setFillParent(true)
 			color.a = 0f
@@ -53,9 +51,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 					}))
 		})
 
-
-
-		Gdx.input.inputProcessor = stage
+        Gdx.input.inputProcessor = stage
 
 		imgLogo = Image(Texture("images/logo.png"))
 
@@ -178,6 +174,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	}
 
 	private fun onError(exception: Throwable) {
+
 
         val message = exception.message ?: "An internal error have occurred, please check your configuration files."
 

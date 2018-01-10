@@ -1,13 +1,16 @@
 package com.github.emulio.ui.input
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.Timer
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.InputConfig
+import com.github.emulio.ui.screens.PlatformsScreen
 import mu.KotlinLogging
 
 
@@ -592,7 +595,17 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		return stage.touchDown(screenX, screenY, pointer, button)
 	}
 
+    private val hideCursorTask: Timer.Task = object : Timer.Task() {
+        override fun run() {
+            Gdx.input.isCursorCatched = true
+        }
+    }
+
 	override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
+        hideCursorTask.cancel()
+        Timer.schedule(hideCursorTask, 2f)
+
+        Gdx.input.isCursorCatched = false
 		return stage.mouseMoved(screenX, screenY)
 	}
 
@@ -604,3 +617,53 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 }
 
 
+class DummyInputListener : InputListener {
+    override fun onCancelButton(): Boolean {
+        return true
+    }
+
+    override fun onUpButton(): Boolean {
+        return true
+    }
+
+    override fun onDownButton(): Boolean {
+        return true
+    }
+
+    override fun onLeftButton(): Boolean {
+        return true
+    }
+
+    override fun onRightButton(): Boolean {
+        return true
+    }
+
+    override fun onFindButton(): Boolean {
+        return true
+    }
+
+    override fun onOptionsButton(): Boolean {
+        return true
+    }
+
+    override fun onSelectButton(): Boolean {
+        return true
+    }
+
+    override fun onPageUpButton(): Boolean {
+        return true
+    }
+
+    override fun onPageDownButton(): Boolean {
+        return true
+    }
+
+    override fun onExitButton(): Boolean {
+        return true
+    }
+
+    override fun onConfirmButton(): Boolean {
+        return true
+    }
+
+}
