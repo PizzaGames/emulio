@@ -1,7 +1,6 @@
 package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
@@ -16,12 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.github.emulio.Emulio
-import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.math.BigInteger
 
-abstract class EmulioScreen(val emulio: Emulio) : Screen {
+abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
     private val logger = KotlinLogging.logger { }
 
@@ -41,6 +39,25 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
         rgba.length == 6 -> Color(BigInteger(rgba.toUpperCase() + "FF", 16).toInt())
         rgba.length == 8 -> Color(BigInteger(rgba.toUpperCase(), 16).toInt())
         else -> Color.BLACK
+    }
+
+    fun buildText(text: String, txtFont: BitmapFont, x: Float, y: Float): Label {
+        return Label(text, Label.LabelStyle().apply {
+            font = txtFont
+        }).apply {
+            setPosition(x, y)
+            color = Color.WHITE
+        }
+    }
+
+    open fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
+        val imgButtonStart = Image(Texture(Gdx.files.internal(imgPath), true).apply {
+            setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+        })
+        imgButtonStart.setSize(imgWidth, imgHeight)
+        imgButtonStart.x = x
+        imgButtonStart.y = y
+        return imgButtonStart
     }
 
 	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color? = null): BitmapFont {
@@ -125,8 +142,8 @@ abstract class EmulioScreen(val emulio: Emulio) : Screen {
         InfoDialog("Error", message, emulio).show(stage)
     }
 
-    fun showMainMenu() {
-        MainMenuDialog(emulio, stage).show(stage)
+    fun showMainMenu(screenCreatorOnBack: () -> EmulioScreen) {
+        MainMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
     }
 
 }

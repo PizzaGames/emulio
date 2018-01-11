@@ -285,25 +285,6 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
         helpHuds = HelpHuds(imgStart, txtMenu, imgA, txtSelect, imgDPadLeftRight, txtChoose)
     }
 
-    private fun buildText(text: String, txtFont: BitmapFont, x: Float, y: Float): Label {
-        return Label(text, Label.LabelStyle().apply {
-            font = txtFont
-        }).apply {
-            setPosition(x, y)
-            color = Color.WHITE
-        }
-    }
-
-    private fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
-        val imgButtonStart = Image(Texture(Gdx.files.internal(imgPath), true).apply {
-            setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-        })
-        imgButtonStart.setSize(imgWidth, imgHeight)
-        imgButtonStart.x = x
-        imgButtonStart.y = y
-        return imgButtonStart
-    }
-
     private fun initGroupPlatforms() {
 
 
@@ -556,7 +537,9 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onOptionsButton(): Boolean {
-		showMainMenu()
+		showMainMenu({
+            PlatformsScreen(emulio, currentPlatform)
+        })
 		return true
 	}
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Align
 import com.github.emulio.Emulio
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.translate
@@ -45,13 +46,18 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
         return super.show(stage)
     }
 
-    fun closeDialog() {
+    fun closeDialog(skipAnimation: Boolean = false) {
         hide()
         remove()
         overlay.actions.forEach { reset() }
         overlay.actions.clear()
 
-        overlay.addAction(SequenceAction(Actions.fadeOut(0.5f), Actions.run { overlay.remove() }))
+        if (skipAnimation) {
+            overlay.remove()
+        } else {
+            overlay.addAction(SequenceAction(Actions.fadeOut(0.5f), Actions.run { overlay.remove() }))
+        }
+
 
         inputController.dispose()
         if (oldProcessor is InputManager) {
@@ -113,7 +119,7 @@ abstract class YesNoDialog(title: String, val dialogMessage: String, emulio: Emu
 
     private fun initGUI() {
         contentTable.add(Table().apply {
-            add(Label(dialogMessage, emulio.skin)).minHeight(100f).expand()
+            add(Label(dialogMessage, emulio.skin)).align(Align.center).minHeight(100f).expandX()
             row()
             add(ImageTextButton("Yes".translate(), emulio.skin, "confirm").apply {
                 addClickListener {
@@ -170,10 +176,10 @@ class InfoDialog(title: String, val dialogMessage: String, emulio: Emulio) : Emu
     }
 }
 
-class MainMenuDialog(emulio: Emulio, val stg: Stage) : EmulioDialog("Main Menu".translate().toUpperCase(), emulio, "naked") {
+class MainMenuDialog(emulio: Emulio, val backCallback: () -> EmulioScreen, screen: EmulioScreen, private val stg: Stage = screen.stage) : EmulioDialog("Main Menu".translate(), emulio, "main-menu") {
 
     // we need to cache this font!
-    val mainFont = FreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf")).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+    private val mainFont = FreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf")).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
         size = 40
         color = Color.WHITE
     })
@@ -184,6 +190,8 @@ class MainMenuDialog(emulio: Emulio, val stg: Stage) : EmulioDialog("Main Menu".
     private val menuItems = mapOf(
             "Scraper" to {
                 InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
+
+
             },
             "Sound Settings" to {
                 InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
@@ -195,7 +203,8 @@ class MainMenuDialog(emulio: Emulio, val stg: Stage) : EmulioDialog("Main Menu".
                 InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
             },
             "Input settings" to {
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
+                closeDialog(true)
+                screen.switchScreen(InputConfigScreen(emulio, backCallback))
             },
             "Quit Emulio" to {
                 showExitConfirmation(emulio, stg)
@@ -207,7 +216,7 @@ class MainMenuDialog(emulio: Emulio, val stg: Stage) : EmulioDialog("Main Menu".
         titleLabel.remove()
         titleTable.reset()
 
-        titleTable.add(Label(title, emulio.skin, "huge").apply {
+        titleTable.add(Label(title, emulio.skin, "title").apply {
             color.a = 0.8f
         })
 

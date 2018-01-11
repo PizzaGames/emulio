@@ -1014,12 +1014,12 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         val txtSelect = buildText("Launch".translate().toUpperCase(), helpFont, imgA.x + imgWidth + padding, y)
         stage.addActor(txtSelect)
 
-        val imgDPadUpDown = buildImage("images/resources/help/dpad_updown_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
+        val imgDPadUpDown = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
         stage.addActor(imgDPadUpDown)
         val txtSystem = buildText("System".translate().toUpperCase(), helpFont, imgDPadUpDown.x + imgWidth + padding, y)
         stage.addActor(txtSystem)
 
-        val imgDPadLeftRight = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSystem.x + txtSystem.width + (padding * 3), imageY)
+        val imgDPadLeftRight = buildImage("images/resources/help/dpad_updown_128_128.png", imgWidth, imgHeight, txtSystem.x + txtSystem.width + (padding * 3), imageY)
         stage.addActor(imgDPadLeftRight)
         val txtChoose = buildText("Choose".translate().toUpperCase(), helpFont, imgDPadLeftRight.x + imgWidth + padding, y)
         stage.addActor(txtChoose)
@@ -1055,16 +1055,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     }
 
-    private fun buildText(text: String, txtFont: BitmapFont, x: Float, y: Float): Label {
-        return Label(text, Label.LabelStyle().apply {
-            font = txtFont
-        }).apply {
-            setPosition(x, y)
-            color = Color.WHITE
-        }
-    }
-
-    private fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
+    override fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
         return buildImage(buildTexture(imgPath), imgWidth, imgHeight, x, y)
     }
 
@@ -1202,7 +1193,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
     
 	override fun onOptionsButton(): Boolean {
-        showMainMenu()
+        showMainMenu({
+            GameListScreen(emulio, platform)
+        })
 		return true
 	}
 

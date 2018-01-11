@@ -174,8 +174,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	}
 
 	private fun onError(exception: Throwable) {
-
-
         val message = exception.message ?: "An internal error have occurred, please check your configuration files."
 
         lbLoading.setText(message)
@@ -199,31 +197,30 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
         val themeName = emulio.config.uiConfig.themeName
         val themesFolder = File(emulio.workdir, "themes")
+        val themeFolder  = File(themesFolder, themeName)
 
-        val themedir = File(themesFolder, themeName)
-
-        if (themeName == "simple" && !themedir.isDirectory) {
+        if (themeName == "simple" && !themeFolder.isDirectory) {
             ThemeReader
-                .extractSimpleTheme(themedir, themeName, emulio)
+                .extractSimpleTheme(themeFolder, themeName, emulio)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(GdxScheduler)
                     .Subscribe(
                         onNext = { pair ->
-                            val (percentual, file) = pair
-                            lbLoading.setText("Extracting initial theme. ${percentual.toInt()}% completed (${file.name})")
+                            val (percent, file) = pair
+                            lbLoading.setText("Extracting initial theme. ${percent.toInt()}% completed (${file.name})")
                         },
                         onError =  { ex ->
                             onError(ex)
                         },
                         onComplete = {
-                            loadTheme(platforms, themedir, themesMap, start)
+                            loadTheme(platforms, themeFolder, themesMap, start)
                     })
         } else {
-            if (!themedir.isDirectory) {
+            if (!themeFolder.isDirectory) {
                 error("Theme '$themeName' not found in the ${themesFolder.absolutePath}, please check your theme files.")
             }
 
-            loadTheme(platforms, themedir, themesMap, start)
+            loadTheme(platforms, themeFolder, themesMap, start)
         }
 	}
 

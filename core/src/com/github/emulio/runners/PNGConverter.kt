@@ -32,7 +32,7 @@ class PNGConverter {
 }
 
 
-
+//
 //fun main(args: Array<String>) {
 //	val start = System.currentTimeMillis()
 //
@@ -42,10 +42,10 @@ class PNGConverter {
 //
 //
 //        val svgFile = path.toFile()
-//        val pngFile = File(svgFile.parentFile.absoluteFile, svgFile.nameWithoutExtension + "_128_128.png")
+//        val pngFile = File("G:\\workspace\\emulio-skin\\sources", svgFile.nameWithoutExtension + "_40_40.png")
 //        println("Converting: $svgFile to $pngFile")
 //
-//        PNGConverter().convertFromSVG(svgFile, pngFile, 128f, 128f)
+//        PNGConverter().convertFromSVG(svgFile, pngFile, 40f, 40f)
 //    }
 //
 //	//PNGConverter().convertFromSVG(File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.svg"), File("G:/workspace/emulio/sample-files/theme/simple/3do/art/3do.png"), 128f, 128f)

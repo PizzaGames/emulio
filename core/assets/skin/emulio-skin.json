@@ -390,14 +390,14 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		font: font
 	}
 	confirm: {
-		imageUp: 360_A
+		imageUp: button_a_40_40
 		font: emulio-title-small
 		up: emulio-button
 		down: emulio-button-pressed
 		over: emulio-button
 	}
 	cancel: {
-		imageUp: 360_B
+		imageUp: button_b_40_40
 		font: emulio-title-small
 		up: emulio-button
 		down: emulio-button-pressed
@@ -413,6 +413,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: emulio-text-huge
 		fontColor: color
 	}
+	title: {
+		font: emulio-title
+		fontColor: color
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
@@ -421,12 +425,6 @@ com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 		fontColorUnselected: color
 		selection: color
 		background: list-c
-	}
-	menu: {
-		font: emulio-text-big
-		fontColorSelected: color
-		fontColorUnselected: color
-		selection: emulio-menu-list-selection
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
@@ -552,14 +550,14 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 		titleFont: emulio-title
 		titleFontColor: color
 	}
-	main: {
-		background: window-main-c
-		titleFont: font
-		titleFontColor: color
-	}
 	naked: {
 		background: emulio-naked-window
-		titleFont: emulio-text-huge
+		titleFont: emulio-title
+		titleFontColor: color
+	}
+	main-menu: {
+		background: emulio-main-menu
+		titleFont: emulio-title
 		titleFontColor: color
 	}
 }
