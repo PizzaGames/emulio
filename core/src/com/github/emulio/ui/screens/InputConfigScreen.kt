@@ -256,34 +256,34 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         val y = initialY - 2f + ((height - lineHeight) / 2)
         val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
 
-        val imgBack = buildImage("images/resources/help/button_b_128_128.png", imgWidth, imgHeight, 10f, imageY)
+        val imgBack = buildImage("images/help/xbox/360_B.png", imgWidth, imgHeight, 10f, imageY)
         stage.addActor(imgBack)
         val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgBack.x + imgWidth + padding, y)
         stage.addActor(txtBack)
 
-        val imgRedefine = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
+        val imgRedefine = buildImage("images/help/xbox/360_A.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
         stage.addActor(imgRedefine)
         val txtRedefine = buildText("Redefine".translate().toUpperCase(), helpFont, imgRedefine.x + imgWidth + padding, y)
         stage.addActor(txtRedefine)
 
-        val imgNavigate = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtRedefine.x + txtRedefine.width + (padding * 3), imageY)
+        val imgNavigate = buildImage("images/help/xbox/360_Dpad.png", imgWidth, imgHeight, txtRedefine.x + txtRedefine.width + (padding * 3), imageY)
         stage.addActor(imgNavigate)
         val txtNavigate = buildText("Navigate".translate().toUpperCase(), helpFont, imgNavigate.x + imgWidth + padding, y)
         stage.addActor(txtNavigate)
 
-        val alpha = 0.4f
+        val alpha = 0.8f
         val imgColor = Color.BLACK
-        val txtColor = Color.BLACK
+        val txtColor = Color.DARK_GRAY
 
-        imgBack.color = imgColor
+//        imgBack.color = imgColor
         imgBack.color.a = alpha
         txtBack.color = txtColor
         txtBack.color.a = alpha
-        imgRedefine.color = imgColor
+//        imgRedefine.color = imgColor
         imgRedefine.color.a = alpha
         txtRedefine.color = txtColor
         txtRedefine.color.a = alpha
-        imgNavigate.color = imgColor
+//        imgNavigate.color = imgColor
         imgNavigate.color.a = alpha
         txtNavigate.color = txtColor
         txtNavigate.color.a = alpha
