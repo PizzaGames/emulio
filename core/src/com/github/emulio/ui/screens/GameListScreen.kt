@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
@@ -24,7 +23,9 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
+import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.Game
+import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.*
 import com.github.emulio.process.ProcessException
@@ -164,7 +165,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
                 val newIndex = listView.selectedIndex
 
                 if (lastSelectedIndex == newIndex) {
-                    onConfirmButton()
+                    onConfirmButton(AnyInputConfig)
                     return
                 }
 
@@ -181,10 +182,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             }
         })
 
-        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle().apply {
-
-        }).apply {
-
+        listScrollPane = ScrollPane(listView, ScrollPane.ScrollPaneStyle()).apply {
             setFlickScroll(true)
             setScrollBarPositions(false, true)
 
@@ -1073,7 +1071,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
     }
 
-    override fun onConfirmButton(): Boolean {
+    override fun onConfirmButton(input: InputConfig) {
         if (isSelectionListView) {
             filteredGames = when(listView.selectedIndex) {
                 0 -> games.filter { it.displayName!![0].isDigit() }
@@ -1115,12 +1113,11 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         } else {
             launchGame()
         }
-        return true
     }
 
 
-    override fun onCancelButton(): Boolean {
-        if (!guiready) return false
+    override fun onCancelButton(input: InputConfig) {
+        if (!guiready) return
 
         if (needSelectionView && !isSelectionListView) {
             listView.remove()
@@ -1133,28 +1130,25 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             switchScreen(PlatformsScreen(emulio, platform))
         }
 
-        return true
     }
 
-    override fun onUpButton(): Boolean {
-        if (!guiready) return false
+    override fun onUpButton(input: InputConfig) {
+        if (!guiready) return
 
         selectNext(-1)
-        return true
     }
 
-    override fun onDownButton(): Boolean {
+    override fun onDownButton(input: InputConfig) {
         logger.debug { "onDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        if (!guiready) return
 
         selectNext()
-		return true
 	}
 
 
-    override fun onLeftButton(): Boolean {
+    override fun onLeftButton(input: InputConfig) {
         logger.debug { "onLeftButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        if (!guiready) return
 
         val platforms = emulio.platforms
         val index = platforms.indexOf(platform)
@@ -1166,12 +1160,11 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         switchScreen(GameListScreen(emulio, platforms[previousPlatform]))
-		return true
 	}
 
-	override fun onRightButton(): Boolean {
+	override fun onRightButton(input: InputConfig) {
         logger.debug { "onRightButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        if (!guiready) return
 
         val platforms = emulio.platforms
         val index = platforms.indexOf(platform)
@@ -1182,50 +1175,43 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             index + 1
         }
         switchScreen(GameListScreen(emulio, platforms[previousPlatform]))
-		return true
 	}
 
-	override fun onFindButton(): Boolean {
+	override fun onFindButton(input: InputConfig) {
         logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
 
-        if (!guiready) return false
-		return true
+        if (!guiready) return
 	}
     
-	override fun onOptionsButton(): Boolean {
+	override fun onOptionsButton(input: InputConfig) {
         showMainMenu({
             GameListScreen(emulio, platform)
         })
-		return true
 	}
 
-	override fun onSelectButton(): Boolean {
+	override fun onSelectButton(input: InputConfig) {
         logger.debug { "onSelectButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
-		return true
+        if (!guiready) return
 	}
 
-	override fun onPageUpButton(): Boolean {
+	override fun onPageUpButton(input: InputConfig) {
         logger.debug { "onPageUpButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        if (!guiready) return
         selectNext(-10)
-        return true
 	}
 
-	override fun onPageDownButton(): Boolean {
+	override fun onPageDownButton(input: InputConfig) {
         logger.debug { "onPageDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        if (!guiready) return
         selectNext(10)
-		return true
 	}
 
-	override fun onExitButton(): Boolean {
+	override fun onExitButton(input: InputConfig) {
         logger.debug { "onExitButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return false
+        if (!guiready) return
 
         showCloseDialog()
 
-		return true
 	}
 
 

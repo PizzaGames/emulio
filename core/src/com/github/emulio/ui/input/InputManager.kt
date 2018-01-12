@@ -95,12 +95,15 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	private fun updatePov(delta: Float) {
-		controllerValues.forEach { (_, cv) ->
-			updatePov(cv, delta)
+		controllerValues.forEach { (controller, cv) ->
+            val controllerConfig = getControllerConfig(controller)
+            if (controllerConfig != null) {
+                updatePov(controllerConfig, cv, delta)
+            }
 		}
 	}
 
-	fun updatePov(cv: ControllerValues, delta: Float) {
+	fun updatePov(controller: InputConfig, cv: ControllerValues, delta: Float) {
 
 		cv.apply {
 
@@ -110,28 +113,28 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				}
 				PovDirection.north -> {
 					if (elapsedPov > povDelay) {
-						listener.onUpButton()
+						listener.onUpButton(controller)
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
 				PovDirection.south -> {
 					if (elapsedPov > povDelay) {
-						listener.onDownButton()
+						listener.onDownButton(controller)
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
 				PovDirection.west -> {
 					if (elapsedPov > povDelay) {
-						listener.onLeftButton()
+						listener.onLeftButton(controller)
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
 				}
 				PovDirection.east -> {
 					if (elapsedPov > povDelay) {
-						listener.onRightButton()
+						listener.onRightButton(controller)
 						elapsedPov = 0f
 					}
 					elapsedPov += delta
@@ -144,26 +147,29 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	private fun updateControllerAxis(delta: Float) {
-		controllerValues.forEach { (_, cv) ->
-			updateControllerAxis(cv, delta)
+		controllerValues.forEach { (controller, cv) ->
+            val controllerConfig = getControllerConfig(controller)
+            if (controllerConfig != null) {
+                updateControllerAxis(controllerConfig, cv, delta)
+            }
 		}
 	}
 
-	private fun updateControllerAxis(cv: ControllerValues, delta: Float) {
+	private fun updateControllerAxis(controller: InputConfig, cv: ControllerValues, delta: Float) {
 		val delayTime = 0.150f
 
-		updateAxisUpDown(cv, delta, delayTime)
-		updateAxisLeftRight(cv, delta, delayTime)
+		updateAxisUpDown(controller, cv, delta, delayTime)
+		updateAxisLeftRight(controller, cv, delta, delayTime)
 
-		updateAxisLTRT(cv, delta, delayTime)
+		updateAxisLTRT(controller, cv, delta, delayTime)
 	}
 
-	private fun updateAxisLTRT(cv: ControllerValues, delta: Float, delayTime: Float) {
+	private fun updateAxisLTRT(controller: InputConfig, cv: ControllerValues, delta: Float, delayTime: Float) {
 		cv.apply {
 			if (axisLT > 0f) {
 				elapsedAxisLT += delta
 				if (elapsedAxisLT > delayByAxisValue(axisLT, delayTime)) {
-					listener.onPageUpButton()
+					listener.onPageUpButton(controller)
 					elapsedAxisLT = 0f
 				}
 			} else {
@@ -174,7 +180,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				elapsedAxisRT += delta
 
 				if (elapsedAxisRT > delayByAxisValue(axisRT, delayTime)) {
-					listener.onPageDownButton()
+					listener.onPageDownButton(controller)
 					elapsedAxisRT = 0f
 				}
 			} else {
@@ -183,13 +189,13 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		}
 	}
 
-	private fun updateAxisUpDown(cv: ControllerValues, delta: Float, delayTime: Float) {
+	private fun updateAxisUpDown(controller: InputConfig, cv: ControllerValues, delta: Float, delayTime: Float) {
 		cv.apply {
 			if (axisUp > 0f) {
 				elapsedAxisUp += delta
 
 				if (elapsedAxisUp > delayByAxisValue(axisUp, delayTime)) {
-					listener.onUpButton()
+					listener.onUpButton(controller)
 					elapsedAxisUp = 0f
 				}
 			} else {
@@ -200,7 +206,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				elapsedAxisDown += delta
 
 				if (elapsedAxisDown > delayByAxisValue(axisDown, delayTime)) {
-					listener.onDownButton()
+					listener.onDownButton(controller)
 					elapsedAxisDown = 0f
 				}
 			} else {
@@ -209,13 +215,13 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		}
 	}
 
-	private fun updateAxisLeftRight(cv: ControllerValues, delta: Float, delayTime: Float) {
+	private fun updateAxisLeftRight(controller: InputConfig,cv: ControllerValues, delta: Float, delayTime: Float) {
 		cv.apply {
 			if (axisLeft > 0f) {
 				elapsedAxisLeft += delta
 
 				if (elapsedAxisLeft > delayByAxisValue(axisLeft, delayTime)) {
-					listener.onLeftButton()
+					listener.onLeftButton(controller)
 					elapsedAxisLeft = 0f
 				}
 			} else {
@@ -226,7 +232,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				elapsedAxisRight += delta
 
 				if (elapsedAxisRight > delayByAxisValue(axisRight, delayTime)) {
-					listener.onRightButton()
+					listener.onRightButton(controller)
 					elapsedAxisRight = 0f
 				}
 			} else {
@@ -297,35 +303,35 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 
 	private fun fireKeyboardEvent(keyboard: InputConfig, keycode: Int) {
 		when (keycode) {
-			keyboard.up -> listener.onUpButton()
-			keyboard.down -> listener.onDownButton()
-			keyboard.left -> listener.onLeftButton()
-			keyboard.right -> listener.onRightButton()
-			keyboard.pageUp -> listener.onPageUpButton()
-			keyboard.pageDown -> listener.onPageDownButton()
+			keyboard.up -> listener.onUpButton(keyboard)
+			keyboard.down -> listener.onDownButton(keyboard)
+			keyboard.left -> listener.onLeftButton(keyboard)
+			keyboard.right -> listener.onRightButton(keyboard)
+			keyboard.pageUp -> listener.onPageUpButton(keyboard)
+			keyboard.pageDown -> listener.onPageDownButton(keyboard)
 
 			keyboard.confirm -> {
-				listener.onConfirmButton()
+				listener.onConfirmButton(keyboard)
 				pressedkey = 0
 			}
 			keyboard.cancel -> {
-				listener.onCancelButton()
+				listener.onCancelButton(keyboard)
 				pressedkey = 0
 			}
 			keyboard.find -> {
-				listener.onFindButton()
+				listener.onFindButton(keyboard)
 				pressedkey = 0
 			}
 			keyboard.options -> {
-				listener.onOptionsButton()
+				listener.onOptionsButton(keyboard)
 				pressedkey = 0
 			}
 			keyboard.select -> {
-				listener.onSelectButton()
+				listener.onSelectButton(keyboard)
 				pressedkey = 0
 			}
 			keyboard.exit -> {
-				listener.onExitButton()
+				listener.onExitButton(keyboard)
 				pressedkey = 0
 			}
 		}
@@ -387,44 +393,44 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 
 			if (!controllerCfg.usePov) {
 				when (buttonCode) {
-					controllerCfg.up -> listener.onUpButton()
-					controllerCfg.down -> listener.onDownButton()
-					controllerCfg.left -> listener.onLeftButton()
-					controllerCfg.right -> listener.onRightButton()
+					controllerCfg.up -> listener.onUpButton(controllerCfg)
+					controllerCfg.down -> listener.onDownButton(controllerCfg)
+					controllerCfg.left -> listener.onLeftButton(controllerCfg)
+					controllerCfg.right -> listener.onRightButton(controllerCfg)
 				}
 			}
 
 			when (buttonCode) {
-				controllerCfg.pageUp -> listener.onPageUpButton()
-				controllerCfg.pageDown -> listener.onPageDownButton()
+				controllerCfg.pageUp -> listener.onPageUpButton(controllerCfg)
+				controllerCfg.pageDown -> listener.onPageDownButton(controllerCfg)
 
 				controllerCfg.confirm -> {
-					listener.onConfirmButton()
+					listener.onConfirmButton(controllerCfg)
 					controllerValues[controller]!!.button = 0
 				}
 
 				controllerCfg.cancel -> {
-					listener.onCancelButton()
+					listener.onCancelButton(controllerCfg)
 					controllerValues[controller]!!.button = 0
 				}
 
 				controllerCfg.find -> {
-					listener.onFindButton()
+					listener.onFindButton(controllerCfg)
 					controllerValues[controller]!!.button = 0
 				}
 
 				controllerCfg.options -> {
-					listener.onOptionsButton()
+					listener.onOptionsButton(controllerCfg)
 					controllerValues[controller]!!.button = 0
 				}
 
 				controllerCfg.select -> {
-					listener.onSelectButton()
+					listener.onSelectButton(controllerCfg)
 					controllerValues[controller]!!.button = 0
 				}
 
 				controllerCfg.exit -> {
-					listener.onExitButton()
+					listener.onExitButton(controllerCfg)
 					controllerValues[controller]!!.button = 0
 				}
 
@@ -438,20 +444,21 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 
         when (axisCode) {
             cfg.axisX ->
-                axisLeftRightMoved(controllerValues[controller]!!, value)
+                axisLeftRightMoved(cfg, controllerValues[controller]!!, value)
             cfg.axisY ->
-                axisUpDownMoved(controllerValues[controller]!!, -value)
-            cfg.axisLeftTrigger -> axisLTMoved(controllerValues[controller]!!, value)
-            cfg.axisRightTrigger -> axisRTMoved(controllerValues[controller]!!, value)
+                axisUpDownMoved(cfg, controllerValues[controller]!!, -value)
+            cfg.axisLeftTrigger -> axisLTMoved(cfg, controllerValues[controller]!!, value)
+            cfg.axisRightTrigger -> axisRTMoved(cfg, controllerValues[controller]!!, value)
         }
 		return true
 	}
 
-	private fun axisLTMoved(cv: ControllerValues, value: Float) {
+	private fun axisLTMoved(controller: InputConfig, cv: ControllerValues, value: Float) {
 		cv.apply {
 			if (value > -1f) { // Left trigger
 				if (!axisLTTriggered) {
-					listener.onPageUpButton()
+
+					listener.onPageUpButton(controller)
 				}
 				axisLT = value
 				axisLTTriggered = true
@@ -462,11 +469,11 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		}
 	}
 
-    private fun axisRTMoved(cv: ControllerValues, value: Float) {
+    private fun axisRTMoved(controller: InputConfig, cv: ControllerValues, value: Float) {
         cv.apply {
             if (value > -1f) { // Right trigger
                 if (!axisRTTriggered) {
-                    listener.onPageDownButton()
+                    listener.onPageDownButton(controller)
                 }
                 axisRT = value
                 axisRTTriggered = true
@@ -477,13 +484,13 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
         }
     }
 
-	private fun axisUpDownMoved(cv: ControllerValues, value: Float) {
+	private fun axisUpDownMoved(controller: InputConfig, cv: ControllerValues, value: Float) {
 		cv.apply {
 			if (notInDeadzone(value)) {
 				if (value < 0) { // up
 
 					if (!axisUpTriggered) {
-						listener.onUpButton()
+						listener.onUpButton(controller)
 					}
 
 					axisUp = -value
@@ -494,7 +501,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				} else if (value > 0) { // down
 
 					if (!axisDownTriggered) {
-						listener.onDownButton()
+						listener.onDownButton(controller)
 					}
 
 					axisUp = 0f
@@ -513,12 +520,12 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		}
 	}
 
-	private fun axisLeftRightMoved(cv: ControllerValues, value: Float) {
+	private fun axisLeftRightMoved(controller: InputConfig, cv: ControllerValues, value: Float) {
 		cv.apply {
 			if (notInDeadzone(value)) {
 				if (value < 0) { // left
 					if (!axisLeftTriggered) {
-						listener.onLeftButton()
+						listener.onLeftButton(controller)
 					}
 
 					axisLeft = -value
@@ -529,7 +536,7 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 				} else if (value > 0) { // right
 
 					if (!axisRightTriggered) {
-						listener.onRightButton()
+						listener.onRightButton(controller)
 					}
 
 					axisLeft = 0f
@@ -556,16 +563,21 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	override fun povMoved(controller: Controller, povCode: Int, value: PovDirection): Boolean {
         if (paused) return false
 
+
+
 		controllerValues[controller]!!.apply {
 			povDirection = value
 			elapsedPov = 0f
 
-			when (value) {
-				PovDirection.north -> listener.onUpButton()
-				PovDirection.south -> listener.onDownButton()
-				PovDirection.west -> listener.onLeftButton()
-				PovDirection.east -> listener.onRightButton()
-			}
+            val controllerConfig = getControllerConfig(controller)
+            if (controllerConfig != null) {
+                when (value) {
+                    PovDirection.north -> listener.onUpButton(controllerConfig)
+                    PovDirection.south -> listener.onDownButton(controllerConfig)
+                    PovDirection.west -> listener.onLeftButton(controllerConfig)
+                    PovDirection.east -> listener.onRightButton(controllerConfig)
+                }
+            }
 		}
 		return true
 	}
@@ -615,52 +627,40 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 
 
 class DummyInputListener : InputListener {
-    override fun onCancelButton(): Boolean {
-        return true
+    override fun onCancelButton(input: InputConfig) {
     }
 
-    override fun onUpButton(): Boolean {
-        return true
+    override fun onUpButton(input: InputConfig) {
     }
 
-    override fun onDownButton(): Boolean {
-        return true
+    override fun onDownButton(input: InputConfig) {
     }
 
-    override fun onLeftButton(): Boolean {
-        return true
+    override fun onLeftButton(input: InputConfig) {
     }
 
-    override fun onRightButton(): Boolean {
-        return true
+    override fun onRightButton(input: InputConfig) {
     }
 
-    override fun onFindButton(): Boolean {
-        return true
+    override fun onFindButton(input: InputConfig) {
     }
 
-    override fun onOptionsButton(): Boolean {
-        return true
+    override fun onOptionsButton(input: InputConfig) {
     }
 
-    override fun onSelectButton(): Boolean {
-        return true
+    override fun onSelectButton(input: InputConfig) {
     }
 
-    override fun onPageUpButton(): Boolean {
-        return true
+    override fun onPageUpButton(input: InputConfig) {
     }
 
-    override fun onPageDownButton(): Boolean {
-        return true
+    override fun onPageDownButton(input: InputConfig) {
     }
 
-    override fun onExitButton(): Boolean {
-        return true
+    override fun onExitButton(input: InputConfig) {
     }
 
-    override fun onConfirmButton(): Boolean {
-        return true
+    override fun onConfirmButton(input: InputConfig) {
     }
 
 }

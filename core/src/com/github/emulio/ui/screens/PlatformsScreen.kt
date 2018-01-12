@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
+import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.HelpSystem
 import com.github.emulio.model.theme.View
@@ -503,49 +504,41 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
 	}
 
-	override fun onConfirmButton(): Boolean {
+	override fun onConfirmButton(input: InputConfig) {
 
         val currentGames = emulio.listGames(currentPlatform)
         if (currentGames.isEmpty()) {
             if (!loaded) {
                 lbCount.setText("Still loading this section...".translate())
             }
-            return true
         }
 		switchScreen(GameListScreen(emulio, currentPlatform))
-		return true
 	}
 
-	override fun onCancelButton(): Boolean {
+	override fun onCancelButton(input: InputConfig) {
 		lbLoading.setText("CancelButton ${System.currentTimeMillis()}")
-		return true
 	}
 
-	override fun onUpButton(): Boolean {
+	override fun onUpButton(input: InputConfig) {
 		lbLoading.setText("UpButton ${System.currentTimeMillis()}")
-		return true
 	}
 
-	override fun onDownButton(): Boolean {
+	override fun onDownButton(input: InputConfig) {
 		lbLoading.setText("DownButton ${System.currentTimeMillis()}")
-		return true
 	}
 
-	override fun onFindButton(): Boolean {
+	override fun onFindButton(input: InputConfig) {
 		lbLoading.setText("onFindButton ${System.currentTimeMillis()}")
-		return true
 	}
 
-	override fun onOptionsButton(): Boolean {
+	override fun onOptionsButton(input: InputConfig) {
 		showMainMenu({
             PlatformsScreen(emulio, currentPlatform)
         })
-		return true
 	}
 
-	override fun onSelectButton(): Boolean {
+	override fun onSelectButton(input: InputConfig) {
 		lbLoading.setText("onSelectButton ${System.currentTimeMillis()}")
-		return true
 	}
 
 	private fun updatePlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
@@ -623,29 +616,24 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		updatePlatformBg(currentPlatform)
 	}
-	override fun onLeftButton(): Boolean {
+	override fun onLeftButton(input: InputConfig) {
 		showPreviousPlatform()
-		return true
 	}
 
-	override fun onRightButton(): Boolean {
+	override fun onRightButton(input: InputConfig) {
 		showNextPlatform()
-		return true
 	}
 
-	override fun onPageUpButton(): Boolean {
+	override fun onPageUpButton(input: InputConfig) {
 		showPreviousPlatform()
-		return false
 	}
 
-	override fun onPageDownButton(): Boolean {
+	override fun onPageDownButton(input: InputConfig) {
 		showNextPlatform()
-		return false
 	}
 
-	override fun onExitButton(): Boolean {
+	override fun onExitButton(input: InputConfig) {
         showCloseDialog()
-		return false
 	}
 
 }

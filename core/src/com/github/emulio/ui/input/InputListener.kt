@@ -1,23 +1,25 @@
 package com.github.emulio.ui.input
 
+import com.github.emulio.model.InputConfig
+
 interface InputListener {
 	
-	fun onConfirmButton(): Boolean
-	fun onCancelButton(): Boolean
+	fun onConfirmButton(input: InputConfig)
+	fun onCancelButton(input: InputConfig)
 	
-	fun onUpButton(): Boolean
-	fun onDownButton(): Boolean
-	fun onLeftButton(): Boolean
-	fun onRightButton(): Boolean
+	fun onUpButton(input: InputConfig)
+	fun onDownButton(input: InputConfig)
+	fun onLeftButton(input: InputConfig)
+	fun onRightButton(input: InputConfig)
 	
-	fun onFindButton(): Boolean
+	fun onFindButton(input: InputConfig)
 	
-	fun onOptionsButton(): Boolean
-	fun onSelectButton(): Boolean
+	fun onOptionsButton(input: InputConfig)
+	fun onSelectButton(input: InputConfig)
 	
-	fun onPageUpButton(): Boolean
-	fun onPageDownButton(): Boolean
+	fun onPageUpButton(input: InputConfig)
+	fun onPageDownButton(input: InputConfig)
 	
-	fun onExitButton(): Boolean
+	fun onExitButton(input: InputConfig)
 }
 

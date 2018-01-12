@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.github.emulio.Emulio
+import com.github.emulio.model.AnyInputConfig
+import com.github.emulio.model.InputConfig
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.translate
 
@@ -66,44 +68,34 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
         Gdx.input.inputProcessor = oldProcessor
     }
 
-    override fun onUpButton(): Boolean {
-        return false
+    override fun onUpButton(input: InputConfig) {
     }
 
-    override fun onDownButton(): Boolean {
-        return false
+    override fun onDownButton(input: InputConfig) {
     }
 
-    override fun onLeftButton(): Boolean {
-        return false
+    override fun onLeftButton(input: InputConfig) {
     }
 
-    override fun onRightButton(): Boolean {
-        return false
+    override fun onRightButton(input: InputConfig) {
     }
 
-    override fun onFindButton(): Boolean {
-        return false
+    override fun onFindButton(input: InputConfig) {
     }
 
-    override fun onOptionsButton(): Boolean {
-        return false
+    override fun onOptionsButton(input: InputConfig) {
     }
 
-    override fun onSelectButton(): Boolean {
-        return false
+    override fun onSelectButton(input: InputConfig) {
     }
 
-    override fun onPageUpButton(): Boolean {
-        return false
+    override fun onPageUpButton(input: InputConfig) {
     }
 
-    override fun onPageDownButton(): Boolean {
-        return false
+    override fun onPageDownButton(input: InputConfig) {
     }
 
-    override fun onExitButton(): Boolean {
-        return false
+    override fun onExitButton(input: InputConfig) {
     }
 
 }
@@ -123,27 +115,25 @@ abstract class YesNoDialog(title: String, val dialogMessage: String, emulio: Emu
             row()
             add(ImageTextButton("Yes".translate(), emulio.skin, "confirm").apply {
                 addClickListener {
-                    onConfirmButton()
+                    onConfirmButton(AnyInputConfig)
                 }
             }).expandX().right()
             add(ImageTextButton("No".translate(), emulio.skin, "cancel").apply {
                 addClickListener {
-                    onCancelButton()
+                    onCancelButton(AnyInputConfig)
                 }
             }).expandX().left()
         }).expand().fill()
     }
 
-    override fun onConfirmButton(): Boolean {
+    override fun onConfirmButton(input: InputConfig) {
         onConfirmDialog()
         closeDialog()
-        return false
     }
 
-    override fun onCancelButton(): Boolean {
+    override fun onCancelButton(input: InputConfig) {
         onCancelDialog()
         closeDialog()
-        return false
     }
 }
 
@@ -159,20 +149,18 @@ class InfoDialog(title: String, val dialogMessage: String, emulio: Emulio) : Emu
             row()
             add(ImageTextButton("Ok".translate(), emulio.skin, "confirm").apply {
                 addClickListener {
-                    onConfirmButton()
+                    onConfirmButton(AnyInputConfig)
                 }
             }).expandX()
         }).expand().fill()
     }
 
-    override fun onConfirmButton(): Boolean {
+    override fun onConfirmButton(input: InputConfig) {
         closeDialog()
-        return false
     }
 
-    override fun onCancelButton(): Boolean {
+    override fun onCancelButton(input: InputConfig) {
         closeDialog()
-        return false
     }
 }
 
@@ -332,35 +320,29 @@ class MainMenuDialog(emulio: Emulio, val backCallback: () -> EmulioScreen, scree
     }
 
 
-    override fun onDownButton(): Boolean {
+    override fun onDownButton(input: InputConfig) {
         selectNext(1)
-        return true
     }
 
-    override fun onUpButton(): Boolean {
+    override fun onUpButton(input: InputConfig) {
         selectNext(-1)
-        return true
     }
 
-    override fun onPageDownButton(): Boolean {
+    override fun onPageDownButton(input: InputConfig) {
         selectNext(5)
-        return true
     }
 
-    override fun onPageUpButton(): Boolean {
+    override fun onPageUpButton(input: InputConfig) {
         selectNext(-5)
-        return true
     }
 
 
-    override fun onConfirmButton(): Boolean {
+    override fun onConfirmButton(input: InputConfig) {
         performSelectItem()
-        return true
     }
 
-    override fun onCancelButton(): Boolean {
+    override fun onCancelButton(input: InputConfig) {
         closeDialog()
-        return true
     }
 
 }

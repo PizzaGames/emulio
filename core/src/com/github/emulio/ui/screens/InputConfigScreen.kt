@@ -2,10 +2,8 @@ package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.controllers.Controllers
-import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
@@ -21,6 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
+import com.github.emulio.model.AnyInputConfig
+import com.github.emulio.model.InputConfig
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.translate
@@ -166,7 +166,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    onLeftButton()
+                    onLeftButton(AnyInputConfig)
                 }
             })
         }
@@ -187,7 +187,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    onRightButton()
+                    onRightButton(AnyInputConfig)
                 }
             })
         }
@@ -256,39 +256,57 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         val y = initialY - 2f + ((height - lineHeight) / 2)
         val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
 
-        val imgB = buildImage("images/resources/help/button_b_128_128.png", imgWidth, imgHeight, 10f, imageY)
-        stage.addActor(imgB)
-        val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgB.x + imgWidth + padding, y)
+        val imgBack = buildImage("images/resources/help/button_b_128_128.png", imgWidth, imgHeight, 10f, imageY)
+        stage.addActor(imgBack)
+        val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgBack.x + imgWidth + padding, y)
         stage.addActor(txtBack)
 
-        val imgA = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
-        stage.addActor(imgA)
-        val txtSelect = buildText("Redefine".translate().toUpperCase(), helpFont, imgA.x + imgWidth + padding, y)
-        stage.addActor(txtSelect)
+        val imgRedefine = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
+        stage.addActor(imgRedefine)
+        val txtRedefine = buildText("Redefine".translate().toUpperCase(), helpFont, imgRedefine.x + imgWidth + padding, y)
+        stage.addActor(txtRedefine)
 
-        val imgDPadUpDown = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
-        stage.addActor(imgDPadUpDown)
-        val txtSystem = buildText("Navigate".translate().toUpperCase(), helpFont, imgDPadUpDown.x + imgWidth + padding, y)
-        stage.addActor(txtSystem)
+        val imgNavigate = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtRedefine.x + txtRedefine.width + (padding * 3), imageY)
+        stage.addActor(imgNavigate)
+        val txtNavigate = buildText("Navigate".translate().toUpperCase(), helpFont, imgNavigate.x + imgWidth + padding, y)
+        stage.addActor(txtNavigate)
 
         val alpha = 0.4f
         val imgColor = Color.BLACK
         val txtColor = Color.BLACK
 
-        imgB.color = imgColor
-        imgB.color.a = alpha
+        imgBack.color = imgColor
+        imgBack.color.a = alpha
         txtBack.color = txtColor
         txtBack.color.a = alpha
-        imgA.color = imgColor
-        imgA.color.a = alpha
-        txtSelect.color = txtColor
-        txtSelect.color.a = alpha
-        imgDPadUpDown.color = imgColor
-        imgDPadUpDown.color.a = alpha
-        txtSystem.color = txtColor
-        txtSystem.color.a = alpha
+        imgRedefine.color = imgColor
+        imgRedefine.color.a = alpha
+        txtRedefine.color = txtColor
+        txtRedefine.color.a = alpha
+        imgNavigate.color = imgColor
+        imgNavigate.color.a = alpha
+        txtNavigate.color = txtColor
+        txtNavigate.color.a = alpha
+
+//        helpHuds = HelpHuds(
+//                imgCancelButton = imgBack,
+//                txtCancelButton = txtBack,
+//                imgConfirmButton = imgRedefine,
+//                txtConfirmButton = txtRedefine
+//
+//
+////                        imgNavigate
+////                        txtNavigate
+//
+//        )
 
     }
+
+
+
+
+
+    private lateinit var helpHuds: HelpHuds
 
     override fun release() {
         inputController.dispose()
@@ -337,14 +355,14 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
     private fun animateController(nextImage: String) {
         imgController.addAction(SequenceAction(
-                Actions.fadeOut(0.2f),
-                Actions.run {
-                    val texture = Texture(Gdx.files.internal(nextImage), true)
+            Actions.fadeOut(0.2f),
+            Actions.run {
+                val texture = Texture(Gdx.files.internal(nextImage), true)
 
-                    texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                    imgController.drawable = TextureRegionDrawable(TextureRegion(texture))
-                },
-                Actions.alpha(0.4f, 0.2f)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgController.drawable = TextureRegionDrawable(TextureRegion(texture))
+            },
+            Actions.alpha(0.4f, 0.2f)
         ))
     }
 
@@ -379,57 +397,45 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
     }
 
-    override fun onConfirmButton(): Boolean {
-        return true
+    override fun onConfirmButton(input: InputConfig) {
     }
 
-    override fun onCancelButton(): Boolean {
+    override fun onCancelButton(input: InputConfig) {
         stage.root.addAction(SequenceAction(Actions.fadeOut(1f, Interpolation.fade), Actions.run {
             switchScreen(backCallback.invoke())
         }))
 
-        return true
     }
 
-    override fun onUpButton(): Boolean {
-        return true
+    override fun onUpButton(input: InputConfig) {
     }
 
-    override fun onDownButton(): Boolean {
-        return true
+    override fun onDownButton(input: InputConfig) {
     }
 
-    override fun onLeftButton(): Boolean {
+    override fun onLeftButton(input: InputConfig) {
         selectPreviousController()
-        return true
     }
 
-    override fun onRightButton(): Boolean {
+    override fun onRightButton(input: InputConfig) {
         selectNextController()
-        return true
     }
 
-    override fun onFindButton(): Boolean {
-        return true
+    override fun onFindButton(input: InputConfig) {
     }
 
-    override fun onOptionsButton(): Boolean {
-        return true
+    override fun onOptionsButton(input: InputConfig) {
     }
 
-    override fun onSelectButton(): Boolean {
-        return true
+    override fun onSelectButton(input: InputConfig) {
     }
 
-    override fun onPageUpButton(): Boolean {
-        return true
+    override fun onPageUpButton(input: InputConfig) {
     }
 
-    override fun onPageDownButton(): Boolean {
-        return true
+    override fun onPageDownButton(input: InputConfig) {
     }
 
-    override fun onExitButton(): Boolean {
-        return true
+    override fun onExitButton(input: InputConfig) {
     }
 }

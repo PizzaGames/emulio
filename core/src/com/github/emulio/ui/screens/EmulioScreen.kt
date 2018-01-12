@@ -140,8 +140,6 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         showExitConfirmation(emulio, stage)
     }
 
-
-
     fun showInfoDialog(message: String) {
         InfoDialog("Info", message, emulio).show(stage)
     }
@@ -185,3 +183,29 @@ fun Button.addClickListener(clickListener: () -> Unit) {
     })
 }
 
+data class HelpHuds(
+    val imgConfirmButton: Image?,
+    val txtConfirmButton: Label?,
+    val imgCancelButton: Image?,
+    val txtCancelButton: Label?,
+    val imgUpButton: Image?,
+    val txtUpButton: Label?,
+    val imgDownButton: Image?,
+    val txtDownButton: Label?,
+    val imgLeftButton: Image?,
+    val txtLeftButton: Label?,
+    val imgRightButton: Image?,
+    val txtRightButton: Label?,
+    val imgFindButton: Image?,
+    val txtFindButton: Label?,
+    val imgOptionsButton: Image?,
+    val txtOptionsButton: Label?,
+    val imgSelectButton: Image?,
+    val txtSelectButton: Label?,
+    val imgPageUpButton: Image?,
+    val txtPageUpButton: Label?,
+    val imgPageDownButton: Image?,
+    val txtPageDownButton: Label?,
+    val imgExitButton: Image?,
+    val txtExitButton: Label?
+)

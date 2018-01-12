@@ -2,6 +2,7 @@ package com.github.emulio.model
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.controllers.Controller
+import jdk.internal.util.xml.impl.Input
 import org.apache.batik.util.XBLConstants
 import java.io.File
 
@@ -98,7 +99,8 @@ enum class InputType {
 	OTHER,
 }
 
-class InputConfig {
+open class InputConfig {
+
 	lateinit var type: InputType
 	lateinit var name: String
 	
@@ -181,3 +183,4 @@ object Xbox {
 	}
 }
 
+object AnyInputConfig : InputConfig()
