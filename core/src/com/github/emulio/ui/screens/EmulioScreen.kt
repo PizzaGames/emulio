@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -32,6 +33,8 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 	private val fontCache = mutableMapOf<Triple<FileHandle, Int, Color?>, BitmapFont>()
 
 	val freeTypeFontGenerator = getFreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
+
+    var fadeAnimation = true
 
 	fun getColor(rgba: String?): Color = when {
 //        // TODO: Color are resources? we need to cache they like in SWT/Swing lib?
@@ -99,13 +102,18 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         logger.debug { "show" }
         stage.root.actions.forEach { it.reset() }
 
-        stage.root.color.a = 0f
+        if (fadeAnimation) {
+            stage.root.color.a = 0f
 
-        onScreenLoad()
-
-		stage.root.addAction(SequenceAction(
-            Actions.fadeIn(0.5f)
-        ))
+            stage.root.addAction(SequenceAction(
+                Actions.fadeIn(0.5f),
+                Actions.run {
+                    onScreenLoad()
+                }
+            ))
+        } else {
+            onScreenLoad()
+        }
 	}
 
     open fun onScreenLoad() {

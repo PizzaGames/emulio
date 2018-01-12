@@ -32,14 +32,16 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	lateinit var platforms: List<Platform>
 
-	val lbLoading: Label
+	private val lbLoading: Label
 
 	private var imgLogo: Image
 
-	init {
+    private var needInputConfig: Boolean = false
+
+    init {
 		logger.debug { "create()" }
 
-
+        fadeAnimation = false
 
 		stage.addActor(Image(createColorTexture(0x6FBBDBFF)).apply {
 			setFillParent(true)
@@ -98,11 +100,14 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 						Actions.fadeIn(1f),
 						Actions.run {
 							maskGroup.remove()
+
+                            if (needInputConfig) {
+                                showInputConfig()
+                            }
 						})
 				)
 			})
 		)
-
 
 		val mainFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 20
@@ -113,40 +118,56 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 			font = mainFont
 		})
 		lbLoading.setPosition(10f, 5f)
-
 		stage.addActor(lbLoading)
-
-		// load main configurations/games and all stuff.. from mongo?
-
 		lbLoading.setText("Loading configurations")
 
 		observeConfig()
 
 	}
 
-	private fun observeConfig() {
-		val observable: Observable<EmulioConfig> = Observable.create({ subscriber ->
+    private fun showInputConfig() {
+        Timer.schedule(object :  Timer.Task() {
+            override fun run() {
+                switchScreen(InputConfigScreen(emulio, {
+                    SplashScreen(emulio)
+                }, true))
+            }
+        }, 2f)
+    }
+
+    private fun observeConfig() {
+		val observable: Observable<Pair<EmulioConfig, Boolean>> = Observable.create({ subscriber ->
 			val yamlUtils = YamlUtils()
 			val configFile = File(emulio.workdir, "emulio-config.yaml")
 
-			if (!configFile.exists()) {
+            configFile.deleteOnExit() //FIXME remove this line
+
+            val createConfig = !configFile.exists()
+            if (createConfig) {
                 logger.info { "Configuration file not found, creating a default" }
 				yamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
 			}
 
-			subscriber.onNext(yamlUtils.parseEmulioConfig(configFile))
+			subscriber.onNext(Pair(yamlUtils.parseEmulioConfig(configFile), createConfig))
 			subscriber.onComplete()
 		})
 
 		observable
 				.subscribeOn(Schedulers.computation())
 				.observeOn(GdxScheduler)
-				.subscribe({ config ->
+				.subscribe({ pair ->
+                    val (config, created) = pair
 
 					emulio.config = config
 
-					lbLoading.setText("Loading platforms")
-					observePlatforms()
+                    if (created) {
+                        needInputConfig = true
+                    } else {
+                        lbLoading.setText("Loading platforms")
+                        observePlatforms()
+
+                        needInputConfig = false
+                    }
 				}, { onError(it) })
 	}
 

@@ -7,10 +7,8 @@ import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.Timer
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.InputConfig
-import com.github.emulio.ui.screens.PlatformsScreen
 import mu.KotlinLogging
 
 
@@ -79,6 +77,11 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 	}
 
 	fun update(delta: Float) {
+//        if (System.currentTimeMillis() - lastMouseMoved > 2000) {
+//            Gdx.input.isCursorCatched = true
+//        }
+
+
 		if (pressedkey != 0) {
 			updatePressedKey(delta)
 		}
@@ -595,17 +598,11 @@ class InputManager(val listener: InputListener, val config: EmulioConfig, val st
 		return stage.touchDown(screenX, screenY, pointer, button)
 	}
 
-    private val hideCursorTask: Timer.Task = object : Timer.Task() {
-        override fun run() {
-            Gdx.input.isCursorCatched = true
-        }
-    }
+//    private var lastMouseMoved = System.currentTimeMillis()
 
-	override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        hideCursorTask.cancel()
-        Timer.schedule(hideCursorTask, 2f)
-
+    override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
         Gdx.input.isCursorCatched = false
+//        lastMouseMoved = System.currentTimeMillis()
 		return stage.mouseMoved(screenX, screenY)
 	}
 
