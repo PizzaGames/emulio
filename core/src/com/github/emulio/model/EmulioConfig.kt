@@ -2,6 +2,7 @@ package com.github.emulio.model
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.controllers.Controller
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import jdk.internal.util.xml.impl.Input
 import org.apache.batik.util.XBLConstants
 import java.io.File
@@ -76,6 +77,8 @@ class EmulioConfig {
 
 			axisX = Xbox.AXIS_LEFT_X
 			axisY = Xbox.AXIS_LEFT_Y
+
+
 		})
 		debug = true
 	}
@@ -128,7 +131,10 @@ open class InputConfig {
 	var pageDown: Int = -1
 
 	var exit: Int = -1
+
+    var configImages: Map<Int, String> = emptyMap()
 }
+
 
 
 /*******************************************************************************

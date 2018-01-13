@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
@@ -42,7 +41,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     val logger = KotlinLogging.logger { }
 
-	private val inputController: InputManager = InputManager(this, emulio.config, stage)
+	private val inputController: InputManager = InputManager(this, emulio, stage)
 	private val interpolation = Interpolation.fade
 
     private var games: kotlin.collections.List<Game>
@@ -259,7 +258,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
 
-        buildHelpHuds(footerY, footerHeight)
+        initHelpHuds(footerY, footerHeight, HelpHuds(
+            txtSelect = "Options".translate().toUpperCase(),
+            txtOptions = "Menu".translate().toUpperCase(),
+            txtCancel = "Back".translate().toUpperCase(),
+            txtConfirm = "Launch".translate().toUpperCase(),
+            txtLeftRight = "System".translate().toUpperCase(),
+            txtUpDown = "Choose".translate().toUpperCase(),
+
+            alpha = 0.6f,
+            txtColor = Color.DARK_GRAY
+        ))
 	}
 
     private lateinit var gamelistView: TextList
@@ -972,87 +981,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
     }
 
-    private fun buildHelpHuds(initialY: Float, height: Float) {
-
-        val calculatedHeight = height * 0.55f
-
-        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-            size = calculatedHeight.toInt()
-            color = Color.WHITE
-            color.a = 1f
-        })
-
-        // Calculate the size according resolution???
-        val imgWidth = calculatedHeight
-        val imgHeight = calculatedHeight
-        val padding = 5f
-
-        val lineHeight = helpFont.lineHeight
-
-        val y = initialY - 2f + ((height - lineHeight) / 2)
-        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
-
-        val imgOptions = buildImage("images/resources/help/button_select_128_128.png", imgWidth, imgHeight, 10f, imageY)
-        stage.addActor(imgOptions)
-        val txtOptions = buildText("Options".translate().toUpperCase(), helpFont, imgOptions.x + imgWidth + padding, y)
-        stage.addActor(txtOptions)
-
-        val imgStart = buildImage("images/resources/help/button_start_128_128.png", imgWidth, imgHeight, txtOptions.x + txtOptions.width + (padding * 3), imageY)
-        stage.addActor(imgStart)
-        val txtMenu = buildText("Menu".translate().toUpperCase(), helpFont, imgStart.x + imgWidth + padding, y)
-        stage.addActor(txtMenu)
-
-        val imgB = buildImage("images/resources/help/button_b_128_128.png", imgWidth, imgHeight, txtMenu.x + txtMenu.width + (padding * 3), imageY)
-        stage.addActor(imgB)
-        val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgB.x + imgWidth + padding, y)
-        stage.addActor(txtBack)
-
-        val imgA = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
-        stage.addActor(imgA)
-        val txtSelect = buildText("Launch".translate().toUpperCase(), helpFont, imgA.x + imgWidth + padding, y)
-        stage.addActor(txtSelect)
-
-        val imgDPadUpDown = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
-        stage.addActor(imgDPadUpDown)
-        val txtSystem = buildText("System".translate().toUpperCase(), helpFont, imgDPadUpDown.x + imgWidth + padding, y)
-        stage.addActor(txtSystem)
-
-        val imgDPadLeftRight = buildImage("images/resources/help/dpad_updown_128_128.png", imgWidth, imgHeight, txtSystem.x + txtSystem.width + (padding * 3), imageY)
-        stage.addActor(imgDPadLeftRight)
-        val txtChoose = buildText("Choose".translate().toUpperCase(), helpFont, imgDPadLeftRight.x + imgWidth + padding, y)
-        stage.addActor(txtChoose)
-
-        val alpha = 0.4f
-        val imgColor = Color.BLACK
-        val txtColor = Color.BLACK
-
-        imgOptions.color = imgColor
-        imgOptions.color.a = alpha
-        txtOptions.color = txtColor
-        txtOptions.color.a = alpha
-        imgStart.color = imgColor
-        imgStart.color.a = alpha
-        txtMenu.color = txtColor
-        txtMenu.color.a = alpha
-        imgB.color = imgColor
-        imgB.color.a = alpha
-        txtBack.color = txtColor
-        txtBack.color.a = alpha
-        imgA.color = imgColor
-        imgA.color.a = alpha
-        txtSelect.color = txtColor
-        txtSelect.color.a = alpha
-        imgDPadUpDown.color = imgColor
-        imgDPadUpDown.color.a = alpha
-        txtSystem.color = txtColor
-        txtSystem.color.a = alpha
-        imgDPadLeftRight.color = imgColor
-        imgDPadLeftRight.color.a = alpha
-        txtChoose.color = txtColor
-        txtChoose.color.a = alpha
-
-    }
-
     override fun buildImage(imgPath: String, imgWidth: Float, imgHeight: Float, x: Float, y: Float): Image {
         return buildImage(buildTexture(imgPath), imgWidth, imgHeight, x, y)
     }
@@ -1072,6 +1000,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     }
 
     override fun onConfirmButton(input: InputConfig) {
+        updateHelpHuds()
         if (isSelectionListView) {
             filteredGames = when(listView.selectedIndex) {
                 0 -> games.filter { it.displayName!![0].isDigit() }
@@ -1117,6 +1046,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
     override fun onCancelButton(input: InputConfig) {
+        updateHelpHuds()
         if (!guiready) return
 
         if (needSelectionView && !isSelectionListView) {
@@ -1133,12 +1063,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     }
 
     override fun onUpButton(input: InputConfig) {
+        updateHelpHuds()
         if (!guiready) return
 
         selectNext(-1)
     }
 
     override fun onDownButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
@@ -1147,6 +1079,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
     override fun onLeftButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onLeftButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
@@ -1163,6 +1096,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onRightButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onRightButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
@@ -1178,35 +1112,41 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onFindButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
 
         if (!guiready) return
 	}
     
 	override fun onOptionsButton(input: InputConfig) {
+        updateHelpHuds()
         showMainMenu({
             GameListScreen(emulio, platform)
         })
 	}
 
 	override fun onSelectButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onSelectButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 	}
 
 	override fun onPageUpButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onPageUpButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
         selectNext(-10)
 	}
 
 	override fun onPageDownButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onPageDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
         selectNext(10)
 	}
 
 	override fun onExitButton(input: InputConfig) {
+        updateHelpHuds()
         logger.debug { "onExitButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 

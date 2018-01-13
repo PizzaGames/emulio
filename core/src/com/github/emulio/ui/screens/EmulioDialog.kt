@@ -36,7 +36,7 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
             (oldProcessor as InputManager).pause()
         }
 
-        inputController = InputManager(this, emulio.config, stage)
+        inputController = InputManager(this, emulio, stage)
 
         Gdx.input.inputProcessor = inputController
         overlay = Image(createColorTexture(0x000000AA)).apply {

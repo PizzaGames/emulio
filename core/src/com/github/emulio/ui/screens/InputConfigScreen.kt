@@ -30,7 +30,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
     
     private val logger = KotlinLogging.logger { }
 
-    private val inputController: InputManager = InputManager(this, emulio.config, this.stage)
+    private val inputController: InputManager = InputManager(this, emulio, this.stage)
 
     private val lbCurrent: Label
     private val lbNext: Label
@@ -42,16 +42,18 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
     private val controllerNames: List<String>
     private var currentIndex = 0
 
+    private val populatedControllers: MutableMap<String, InputConfig?>
+
     init {
         Gdx.input.inputProcessor = inputController
 
-        val populatedControllers = mutableListOf("Keyboard")
+        populatedControllers = mutableMapOf("Keyboard" to emulio.config.keyboardConfig)
 
         Controllers.getControllers().forEach { controller ->
-            populatedControllers.add(controller.name)
+            populatedControllers[controller.name] = emulio.config.gamepadConfig[controller.name]
         }
 
-        controllerNames = populatedControllers
+        controllerNames = populatedControllers.keys.toList()
         if (controllerNames.size > 1) {
             currentIndex = 1 // keyboard is not the default appareance
         }
@@ -76,7 +78,14 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         })
 
         val hudHeight = screenHeight * 0.065f
-        initHelpHuds(0f, hudHeight)
+        initHelpHuds(0f, hudHeight, HelpHuds(
+            txtCancel = "Back".translate().toUpperCase(),
+            txtConfirm = "Redefine".translate().toUpperCase(),
+            txtAllDirection = "Navigate".translate().toUpperCase(),
+
+            alpha = 0.8f,
+            txtColor = Color.DARK_GRAY
+        ))
 
         val lbScreenTitle = Label("Input configurations".translate(), emulio.skin, "title").apply {
             setPosition(10f, screenHeight - height - 10f)
@@ -236,78 +245,6 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         }
     }
 
-    private fun initHelpHuds(initialY: Float, height: Float) {
-
-        val calculatedHeight = height * 0.55f
-
-        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-            size = calculatedHeight.toInt()
-            color = Color.WHITE
-            color.a = 1f
-        })
-
-        // Calculate the size according resolution???
-        val imgWidth = calculatedHeight
-        val imgHeight = calculatedHeight
-        val padding = 5f
-
-        val lineHeight = helpFont.lineHeight
-
-        val y = initialY - 2f + ((height - lineHeight) / 2)
-        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
-
-        val imgBack = buildImage("images/help/xbox/360_B.png", imgWidth, imgHeight, 10f, imageY)
-        stage.addActor(imgBack)
-        val txtBack = buildText("Back".translate().toUpperCase(), helpFont, imgBack.x + imgWidth + padding, y)
-        stage.addActor(txtBack)
-
-        val imgRedefine = buildImage("images/help/xbox/360_A.png", imgWidth, imgHeight, txtBack.x + txtBack.width + (padding * 3), imageY)
-        stage.addActor(imgRedefine)
-        val txtRedefine = buildText("Redefine".translate().toUpperCase(), helpFont, imgRedefine.x + imgWidth + padding, y)
-        stage.addActor(txtRedefine)
-
-        val imgNavigate = buildImage("images/help/xbox/360_Dpad.png", imgWidth, imgHeight, txtRedefine.x + txtRedefine.width + (padding * 3), imageY)
-        stage.addActor(imgNavigate)
-        val txtNavigate = buildText("Navigate".translate().toUpperCase(), helpFont, imgNavigate.x + imgWidth + padding, y)
-        stage.addActor(txtNavigate)
-
-        val alpha = 0.8f
-        val imgColor = Color.BLACK
-        val txtColor = Color.DARK_GRAY
-
-//        imgBack.color = imgColor
-        imgBack.color.a = alpha
-        txtBack.color = txtColor
-        txtBack.color.a = alpha
-//        imgRedefine.color = imgColor
-        imgRedefine.color.a = alpha
-        txtRedefine.color = txtColor
-        txtRedefine.color.a = alpha
-//        imgNavigate.color = imgColor
-        imgNavigate.color.a = alpha
-        txtNavigate.color = txtColor
-        txtNavigate.color.a = alpha
-
-//        helpHuds = HelpHuds(
-//                imgCancelButton = imgBack,
-//                txtCancelButton = txtBack,
-//                imgConfirmButton = imgRedefine,
-//                txtConfirmButton = txtRedefine
-//
-//
-////                        imgNavigate
-////                        txtNavigate
-//
-//        )
-
-    }
-
-
-
-
-
-    private lateinit var helpHuds: HelpHuds
-
     override fun release() {
         inputController.dispose()
     }
@@ -398,9 +335,11 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
     }
 
     override fun onConfirmButton(input: InputConfig) {
+        updateHelpHuds()
     }
 
     override fun onCancelButton(input: InputConfig) {
+        updateHelpHuds(input)
         stage.root.addAction(SequenceAction(Actions.fadeOut(1f, Interpolation.fade), Actions.run {
             switchScreen(backCallback.invoke())
         }))
@@ -408,34 +347,44 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
     }
 
     override fun onUpButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onDownButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onLeftButton(input: InputConfig) {
+        updateHelpHuds(input)
         selectPreviousController()
     }
 
     override fun onRightButton(input: InputConfig) {
+        updateHelpHuds(input)
         selectNextController()
     }
 
     override fun onFindButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onOptionsButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onSelectButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onPageUpButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onPageDownButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 
     override fun onExitButton(input: InputConfig) {
+        updateHelpHuds(input)
     }
 }

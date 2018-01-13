@@ -36,8 +36,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	private var imgLogo: Image
 
-    private var needInputConfig: Boolean = false
-
     init {
 		logger.debug { "create()" }
 
@@ -100,10 +98,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 						Actions.fadeIn(1f),
 						Actions.run {
 							maskGroup.remove()
-
-                            if (needInputConfig) {
-                                showInputConfig()
-                            }
 						})
 				)
 			})
@@ -124,16 +118,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		observeConfig()
 
 	}
-
-    private fun showInputConfig() {
-        Timer.schedule(object :  Timer.Task() {
-            override fun run() {
-                switchScreen(InputConfigScreen(emulio, {
-                    SplashScreen(emulio)
-                }, true))
-            }
-        }, 2f)
-    }
 
     private fun observeConfig() {
 		val observable: Observable<Pair<EmulioConfig, Boolean>> = Observable.create({ subscriber ->
@@ -159,15 +143,15 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
                     val (config, created) = pair
 
 					emulio.config = config
-
-                    if (created) {
-                        needInputConfig = true
+                    emulio.data["lastInput"] = if (config.gamepadConfig.isEmpty()) {
+                        config.keyboardConfig
                     } else {
-                        lbLoading.setText("Loading platforms")
-                        observePlatforms()
-
-                        needInputConfig = false
+                        config.gamepadConfig.values.first()
                     }
+
+                    lbLoading.setText("Loading platforms")
+                    observePlatforms()
+
 				}, { onError(it) })
 	}
 

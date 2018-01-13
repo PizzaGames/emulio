@@ -1,26 +1,34 @@
 package com.github.emulio.ui.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
+import com.github.emulio.model.InputConfig
+import com.github.emulio.model.Xbox
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.math.BigInteger
 
+
 abstract class EmulioScreen(open val emulio: Emulio) : Screen {
+
 
     private val logger = KotlinLogging.logger { }
 
@@ -152,6 +160,559 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         MainMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
     }
 
+    private var helpHuds: HelpHuds? = null
+
+    fun initHelpHuds(initialY: Float, height: Float, newHelpHuds: HelpHuds, initialInputConfig: InputConfig = emulio.data["lastInput"] as InputConfig) {
+        val calculatedHeight = height * 0.55f
+
+        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+            size = calculatedHeight.toInt()
+            color = Color.WHITE
+            color.a = 1f
+        })
+
+        // Calculate the size according resolution???
+        val imgWidth = calculatedHeight
+        val imgHeight = calculatedHeight
+        val padding = 5f
+
+        val lineHeight = helpFont.lineHeight
+
+        val y = initialY - 2f + ((height - lineHeight) / 2)
+        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
+
+        var x = 10f
+
+
+        newHelpHuds.apply {
+
+            val action = initialInputConfig.confirm
+            if (txtConfirm != null) {
+                buildHud(action, txtConfirm, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgConfirmButton = first
+                    txtConfirmButton = second
+                    x = third
+                }
+            }
+
+            if (txtCancel != null) {
+                buildHud(initialInputConfig.cancel, txtCancel, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgCancelButton = first
+                    txtCancelButton = second
+                    x = third
+                }
+            }
+
+            if (txtFind != null) {
+                buildHud(initialInputConfig.find, txtFind, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgFindButton = first
+                    txtFindButton = second
+                    x = third
+                }
+            }
+
+            if (txtOptions != null) {
+                buildHud(initialInputConfig.options, txtOptions, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgOptionsButton = first
+                    txtOptionsButton = second
+                    x = third
+                }
+            }
+
+            if (txtSelect != null) {
+                buildHud(initialInputConfig.select, txtSelect, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgSelectButton = first
+                    txtSelectButton = second
+                    x = third
+                }
+            }
+
+            if (txtPageUp != null) {
+                buildHud(initialInputConfig.pageUp, txtPageUp, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgPageUpButton = first
+                    txtPageUpButton = second
+                    x = third
+                }
+            }
+
+            if (txtPageDown != null) {
+                buildHud(initialInputConfig.pageDown, txtPageDown, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgPageDownButton = first
+                    txtPageDownButton = second
+                    x = third
+                }
+            }
+
+            if (txtUpDown != null) {
+                buildHud(HELP_HUD_UPDOWN, txtUpDown, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgUpDownButton = first
+                    txtUpDownButton = second
+                    x = third
+                }
+            }
+
+            if (txtLeftRight != null) {
+                buildHud(HELP_HUD_LEFTRIGHT, txtLeftRight, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgLeftRightButton = first
+                    txtLeftRightButton = second
+                    x = third
+                }
+            }
+
+            if (txtAllDirection != null) {
+                buildHud(HELP_HUD_ALL, txtAllDirection, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                    imgAllDirectionButtons = first
+                    txtAllDirectionButtons = second
+                    x = third
+                }
+            }
+
+            lastInputLoaded = initialInputConfig
+
+        }
+
+        this.helpHuds = newHelpHuds
+    }
+
+    private fun HelpHuds.buildHud(action: Int, text: String, config: InputConfig, imgWidth: Float, imgHeight: Float, x: Float, imageY: Float, padding: Float, helpFont: BitmapFont, y: Float): Triple<Image, Label, Float> {
+        var x1 = x
+        val imgPath = getButtonImagePath(config.name, action)
+
+        val imgConf = buildImage(imgPath, imgWidth, imgHeight, x1, imageY)
+        imgConf.color.a = alpha
+        stage.addActor(imgConf)
+
+        x1 += imgWidth + padding
+
+
+        val txtConf = buildText(text, helpFont, x1, y)
+        txtConf.color = txtColor
+        txtConf.color.a = alpha
+
+        stage.addActor(txtConf)
+
+        x1 += txtConf.width + (padding * 3)
+        return Triple(imgConf, txtConf, x1)
+    }
+
+    private fun getButtonImagePath(controllerName: String, button: Int): String {
+        return when {
+            isXboxController(controllerName) -> getXboxImagePath(button)
+            isPlaystationController(controllerName) -> getPlaystationImagePath(button)
+            isKeyboard(controllerName) -> getKeyboardImagePath(button)
+            else -> getGenericImagePath(button)
+        }
+
+    }
+
+    fun updateHelpHuds(textColor: Color?, alpha: Float) {
+        val helpHuds = this.helpHuds ?: return
+
+        helpHuds.apply {
+
+            if (txtConfirm != null) {
+                txtConfirmButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgConfirmButton?.apply {
+                    color.a = alpha
+                }
+            }
+            if (txtCancel != null) {
+                txtCancelButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgCancelButton?.apply {
+                    color.a = alpha
+                }
+            }
+            if (txtUpDown != null) {
+                txtUpDownButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgUpDownButton?.apply {
+                    color.a = alpha
+                }
+
+            }
+            if (txtLeftRight != null) {
+                txtLeftRightButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgLeftRightButton?.apply {
+                    color.a = alpha
+                }
+
+            }
+            if (txtAllDirection != null) {
+                txtAllDirectionButtons?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgAllDirectionButtons?.apply {
+                    color.a = alpha
+                }
+
+            }
+            if (txtFind != null) {
+                txtFindButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgFindButton?.apply {
+                    color.a = alpha
+                }
+
+            }
+            if (txtOptions != null) {
+                txtOptionsButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgOptionsButton?.apply {
+                    color.a = alpha
+                }
+
+            }
+            if (txtSelect != null) {
+                txtSelectButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgSelectButton?.apply {
+                    color.a = alpha
+                }
+
+            }
+            if (txtPageUp != null) {
+                txtPageUpButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgPageUpButton?.apply {
+                    color.a = alpha
+                }
+            }
+            if (txtPageDown != null) {
+                txtPageDownButton?.apply {
+                    if (textColor != null) {
+                        color = textColor
+                    }
+                    color.a = alpha
+                }
+                imgPageDownButton?.apply {
+                    color.a = alpha
+                }
+            }
+
+        }
+    }
+
+    fun updateHelpHuds(config: InputConfig = emulio.data["lastInput"] as InputConfig) {
+        val helpHuds = this.helpHuds ?: return
+
+        if (config.name == helpHuds.lastInputLoaded!!.name) {
+            return
+        }
+
+        helpHuds.apply {
+
+            lastInputLoaded = config
+
+            val animationTime = 0.1f
+            if (txtConfirm != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.confirm)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgConfirmButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtCancel != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.cancel)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgCancelButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtUpDown != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, HELP_HUD_UPDOWN)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgUpDownButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtLeftRight != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, HELP_HUD_LEFTRIGHT)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgLeftRightButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtAllDirection != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, HELP_HUD_ALL)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgAllDirectionButtons?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtFind != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.find)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgFindButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtOptions != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.options)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgOptionsButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtSelect != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.select)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgSelectButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtPageUp != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.pageUp)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgPageUpButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+            if (txtPageDown != null) {
+                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.pageDown)), true)
+                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                imgPageDownButton?.apply {
+                    addAction(SequenceAction(Actions.fadeOut(animationTime),
+                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
+                            Actions.fadeIn(animationTime)
+                    ))
+
+                }
+            }
+        }
+    }
+
+    private fun isKeyboard(controllerName: String): Boolean {
+        return controllerName.toLowerCase().contains("keyboard")
+    }
+
+    private fun isXboxController(controllerName: String): Boolean {
+        return controllerName.toLowerCase().contains("xbox")
+    }
+
+    private fun isPlaystationController(controllerName: String): Boolean {
+        return controllerName.toLowerCase().contains("playstation")
+    }
+
+    private fun getGenericImagePath(button: Int): String {
+        return when (button) {
+            Xbox.A -> "images/help/xbox/360_A.png"
+            Xbox.B -> "images/help/xbox/360_B.png"
+            Xbox.X -> "images/help/xbox/360_X.png"
+            Xbox.Y -> "images/help/xbox/360_Y.png"
+            Xbox.BACK -> "images/help/xbox/360_BACK.png"
+            Xbox.START -> "images/help/xbox/360_START.png"
+            Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
+            Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
+            HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
+            HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
+            HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
+            else -> ""
+        }
+    }
+
+    private fun getPlaystationImagePath(button: Int): String {
+        return when (button) {
+            Xbox.A -> "images/help/xbox/360_A.png"
+            Xbox.B -> "images/help/xbox/360_B.png"
+            Xbox.X -> "images/help/xbox/360_X.png"
+            Xbox.Y -> "images/help/xbox/360_Y.png"
+            Xbox.BACK -> "images/help/xbox/360_BACK.png"
+            Xbox.START -> "images/help/xbox/360_START.png"
+            Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
+            Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
+            HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
+            HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
+            HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
+            else -> ""
+        }
+    }
+
+    private fun getXboxImagePath(button: Int): String {
+        return when (button) {
+            Xbox.A -> "images/help/xbox/360_A.png"
+            Xbox.B -> "images/help/xbox/360_B.png"
+            Xbox.X -> "images/help/xbox/360_X.png"
+            Xbox.Y -> "images/help/xbox/360_Y.png"
+            Xbox.BACK -> "images/help/xbox/360_BACK.png"
+            Xbox.START -> "images/help/xbox/360_START.png"
+            Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
+            Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
+            HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
+            HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
+            HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
+            else -> ""
+        }
+    }
+
+    private fun getKeyboardImagePath(button: Int): String {
+        return when (button) {
+            HELP_HUD_ALL -> "images/help/keyboard/Keyboard_White_Arrow_All.png"
+            HELP_HUD_UPDOWN -> "images/help/keyboard/Keyboard_White_Arrow_UpDown.png"
+            HELP_HUD_LEFTRIGHT -> "images/help/keyboard/Keyboard_White_Arrow_LeftRight.png"
+            Keys.NUMPAD_0 -> "images/help/keyboard/Keyboard_White_0.png"
+            Keys.NUMPAD_1 -> "images/help/keyboard/Keyboard_White_1.png"
+            Keys.NUMPAD_2 -> "images/help/keyboard/Keyboard_White_2.png"
+            Keys.NUMPAD_3 -> "images/help/keyboard/Keyboard_White_3.png"
+            Keys.NUMPAD_4 -> "images/help/keyboard/Keyboard_White_4.png"
+            Keys.NUMPAD_5 -> "images/help/keyboard/Keyboard_White_5.png"
+            Keys.NUMPAD_6 -> "images/help/keyboard/Keyboard_White_6.png"
+            Keys.NUMPAD_7 -> "images/help/keyboard/Keyboard_White_7.png"
+            Keys.NUMPAD_8 -> "images/help/keyboard/Keyboard_White_8.png"
+            Keys.NUMPAD_9 -> "images/help/keyboard/Keyboard_White_9.png"
+            Keys.NUM_0 -> "images/help/keyboard/Keyboard_White_0.png"
+            Keys.NUM_1 -> "images/help/keyboard/Keyboard_White_1.png"
+            Keys.NUM_2 -> "images/help/keyboard/Keyboard_White_2.png"
+            Keys.NUM_3 -> "images/help/keyboard/Keyboard_White_3.png"
+            Keys.NUM_4 -> "images/help/keyboard/Keyboard_White_4.png"
+            Keys.NUM_5 -> "images/help/keyboard/Keyboard_White_5.png"
+            Keys.NUM_6 -> "images/help/keyboard/Keyboard_White_6.png"
+            Keys.NUM_7 -> "images/help/keyboard/Keyboard_White_7.png"
+            Keys.NUM_8 -> "images/help/keyboard/Keyboard_White_8.png"
+            Keys.NUM_9 -> "images/help/keyboard/Keyboard_White_9.png"
+            Keys.A -> "images/help/keyboard/Keyboard_White_A.png"
+            Keys.ALT_RIGHT -> "images/help/keyboard/Keyboard_White_Alt.png"
+            Keys.ALT_LEFT -> "images/help/keyboard/Keyboard_White_Alt.png"
+            Keys.DOWN -> "images/help/keyboard/Keyboard_White_Arrow_Down.png"
+            Keys.LEFT -> "images/help/keyboard/Keyboard_White_Arrow_Left.png"
+            Keys.RIGHT -> "images/help/keyboard/Keyboard_White_Arrow_Right.png"
+            Keys.UP -> "images/help/keyboard/Keyboard_White_Arrow_Up.png"
+            Keys.B -> "images/help/keyboard/Keyboard_White_B.png"
+            Keys.BACKSPACE -> "images/help/keyboard/Keyboard_White_Backspace.png"
+            Keys.LEFT_BRACKET -> "images/help/keyboard/Keyboard_White_Bracket_Left.png"
+            Keys.RIGHT_BRACKET -> "images/help/keyboard/Keyboard_White_Bracket_Right.png"
+            Keys.C -> "images/help/keyboard/Keyboard_White_C.png"
+            Keys.CONTROL_LEFT -> "images/help/keyboard/Keyboard_White_Ctrl.png"
+            Keys.CONTROL_RIGHT -> "images/help/keyboard/Keyboard_White_Ctrl.png"
+            Keys.D -> "images/help/keyboard/Keyboard_White_D.png"
+//            Keys.DEL -> "images/help/keyboard/Keyboard_White_Del.png"
+            Keys.E -> "images/help/keyboard/Keyboard_White_E.png"
+            Keys.END -> "images/help/keyboard/Keyboard_White_End.png"
+            Keys.ENTER -> "images/help/keyboard/Keyboard_White_Enter.png"
+            Keys.ESCAPE -> "images/help/keyboard/Keyboard_White_Esc.png"
+            Keys.F -> "images/help/keyboard/Keyboard_White_F.png"
+            Keys.F1 -> "images/help/keyboard/Keyboard_White_F1.png"
+            Keys.F10 -> "images/help/keyboard/Keyboard_White_F10.png"
+            Keys.F11 -> "images/help/keyboard/Keyboard_White_F11.png"
+            Keys.F12 -> "images/help/keyboard/Keyboard_White_F12.png"
+            Keys.F2 -> "images/help/keyboard/Keyboard_White_F2.png"
+            Keys.F3 -> "images/help/keyboard/Keyboard_White_F3.png"
+            Keys.F4 -> "images/help/keyboard/Keyboard_White_F4.png"
+            Keys.F5 -> "images/help/keyboard/Keyboard_White_F5.png"
+            Keys.F6 -> "images/help/keyboard/Keyboard_White_F6.png"
+            Keys.F7 -> "images/help/keyboard/Keyboard_White_F7.png"
+            Keys.F8 -> "images/help/keyboard/Keyboard_White_F8.png"
+            Keys.F9 -> "images/help/keyboard/Keyboard_White_F9.png"
+            Keys.G -> "images/help/keyboard/Keyboard_White_G.png"
+            Keys.H -> "images/help/keyboard/Keyboard_White_H.png"
+            Keys.HOME -> "images/help/keyboard/Keyboard_White_Home.png"
+            Keys.I -> "images/help/keyboard/Keyboard_White_I.png"
+            Keys.INSERT -> "images/help/keyboard/Keyboard_White_Insert.png"
+            Keys.J -> "images/help/keyboard/Keyboard_White_J.png"
+            Keys.K -> "images/help/keyboard/Keyboard_White_K.png"
+            Keys.L -> "images/help/keyboard/Keyboard_White_L.png"
+            Keys.M -> "images/help/keyboard/Keyboard_White_M.png"
+            Keys.MINUS -> "images/help/keyboard/Keyboard_White_Minus.png"
+            Keys.N -> "images/help/keyboard/Keyboard_White_N.png"
+            Keys.O -> "images/help/keyboard/Keyboard_White_O.png"
+            Keys.P -> "images/help/keyboard/Keyboard_White_P.png"
+            Keys.PAGE_DOWN -> "images/help/keyboard/Keyboard_White_Page_Down.png"
+            Keys.PAGE_UP -> "images/help/keyboard/Keyboard_White_Page_Up.png"
+            Keys.PLUS -> "images/help/keyboard/Keyboard_White_Plus.png"
+            Keys.Q -> "images/help/keyboard/Keyboard_White_Q.png"
+            Keys.R -> "images/help/keyboard/Keyboard_White_R.png"
+            Keys.S -> "images/help/keyboard/Keyboard_White_S.png"
+            Keys.SEMICOLON -> "images/help/keyboard/Keyboard_White_Semicolon.png"
+            Keys.SHIFT_LEFT -> "images/help/keyboard/Keyboard_White_Shift.png"
+            Keys.SHIFT_RIGHT -> "images/help/keyboard/Keyboard_White_Shift.png"
+            Keys.SLASH -> "images/help/keyboard/Keyboard_White_Slash.png"
+            Keys.SPACE -> "images/help/keyboard/Keyboard_White_Space.png"
+            Keys.T -> "images/help/keyboard/Keyboard_White_T.png"
+            Keys.TAB -> "images/help/keyboard/Keyboard_White_Tab.png"
+            Keys.GRAVE -> "images/help/keyboard/Keyboard_White_Tilda.png"
+            Keys.U -> "images/help/keyboard/Keyboard_White_U.png"
+            Keys.V -> "images/help/keyboard/Keyboard_White_V.png"
+            Keys.W -> "images/help/keyboard/Keyboard_White_W.png"
+            Keys.X -> "images/help/keyboard/Keyboard_White_X.png"
+            Keys.Y -> "images/help/keyboard/Keyboard_White_Y.png"
+            Keys.Z -> "images/help/keyboard/Keyboard_White_Z.png"
+            else -> ""
+        }
+    }
+
 }
 
 fun showExitConfirmation(emulio: Emulio, stage: Stage) {
@@ -183,29 +744,43 @@ fun Button.addClickListener(clickListener: () -> Unit) {
     })
 }
 
+
+const val HELP_HUD_UPDOWN: Int = -10
+const val HELP_HUD_LEFTRIGHT: Int = -11
+const val HELP_HUD_ALL: Int = -12
+
 data class HelpHuds(
-    val imgConfirmButton: Image?,
-    val txtConfirmButton: Label?,
-    val imgCancelButton: Image?,
-    val txtCancelButton: Label?,
-    val imgUpButton: Image?,
-    val txtUpButton: Label?,
-    val imgDownButton: Image?,
-    val txtDownButton: Label?,
-    val imgLeftButton: Image?,
-    val txtLeftButton: Label?,
-    val imgRightButton: Image?,
-    val txtRightButton: Label?,
-    val imgFindButton: Image?,
-    val txtFindButton: Label?,
-    val imgOptionsButton: Image?,
-    val txtOptionsButton: Label?,
-    val imgSelectButton: Image?,
-    val txtSelectButton: Label?,
-    val imgPageUpButton: Image?,
-    val txtPageUpButton: Label?,
-    val imgPageDownButton: Image?,
-    val txtPageDownButton: Label?,
-    val imgExitButton: Image?,
-    val txtExitButton: Label?
+    val txtConfirm: String? = null,
+    var imgConfirmButton: Image? = null,
+    var txtConfirmButton: Label? = null,
+    val txtCancel: String? = null,
+    var imgCancelButton: Image? = null,
+    var txtCancelButton: Label? = null,
+    val txtUpDown: String? = null,
+    var imgUpDownButton: Image? = null,
+    var txtUpDownButton: Label? = null,
+    val txtLeftRight: String? = null,
+    var imgLeftRightButton: Image? = null,
+    var txtLeftRightButton: Label? = null,
+    val txtAllDirection: String? = null,
+    var imgAllDirectionButtons: Image? = null,
+    var txtAllDirectionButtons: Label? = null,
+    val txtFind: String? = null,
+    var imgFindButton: Image? = null,
+    var txtFindButton: Label? = null,
+    val txtOptions: String? = null,
+    var imgOptionsButton: Image? = null,
+    var txtOptionsButton: Label? = null,
+    val txtSelect: String? = null,
+    var imgSelectButton: Image? = null,
+    var txtSelectButton: Label? = null,
+    val txtPageUp: String? = null,
+    var imgPageUpButton: Image? = null,
+    var txtPageUpButton: Label? = null,
+    val txtPageDown: String? = null,
+    var imgPageDownButton: Image? = null,
+    var txtPageDownButton: Label? = null,
+    var lastInputLoaded: InputConfig? = null,
+    var alpha: Float = 1f,
+    var txtColor: Color = Color.WHITE
 )

@@ -76,10 +76,12 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
     private var loaded: Boolean = false
 
+    private val helpAlpha = 0.7f
+
     init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
 
-		inputController = InputManager(this, emulio.config, stage)
+		inputController = InputManager(this, emulio, stage)
 		Gdx.input.inputProcessor = inputController
 
 		whiteTexture = createColorTexture(0xFFFFFFDD.toInt())
@@ -121,10 +123,18 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		initGroupPlatforms()
 		initGroupPlatformCount()
 
-        initHelpHuds(0f, screenHeight * 0.065f)
+        initHelpHuds(0f, screenHeight * 0.065f, HelpHuds(
+            txtOptions = "Menu".translate().toUpperCase(),
+            txtConfirm = "Select".translate().toUpperCase(),
+            txtLeftRight = "Choose".translate().toUpperCase(),
+
+            alpha = helpAlpha,
+            txtColor = Color.DARK_GRAY
+        ))
 	}
 
-	private lateinit var groupCount: Table
+
+    private lateinit var groupCount: Table
 
 	private fun initGroupPlatformCount() {
 		groupCount = Table()
@@ -200,90 +210,16 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
         val helpSystemView = systemView.findViewItem("help") as HelpSystem?
 
-        if (helpSystemView == null) {
-            helpHuds.imgChoose.color.a = 0f
-            helpHuds.txtChoose.color.a = 0f
-            helpHuds.imgMenu.color.a = 0f
-            helpHuds.txtMenu.color.a = 0f
-            helpHuds.imgSelect.color.a = 0f
-            helpHuds.txtSelect.color.a = 0f
+        val alpha = if (helpSystemView != null) { helpAlpha } else { 0f }
 
-            return
+        val textColor = if (helpSystemView != null) { getColor(helpSystemView.textColor) } else { null }
+
+        if (textColor != null) {
+            lbLoading.color = textColor
         }
-
-        val alpha = 0.4f
-
-        val iconColor = getColor(helpSystemView.iconColor)
-        val textColor = getColor(helpSystemView.textColor)
-
-        helpHuds.imgChoose.color = iconColor
-        helpHuds.imgChoose.color.a = alpha
-
-        helpHuds.txtChoose.color = textColor
-        helpHuds.txtChoose.color.a = alpha
-
-        helpHuds.imgMenu.color = iconColor
-        helpHuds.imgMenu.color.a = alpha
-
-        helpHuds.txtMenu.color = textColor
-        helpHuds.txtMenu.color.a = alpha
-
-        helpHuds.imgSelect.color = iconColor
-        helpHuds.imgSelect.color.a = alpha
-
-        helpHuds.txtSelect.color = textColor
-        helpHuds.txtSelect.color.a = alpha
-
-        lbLoading.color = textColor
         lbLoading.color.a = alpha
-    }
 
-    data class HelpHuds(
-        val imgMenu: Image,
-        val txtMenu: Label,
-        val imgSelect: Image,
-        val txtSelect: Label,
-        val imgChoose: Image,
-        val txtChoose: Label
-    )
-    private lateinit var helpHuds: HelpHuds
-
-    private fun initHelpHuds(initialY: Float, height: Float) {
-
-        val calculatedHeight = height * 0.55f
-
-        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-            size = calculatedHeight.toInt()
-            color = Color.WHITE
-            color.a = 1f
-        })
-
-        // Calculate the size according resolution???
-        val imgWidth = calculatedHeight
-        val imgHeight = calculatedHeight
-        val padding = 5f
-
-        val lineHeight = helpFont.lineHeight
-
-        val y = initialY - 2f + ((height - lineHeight) / 2)
-        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
-
-        val imgStart = buildImage("images/resources/help/button_start_128_128.png", imgWidth, imgHeight, 10f, imageY)
-        stage.addActor(imgStart)
-        val txtMenu = buildText("Menu".translate().toUpperCase(), helpFont, imgStart.x + imgWidth + padding, y)
-        stage.addActor(txtMenu)
-
-        val imgA = buildImage("images/resources/help/button_a_128_128.png", imgWidth, imgHeight, txtMenu.x + txtMenu.width + (padding * 3), imageY)
-        stage.addActor(imgA)
-        val txtSelect = buildText("Select".translate().toUpperCase(), helpFont, imgA.x + imgWidth + padding, y)
-        stage.addActor(txtSelect)
-
-        val imgDPadLeftRight = buildImage("images/resources/help/dpad_leftright_128_128.png", imgWidth, imgHeight, txtSelect.x + txtSelect.width + (padding * 3), imageY)
-        stage.addActor(imgDPadLeftRight)
-        val txtChoose = buildText("Choose".translate().toUpperCase(), helpFont, imgDPadLeftRight.x + imgWidth + padding, y)
-        stage.addActor(txtChoose)
-
-        helpHuds = HelpHuds(imgStart, txtMenu, imgA, txtSelect, imgDPadLeftRight, txtChoose)
+        updateHelpHuds(textColor, alpha)
     }
 
     private fun initGroupPlatforms() {
@@ -505,39 +441,47 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onConfirmButton(input: InputConfig) {
+        updateHelpHuds()
 
         val currentGames = emulio.listGames(currentPlatform)
         if (currentGames.isEmpty()) {
             if (!loaded) {
                 lbCount.setText("Still loading this section...".translate())
             }
+            return
         }
-		switchScreen(GameListScreen(emulio, currentPlatform))
+        switchScreen(GameListScreen(emulio, currentPlatform))
 	}
 
 	override fun onCancelButton(input: InputConfig) {
+        updateHelpHuds()
 		lbLoading.setText("CancelButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onUpButton(input: InputConfig) {
+        updateHelpHuds()
 		lbLoading.setText("UpButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onDownButton(input: InputConfig) {
+        updateHelpHuds()
 		lbLoading.setText("DownButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onFindButton(input: InputConfig) {
+        updateHelpHuds()
 		lbLoading.setText("onFindButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onOptionsButton(input: InputConfig) {
+        updateHelpHuds()
 		showMainMenu({
             PlatformsScreen(emulio, currentPlatform)
         })
 	}
 
 	override fun onSelectButton(input: InputConfig) {
+        updateHelpHuds()
 		lbLoading.setText("onSelectButton ${System.currentTimeMillis()}")
 	}
 
@@ -617,22 +561,27 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		updatePlatformBg(currentPlatform)
 	}
 	override fun onLeftButton(input: InputConfig) {
+        updateHelpHuds()
 		showPreviousPlatform()
 	}
 
 	override fun onRightButton(input: InputConfig) {
+        updateHelpHuds()
 		showNextPlatform()
 	}
 
 	override fun onPageUpButton(input: InputConfig) {
+        updateHelpHuds()
 		showPreviousPlatform()
 	}
 
 	override fun onPageDownButton(input: InputConfig) {
+        updateHelpHuds()
 		showNextPlatform()
 	}
 
 	override fun onExitButton(input: InputConfig) {
+        updateHelpHuds()
         showCloseDialog()
 	}
 

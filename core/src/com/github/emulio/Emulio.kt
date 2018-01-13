@@ -40,6 +40,7 @@ class Emulio(val options: EmulioOptions) : Game() {
 
     }
 
+
     val workdir = options.workdir
 
 	var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
@@ -63,6 +64,10 @@ class Emulio(val options: EmulioOptions) : Game() {
         check(languageStream != null, {"Unable to find language file. ${config.languagePath}"})
         return languageStream
     }
+
+    val data: MutableMap<String, Any> = mutableMapOf()
+
+
 }
 
 
