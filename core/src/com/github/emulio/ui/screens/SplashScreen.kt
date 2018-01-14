@@ -124,8 +124,6 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 			val yamlUtils = YamlUtils()
 			val configFile = File(emulio.workdir, "emulio-config.yaml")
 
-            configFile.deleteOnExit() //FIXME remove this line
-
             val createConfig = !configFile.exists()
             if (createConfig) {
                 logger.info { "Configuration file not found, creating a default" }

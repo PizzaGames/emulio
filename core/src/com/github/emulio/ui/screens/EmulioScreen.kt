@@ -20,7 +20,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
+import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
+import com.github.emulio.model.Playstation
 import com.github.emulio.model.Xbox
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
@@ -160,10 +162,12 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         MainMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
     }
 
-    private var helpHuds: HelpHuds? = null
+    private var helpItems: HelpItems? = null
 
-    fun initHelpHuds(initialY: Float, height: Float, newHelpHuds: HelpHuds, initialInputConfig: InputConfig = emulio.data["lastInput"] as InputConfig) {
+    fun initHelpHuds(initialY: Float, height: Float, newHelpItems: HelpItems, initialInputConfig: InputConfig = emulio.data["lastInput"] as InputConfig) {
         val calculatedHeight = height * 0.55f
+        
+        logger.debug { "initHelpHuds: ${initialInputConfig.name}" }
 
         val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
             size = calculatedHeight.toInt()
@@ -184,7 +188,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         var x = 10f
 
 
-        newHelpHuds.apply {
+        newHelpItems.apply {
 
             val action = initialInputConfig.confirm
             if (txtConfirm != null) {
@@ -271,10 +275,10 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
         }
 
-        this.helpHuds = newHelpHuds
+        this.helpItems = newHelpItems
     }
 
-    private fun HelpHuds.buildHud(action: Int, text: String, config: InputConfig, imgWidth: Float, imgHeight: Float, x: Float, imageY: Float, padding: Float, helpFont: BitmapFont, y: Float): Triple<Image, Label, Float> {
+    private fun HelpItems.buildHud(action: Int, text: String, config: InputConfig, imgWidth: Float, imgHeight: Float, x: Float, imageY: Float, padding: Float, helpFont: BitmapFont, y: Float): Triple<Image, Label, Float> {
         var x1 = x
         val imgPath = getButtonImagePath(config.name, action)
 
@@ -295,7 +299,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         return Triple(imgConf, txtConf, x1)
     }
 
-    private fun getButtonImagePath(controllerName: String, button: Int): String {
+    fun getButtonImagePath(controllerName: String, button: Int): String {
         return when {
             isXboxController(controllerName) -> getXboxImagePath(button)
             isPlaystationController(controllerName) -> getPlaystationImagePath(button)
@@ -305,300 +309,131 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
     }
 
-    fun updateHelpHuds(textColor: Color?, alpha: Float) {
-        val helpHuds = this.helpHuds ?: return
+    fun updateHelp(textColor: Color?, outerAlpha: Float) {
+        val helpHuds = this.helpItems ?: return
 
         helpHuds.apply {
+            alpha = outerAlpha
 
             if (txtConfirm != null) {
-                txtConfirmButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgConfirmButton?.apply {
-                    color.a = alpha
-                }
+                updateHelpItem(txtConfirmButton, textColor, imgConfirmButton)
             }
             if (txtCancel != null) {
-                txtCancelButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgCancelButton?.apply {
-                    color.a = alpha
-                }
+                updateHelpItem(txtCancelButton, textColor, imgCancelButton)
             }
             if (txtUpDown != null) {
-                txtUpDownButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgUpDownButton?.apply {
-                    color.a = alpha
-                }
-
+                updateHelpItem(txtUpDownButton, textColor, imgUpDownButton)
             }
             if (txtLeftRight != null) {
-                txtLeftRightButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgLeftRightButton?.apply {
-                    color.a = alpha
-                }
-
+                updateHelpItem(txtLeftRightButton, textColor, imgLeftRightButton)
             }
             if (txtAllDirection != null) {
-                txtAllDirectionButtons?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgAllDirectionButtons?.apply {
-                    color.a = alpha
-                }
-
+                updateHelpItem(txtAllDirectionButtons, textColor, imgAllDirectionButtons)
             }
             if (txtFind != null) {
-                txtFindButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgFindButton?.apply {
-                    color.a = alpha
-                }
-
+                updateHelpItem(txtFindButton, textColor, imgFindButton)
             }
             if (txtOptions != null) {
-                txtOptionsButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgOptionsButton?.apply {
-                    color.a = alpha
-                }
-
+                updateHelpItem(txtOptionsButton, textColor, imgOptionsButton)
             }
             if (txtSelect != null) {
-                txtSelectButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgSelectButton?.apply {
-                    color.a = alpha
-                }
-
+                updateHelpItem(txtSelectButton, textColor, imgSelectButton)
             }
             if (txtPageUp != null) {
-                txtPageUpButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgPageUpButton?.apply {
-                    color.a = alpha
-                }
+                updateHelpItem(txtPageUpButton, textColor, imgPageUpButton)
             }
             if (txtPageDown != null) {
-                txtPageDownButton?.apply {
-                    if (textColor != null) {
-                        color = textColor
-                    }
-                    color.a = alpha
-                }
-                imgPageDownButton?.apply {
-                    color.a = alpha
-                }
+                updateHelpItem(txtPageDownButton, textColor, imgPageDownButton)
             }
 
         }
     }
 
-    fun updateHelpHuds(config: InputConfig = emulio.data["lastInput"] as InputConfig) {
-        val helpHuds = this.helpHuds ?: return
+    private fun HelpItems.updateHelpItem(txt: Label?, textColor: Color?, img: Image?) {
+        txt?.apply {
+            if (textColor != null) {
+                color = textColor
+            }
+            color.a = alpha
+        }
+        img?.apply {
+            color.a = alpha
+        }
+    }
 
-        if (config.name == helpHuds.lastInputLoaded!!.name) {
+    fun updateHelp(config: InputConfig = emulio.data["lastInput"] as InputConfig) {
+        val help = this.helpItems ?: return
+
+        if (config == AnyInputConfig) {
             return
         }
 
-        helpHuds.apply {
+        if (config.name == help.lastInputLoaded!!.name) {
+            return
+        }
+
+        help.apply {
 
             lastInputLoaded = config
-
             val animationTime = 0.1f
-            if (txtConfirm != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.confirm)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgConfirmButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
 
-                }
+            if (txtConfirm != null) {
+                updateHelpItem(config, config.confirm, imgConfirmButton, animationTime)
             }
             if (txtCancel != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.cancel)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgCancelButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, config.cancel, imgCancelButton, animationTime)
             }
             if (txtUpDown != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, HELP_HUD_UPDOWN)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgUpDownButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, HELP_HUD_UPDOWN, imgUpDownButton, animationTime)
             }
             if (txtLeftRight != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, HELP_HUD_LEFTRIGHT)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgLeftRightButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, HELP_HUD_LEFTRIGHT, imgLeftRightButton, animationTime)
             }
             if (txtAllDirection != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, HELP_HUD_ALL)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgAllDirectionButtons?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, HELP_HUD_ALL, imgAllDirectionButtons, animationTime)
             }
             if (txtFind != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.find)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgFindButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, config.find, imgFindButton, animationTime)
             }
             if (txtOptions != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.options)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgOptionsButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, config.options, imgOptionsButton, animationTime)
             }
             if (txtSelect != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.select)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgSelectButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, config.select, imgSelectButton, animationTime)
             }
             if (txtPageUp != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.pageUp)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgPageUpButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, config.pageUp, imgPageUpButton, animationTime)
             }
             if (txtPageDown != null) {
-                val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, config.pageDown)), true)
-                texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
-                imgPageDownButton?.apply {
-                    addAction(SequenceAction(Actions.fadeOut(animationTime),
-                            Actions.run { drawable = TextureRegionDrawable(TextureRegion(texture)) },
-                            Actions.fadeIn(animationTime)
-                    ))
-
-                }
+                updateHelpItem(config, config.pageDown, imgPageDownButton, animationTime)
             }
         }
     }
 
-    private fun isKeyboard(controllerName: String): Boolean {
+    private fun HelpItems.updateHelpItem(config: InputConfig, action: Int, img: Image?, animationTime: Float) {
+        val texture = Texture(Gdx.files.internal(getButtonImagePath(config.name, action)), true)
+        texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+        img?.apply {
+            addAction(SequenceAction(Actions.fadeOut(animationTime),
+                    Actions.run {
+                        drawable = TextureRegionDrawable(TextureRegion(texture))
+                    },
+                    Actions.alpha(alpha, animationTime)
+            ))
+
+        }
+    }
+
+    fun isKeyboard(controllerName: String): Boolean {
         return controllerName.toLowerCase().contains("keyboard")
     }
 
-    private fun isXboxController(controllerName: String): Boolean {
-        return controllerName.toLowerCase().contains("xbox")
+    fun isXboxController(controllerName: String): Boolean {
+        return Xbox.isXboxController(controllerName)
     }
 
-    private fun isPlaystationController(controllerName: String): Boolean {
-        return controllerName.toLowerCase().contains("playstation")
-    }
-
-    private fun getGenericImagePath(button: Int): String {
-        return when (button) {
-            Xbox.A -> "images/help/xbox/360_A.png"
-            Xbox.B -> "images/help/xbox/360_B.png"
-            Xbox.X -> "images/help/xbox/360_X.png"
-            Xbox.Y -> "images/help/xbox/360_Y.png"
-            Xbox.BACK -> "images/help/xbox/360_BACK.png"
-            Xbox.START -> "images/help/xbox/360_START.png"
-            Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
-            Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
-            HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
-            HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
-            HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
-            else -> ""
-        }
-    }
-
-    private fun getPlaystationImagePath(button: Int): String {
-        return when (button) {
-            Xbox.A -> "images/help/xbox/360_A.png"
-            Xbox.B -> "images/help/xbox/360_B.png"
-            Xbox.X -> "images/help/xbox/360_X.png"
-            Xbox.Y -> "images/help/xbox/360_Y.png"
-            Xbox.BACK -> "images/help/xbox/360_BACK.png"
-            Xbox.START -> "images/help/xbox/360_START.png"
-            Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
-            Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
-            HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
-            HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
-            HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
-            else -> ""
-        }
+    fun isPlaystationController(controllerName: String): Boolean {
+        return Playstation.isPlaystationController(controllerName)
     }
 
     private fun getXboxImagePath(button: Int): String {
@@ -614,7 +449,55 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
             HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
             HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
-            else -> ""
+            else -> "images/help/generic/unknown.png"
+        }
+    }
+
+    private fun getPlaystationImagePath(button: Int): String {
+        return when (button) {
+            Playstation.CIRCLE -> "images/help/playstation/circle.png"
+            Playstation.CROSS -> "images/help/playstation/cross.png"
+            Playstation.TRIANGLE -> "images/help/playstation/triangle.png"
+            Playstation.SQUARE -> "images/help/playstation/square.png"
+            Playstation.START -> "images/help/playstation/start.png"
+            Playstation.SELECT -> "images/help/playstation/select.png"
+            Playstation.L1 -> "images/help/playstation/l1.png"
+            Playstation.L2 -> "images/help/playstation/l2.png"
+            Playstation.R1 -> "images/help/playstation/r1.png"
+            Playstation.R2 -> "images/help/playstation/r2.png"
+            HELP_HUD_ALL -> "images/help/playstation/all.png"
+            HELP_HUD_UPDOWN -> "images/help/playstation/updown.png"
+            HELP_HUD_LEFTRIGHT -> "images/help/playstation/leftright.png"
+            else -> "images/help/generic/unknown.png"
+        }
+    }
+
+    private fun getGenericImagePath(button: Int): String {
+        return when (button) {
+            0 -> "images/help/generic/1.png"
+            1 -> "images/help/generic/2.png"
+            2 -> "images/help/generic/3.png"
+            3 -> "images/help/generic/4.png"
+            4 -> "images/help/generic/5.png"
+            5 -> "images/help/generic/6.png"
+            6 -> "images/help/generic/7.png"
+            7 -> "images/help/generic/8.png"
+            8 -> "images/help/generic/9.png"
+            9 -> "images/help/generic/10.png"
+            10 -> "images/help/generic/11.png"
+            11 -> "images/help/generic/12.png"
+            12 -> "images/help/generic/13.png"
+            13 -> "images/help/generic/14.png"
+            14 -> "images/help/generic/15.png"
+            15 -> "images/help/generic/16.png"
+            16 -> "images/help/generic/17.png"
+            17 -> "images/help/generic/18.png"
+            18 -> "images/help/generic/19.png"
+            19 -> "images/help/generic/20.png"
+            HELP_HUD_ALL -> "images/help/generic/all.png"
+            HELP_HUD_UPDOWN -> "images/help/generic/updown.png"
+            HELP_HUD_LEFTRIGHT -> "images/help/generic/leftright.png"
+            else -> "images/help/generic/unknown.png"
         }
     }
 
@@ -709,7 +592,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             Keys.X -> "images/help/keyboard/Keyboard_White_X.png"
             Keys.Y -> "images/help/keyboard/Keyboard_White_Y.png"
             Keys.Z -> "images/help/keyboard/Keyboard_White_Z.png"
-            else -> ""
+            else -> "images/help/generic/unknown.png"
         }
     }
 
@@ -749,7 +632,7 @@ const val HELP_HUD_UPDOWN: Int = -10
 const val HELP_HUD_LEFTRIGHT: Int = -11
 const val HELP_HUD_ALL: Int = -12
 
-data class HelpHuds(
+data class HelpItems(
     val txtConfirm: String? = null,
     var imgConfirmButton: Image? = null,
     var txtConfirmButton: Label? = null,
@@ -781,6 +664,6 @@ data class HelpHuds(
     var imgPageDownButton: Image? = null,
     var txtPageDownButton: Label? = null,
     var lastInputLoaded: InputConfig? = null,
-    var alpha: Float = 1f,
+    var alpha: Float = 0.8f,
     var txtColor: Color = Color.WHITE
 )

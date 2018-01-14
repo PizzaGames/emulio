@@ -8,6 +8,7 @@ import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.emulio.Emulio
+import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.InputConfig
 import mu.KotlinLogging
@@ -105,7 +106,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	fun updatePov(controller: InputConfig, cv: ControllerValues, delta: Float) {
-        emulio.data["lastInput"] = controller
+        updateLastInput(controller)
 
 		cv.apply {
 
@@ -158,7 +159,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun updateControllerAxis(controller: InputConfig, cv: ControllerValues, delta: Float) {
-        emulio.data["lastInput"] = controller
+        updateLastInput(controller)
 		val delayTime = 0.150f
 
 		updateAxisUpDown(controller, cv, delta, delayTime)
@@ -168,7 +169,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun updateAxisLTRT(controller: InputConfig, cv: ControllerValues, delta: Float, delayTime: Float) {
-        emulio.data["lastInput"] = controller
+        updateLastInput(controller)
 		cv.apply {
 			if (axisLT > 0f) {
 				elapsedAxisLT += delta
@@ -194,7 +195,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun updateAxisUpDown(controller: InputConfig, cv: ControllerValues, delta: Float, delayTime: Float) {
-        emulio.data["lastInput"] = controller
+        updateLastInput(controller)
 		cv.apply {
 			if (axisUp > 0f) {
 				elapsedAxisUp += delta
@@ -221,7 +222,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun updateAxisLeftRight(controller: InputConfig,cv: ControllerValues, delta: Float, delayTime: Float) {
-        emulio.data["lastInput"] = controller
+        updateLastInput(controller)
 		cv.apply {
 			if (axisLeft > 0f) {
 				elapsedAxisLeft += delta
@@ -308,7 +309,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun fireKeyboardEvent(keyboard: InputConfig, keycode: Int) {
-        emulio.data["lastInput"] = keyboard
+        updateLastInput(keyboard)
 
 		when (keycode) {
 			keyboard.up -> listener.onUpButton(keyboard)
@@ -396,10 +397,11 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun fireControllerButtonEvent(buttonCode: Int, controller: Controller) {
+//        logger.debug { "fireControllerButtonEvent: button: $buttonCode; controller: ${controller.name}" }
 		val controllerCfg = getControllerConfig(controller)
 		if (controllerCfg != null) {
 
-            emulio.data["lastInput"] = controllerCfg
+            updateLastInput(controllerCfg)
 
 			if (!controllerCfg.usePov) {
 				when (buttonCode) {
@@ -448,7 +450,14 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 		}
 	}
 
-	override fun axisMoved(controller: Controller, axisCode: Int, value: Float): Boolean {
+    private fun updateLastInput(controllerCfg: InputConfig) {
+        if (controllerCfg != AnyInputConfig) {
+            emulio.data["lastInput"] = controllerCfg
+        }
+    }
+
+    override fun axisMoved(controller: Controller, axisCode: Int, value: Float): Boolean {
+//        logger.debug { "axisMoved controller: ${controller.name}; axisCode: $axisCode; value: $value"  }
         if (paused) return false
         val cfg = getControllerConfig(controller) ?: return true
 
@@ -571,9 +580,9 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	override fun povMoved(controller: Controller, povCode: Int, value: PovDirection): Boolean {
+
+//        logger.debug { "povMoved: ${controller.name}; code: $povCode; value: $value"  }
         if (paused) return false
-
-
 
 		controllerValues[controller]!!.apply {
 			povDirection = value

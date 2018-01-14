@@ -76,7 +76,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
     private var loaded: Boolean = false
 
-    private val helpAlpha = 0.7f
+    private val helpAlpha = 0.65f
 
     init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)
@@ -123,7 +123,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		initGroupPlatforms()
 		initGroupPlatformCount()
 
-        initHelpHuds(0f, screenHeight * 0.065f, HelpHuds(
+        initHelpHuds(0f, screenHeight * 0.065f, HelpItems(
             txtOptions = "Menu".translate().toUpperCase(),
             txtConfirm = "Select".translate().toUpperCase(),
             txtLeftRight = "Choose".translate().toUpperCase(),
@@ -219,7 +219,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
         }
         lbLoading.color.a = alpha
 
-        updateHelpHuds(textColor, alpha)
+        updateHelp(textColor, alpha)
     }
 
     private fun initGroupPlatforms() {
@@ -441,7 +441,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onConfirmButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 
         val currentGames = emulio.listGames(currentPlatform)
         if (currentGames.isEmpty()) {
@@ -454,34 +454,34 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onCancelButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		lbLoading.setText("CancelButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onUpButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		lbLoading.setText("UpButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onDownButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		lbLoading.setText("DownButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onFindButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		lbLoading.setText("onFindButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onOptionsButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		showMainMenu({
             PlatformsScreen(emulio, currentPlatform)
         })
 	}
 
 	override fun onSelectButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		lbLoading.setText("onSelectButton ${System.currentTimeMillis()}")
 	}
 
@@ -561,27 +561,27 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		updatePlatformBg(currentPlatform)
 	}
 	override fun onLeftButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		showPreviousPlatform()
 	}
 
 	override fun onRightButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		showNextPlatform()
 	}
 
 	override fun onPageUpButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		showPreviousPlatform()
 	}
 
 	override fun onPageDownButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
 		showNextPlatform()
 	}
 
 	override fun onExitButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         showCloseDialog()
 	}
 

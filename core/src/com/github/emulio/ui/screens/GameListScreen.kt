@@ -257,8 +257,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             footerY = 10f
         }
 
-
-        initHelpHuds(footerY, footerHeight, HelpHuds(
+        initHelpHuds(footerY, footerHeight, HelpItems(
             txtSelect = "Options".translate().toUpperCase(),
             txtOptions = "Menu".translate().toUpperCase(),
             txtCancel = "Back".translate().toUpperCase(),
@@ -747,6 +746,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         }
 
         emulio.options.restoreApplication()
+
     }
 
     private fun selectNext(amount: Int = 1) {
@@ -1000,7 +1000,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     }
 
     override fun onConfirmButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         if (isSelectionListView) {
             filteredGames = when(listView.selectedIndex) {
                 0 -> games.filter { it.displayName!![0].isDigit() }
@@ -1046,7 +1046,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
     override fun onCancelButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         if (!guiready) return
 
         if (needSelectionView && !isSelectionListView) {
@@ -1063,14 +1063,14 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     }
 
     override fun onUpButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         if (!guiready) return
 
         selectNext(-1)
     }
 
     override fun onDownButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
@@ -1079,7 +1079,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 
     override fun onLeftButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onLeftButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
@@ -1096,7 +1096,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onRightButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onRightButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
@@ -1112,41 +1112,41 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	}
 
 	override fun onFindButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
 
         if (!guiready) return
 	}
     
 	override fun onOptionsButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         showMainMenu({
             GameListScreen(emulio, platform)
         })
 	}
 
 	override fun onSelectButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onSelectButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 	}
 
 	override fun onPageUpButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onPageUpButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
         selectNext(-10)
 	}
 
 	override fun onPageDownButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onPageDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
         selectNext(10)
 	}
 
 	override fun onExitButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
         logger.debug { "onExitButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 

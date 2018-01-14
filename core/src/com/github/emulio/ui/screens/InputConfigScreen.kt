@@ -58,7 +58,6 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
             currentIndex = 1 // keyboard is not the default appareance
         }
 
-
         // we need to cache this font!
         val mainFont = FreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf")).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
             size = 40
@@ -78,7 +77,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         })
 
         val hudHeight = screenHeight * 0.065f
-        initHelpHuds(0f, hudHeight, HelpHuds(
+        initHelpHuds(0f, hudHeight, HelpItems(
             txtCancel = "Back".translate().toUpperCase(),
             txtConfirm = "Redefine".translate().toUpperCase(),
             txtAllDirection = "Navigate".translate().toUpperCase(),
@@ -111,16 +110,16 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
         val root = Table().apply {
             width = screenWidth
-            height = screenHeight - hudHeight - lbScreenTitle.height - 80f
+            height = screenHeight - hudHeight - lbScreenTitle.height - 80f - 20f
 
-            setPosition(0f, hudHeight)
+            setPosition(0f, hudHeight + 20)
         }
 
         stage.addActor(Image(createColorTexture(0x878787FF.toInt())).apply {
             width = screenWidth
             height = 20f
 
-            setPosition(0f, root.y)
+            setPosition(0f, hudHeight)
         })
 
         stage.addActor(Image(createColorTexture(0x878787FF.toInt())).apply {
@@ -202,16 +201,32 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         }
         stage.addActor(imgNext)
 
+        val name = controllerNames[currentIndex]
+        val inputConfig = populatedControllers[name]!!
+
+        root.left().top()
+
+        root.add(Image(Texture(Gdx.files.internal(getButtonImagePath(name, inputConfig.confirm)), true)).apply {
+            height = mainFont.lineHeight
+
+            setScaling(Scaling.fillY)
+        })
+        root.add(Label("Confirm".translate(), Label.LabelStyle(mainFont, Color.DARK_GRAY)))
+        root.row()
+
         stage.addActor(root)
+
 
     }
 
     private fun obtainImage(idx: Int): String {
         val name = controllerNames[idx]
-        return if (name.toLowerCase().contains("keyboard")) {
+        return if (isKeyboard(name)) {
             "images/controllers/keyboard.png"
-        } else if (name.toLowerCase().contains("xbox")) {
+        } else if (isXboxController(name)) {
             "images/controllers/xbox.png"
+        } else if (isPlaystationController(name)) {
+            "images/controllers/playstation.png"
         } else {
             "images/controllers/snes.png"
         }
@@ -335,11 +350,11 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
     }
 
     override fun onConfirmButton(input: InputConfig) {
-        updateHelpHuds()
+        updateHelp()
     }
 
     override fun onCancelButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
         stage.root.addAction(SequenceAction(Actions.fadeOut(1f, Interpolation.fade), Actions.run {
             switchScreen(backCallback.invoke())
         }))
@@ -347,44 +362,44 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
     }
 
     override fun onUpButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onDownButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onLeftButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
         selectPreviousController()
     }
 
     override fun onRightButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
         selectNextController()
     }
 
     override fun onFindButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onOptionsButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onSelectButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onPageUpButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onPageDownButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 
     override fun onExitButton(input: InputConfig) {
-        updateHelpHuds(input)
+        updateHelp(input)
     }
 }
