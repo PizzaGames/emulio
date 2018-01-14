@@ -1,5 +1,4 @@
 apply plugin: "kotlin"
-apply plugin: 'edu.sc.seis.launch4j'
 
 sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
@@ -64,14 +63,13 @@ task afterEclipseImport(description: "Post processing after project generation",
 }
 
 buildscript {
-    ext.kotlin_version = '1.1.2-4'
+    ext.kotlin_version = '1.2.10'
     repositories {
         mavenCentral()
         jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "edu.sc.seis.gradle:launch4j:2.4.2"
     }
 }
 repositories {
@@ -86,9 +84,10 @@ dependencies {
     compile 'commons-cli:commons-cli:1.4'
 }
 
-launch4j {
-  mainClassName = project.mainClassName
-  icon = 'core/assets/images/emulio.ico'
-  outputDir = 'launch4j/'
-  jar = 'desktop/build/libs/emulio.jar'
+task createExe(type: Exec) {
+    workingDir: ${projectDir}
+
+    commandLine
 }
+
+
