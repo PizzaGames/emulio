@@ -76,7 +76,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
     private var loaded: Boolean = false
 
-    private val helpAlpha = 0.65f
+    private val helpAlpha = 0.7f
 
     init {
 		currentIdx = emulio.platforms.indexOf(initialPlatform)

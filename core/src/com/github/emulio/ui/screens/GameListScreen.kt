@@ -265,8 +265,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             txtLeftRight = "System".translate().toUpperCase(),
             txtUpDown = "Choose".translate().toUpperCase(),
 
-            alpha = 0.6f,
-            txtColor = Color.DARK_GRAY
+            alpha = 0.9f,
+            txtColor = Color(0x666666FF)
         ))
 	}
 
