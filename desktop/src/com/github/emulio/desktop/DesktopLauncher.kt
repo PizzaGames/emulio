@@ -23,11 +23,10 @@ object DesktopLauncher {
     @JvmStatic fun main(arg: Array<String>) {
         val options = getEmulioOptions(arg) ?: return
 
-        val yamlUtils = YamlUtils()
         val configFile = File(options.workdir, "emulio-config.yaml")
 
         val graphicsConfig = if (configFile.exists()) {
-            yamlUtils.parseEmulioConfig(configFile).graphicsConfig
+            YamlUtils.parseEmulioConfig(configFile).graphicsConfig
         } else {
             GraphicsConfig().apply {
                 screenWidth = 1280

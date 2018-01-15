@@ -1147,7 +1147,6 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	override fun onExitButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onExitButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
         if (!guiready) return
 
         showCloseDialog()

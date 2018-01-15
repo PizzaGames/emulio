@@ -289,11 +289,15 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	override fun keyUp(keycode: Int): Boolean {
+        if (paused) return false
+
 		pressedkey = 0
 		return stage.keyUp(keycode)
 	}
 
 	override fun keyDown(keycode: Int): Boolean {
+        if (paused) return false
+
 		pressedkey = keycode
 		pressedKeyRepeat = false
 		elapsedPressedKeyTime = 0f
@@ -305,6 +309,8 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	override fun keyTyped(character: Char): Boolean {
+        if (paused) return false
+
 		return stage.keyTyped(character)
 	}
 
@@ -397,7 +403,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
 	}
 
 	private fun fireControllerButtonEvent(buttonCode: Int, controller: Controller) {
-//        logger.debug { "fireControllerButtonEvent: button: $buttonCode; controller: ${controller.name}" }
+        logger.debug { "fireControllerButtonEvent: button: $buttonCode; controller: ${controller.name}; time: ${System.currentTimeMillis()}" }
 		val controllerCfg = getControllerConfig(controller)
 		if (controllerCfg != null) {
 

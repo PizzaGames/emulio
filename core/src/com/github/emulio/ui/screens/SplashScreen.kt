@@ -121,16 +121,15 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
     private fun observeConfig() {
 		val observable: Observable<Pair<EmulioConfig, Boolean>> = Observable.create({ subscriber ->
-			val yamlUtils = YamlUtils()
-			val configFile = File(emulio.workdir, "emulio-config.yaml")
+            val configFile = File(emulio.workdir, "emulio-config.yaml")
 
             val createConfig = !configFile.exists()
             if (createConfig) {
                 logger.info { "Configuration file not found, creating a default" }
-				yamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
+				YamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
 			}
 
-			subscriber.onNext(Pair(yamlUtils.parseEmulioConfig(configFile), createConfig))
+			subscriber.onNext(Pair(YamlUtils.parseEmulioConfig(configFile), createConfig))
 			subscriber.onComplete()
 		})
 
@@ -138,7 +137,7 @@ class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 				.subscribeOn(Schedulers.computation())
 				.observeOn(GdxScheduler)
 				.subscribe({ pair ->
-                    val (config, created) = pair
+                    val (config, _) = pair
 
 					emulio.config = config
                     emulio.data["lastInput"] = if (config.gamepadConfig.isEmpty()) {

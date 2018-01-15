@@ -10,7 +10,7 @@ import java.io.FileInputStream
 import java.io.InputStream
 
 
-class YamlUtils {
+object YamlUtils {
 
 	val logger = KotlinLogging.logger { }
 	

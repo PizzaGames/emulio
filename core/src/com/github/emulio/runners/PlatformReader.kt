@@ -33,6 +33,6 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
             error("${platformsFile.canonicalPath} not found, a template ('${templateFile.name}') \n " +
                     "file was created so you can change and rename it.")
         }
-        return YamlUtils().parsePlatforms(platformsFile)
+        return YamlUtils.parsePlatforms(platformsFile)
     }
 }

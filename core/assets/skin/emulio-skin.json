@@ -417,6 +417,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: emulio-title
 		fontColor: color
 	}
+	title-small: {
+		font: emulio-title-small
+		fontColor: color
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {

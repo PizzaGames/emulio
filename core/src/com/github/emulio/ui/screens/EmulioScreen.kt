@@ -299,16 +299,6 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         return Triple(imgConf, txtConf, x1)
     }
 
-    fun getButtonImagePath(controllerName: String, button: Int): String {
-        return when {
-            isXboxController(controllerName) -> getXboxImagePath(button)
-            isPlaystationController(controllerName) -> getPlaystationImagePath(button)
-            isKeyboard(controllerName) -> getKeyboardImagePath(button)
-            else -> getGenericImagePath(button)
-        }
-
-    }
-
     fun updateHelp(textColor: Color?, outerAlpha: Float) {
         val helpHuds = this.helpItems ?: return
 
@@ -424,178 +414,188 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         }
     }
 
-    fun isKeyboard(controllerName: String): Boolean {
-        return controllerName.toLowerCase().contains("keyboard")
+}
+
+fun getButtonImagePath(controllerName: String, button: Int): String {
+    return when {
+        isXboxController(controllerName) -> getXboxImagePath(button)
+        isPlaystationController(controllerName) -> getPlaystationImagePath(button)
+        isKeyboard(controllerName) -> getKeyboardImagePath(button)
+        else -> getGenericImagePath(button)
     }
 
-    fun isXboxController(controllerName: String): Boolean {
-        return Xbox.isXboxController(controllerName)
-    }
+}
 
-    fun isPlaystationController(controllerName: String): Boolean {
-        return Playstation.isPlaystationController(controllerName)
-    }
+fun isKeyboard(controllerName: String): Boolean {
+    return controllerName.toLowerCase().contains("keyboard")
+}
 
-    private fun getXboxImagePath(button: Int): String {
-        return when (button) {
-            Xbox.A -> "images/help/xbox/360_A.png"
-            Xbox.B -> "images/help/xbox/360_B.png"
-            Xbox.X -> "images/help/xbox/360_X.png"
-            Xbox.Y -> "images/help/xbox/360_Y.png"
-            Xbox.BACK -> "images/help/xbox/360_Back.png"
-            Xbox.START -> "images/help/xbox/360_Start.png"
-            Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
-            Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
-            HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
-            HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
-            HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
-            else -> "images/help/generic/unknown.png"
-        }
-    }
+fun isXboxController(controllerName: String): Boolean {
+    return Xbox.isXboxController(controllerName)
+}
 
-    private fun getPlaystationImagePath(button: Int): String {
-        return when (button) {
-            Playstation.CIRCLE -> "images/help/playstation/circle.png"
-            Playstation.CROSS -> "images/help/playstation/cross.png"
-            Playstation.TRIANGLE -> "images/help/playstation/triangle.png"
-            Playstation.SQUARE -> "images/help/playstation/square.png"
-            Playstation.START -> "images/help/playstation/start.png"
-            Playstation.SELECT -> "images/help/playstation/select.png"
-            Playstation.L1 -> "images/help/playstation/l1.png"
-            Playstation.L2 -> "images/help/playstation/l2.png"
-            Playstation.R1 -> "images/help/playstation/r1.png"
-            Playstation.R2 -> "images/help/playstation/r2.png"
-            HELP_HUD_ALL -> "images/help/playstation/all.png"
-            HELP_HUD_UPDOWN -> "images/help/playstation/updown.png"
-            HELP_HUD_LEFTRIGHT -> "images/help/playstation/leftright.png"
-            else -> "images/help/generic/unknown.png"
-        }
-    }
+fun isPlaystationController(controllerName: String): Boolean {
+    return Playstation.isPlaystationController(controllerName)
+}
 
-    private fun getGenericImagePath(button: Int): String {
-        return when (button) {
-            0 -> "images/help/generic/1.png"
-            1 -> "images/help/generic/2.png"
-            2 -> "images/help/generic/3.png"
-            3 -> "images/help/generic/4.png"
-            4 -> "images/help/generic/5.png"
-            5 -> "images/help/generic/6.png"
-            6 -> "images/help/generic/7.png"
-            7 -> "images/help/generic/8.png"
-            8 -> "images/help/generic/9.png"
-            9 -> "images/help/generic/10.png"
-            10 -> "images/help/generic/11.png"
-            11 -> "images/help/generic/12.png"
-            12 -> "images/help/generic/13.png"
-            13 -> "images/help/generic/14.png"
-            14 -> "images/help/generic/15.png"
-            15 -> "images/help/generic/16.png"
-            16 -> "images/help/generic/17.png"
-            17 -> "images/help/generic/18.png"
-            18 -> "images/help/generic/19.png"
-            19 -> "images/help/generic/20.png"
-            HELP_HUD_ALL -> "images/help/generic/all.png"
-            HELP_HUD_UPDOWN -> "images/help/generic/updown.png"
-            HELP_HUD_LEFTRIGHT -> "images/help/generic/leftright.png"
-            else -> "images/help/generic/unknown.png"
-        }
+fun getXboxImagePath(button: Int): String {
+    return when (button) {
+        Xbox.A -> "images/help/xbox/360_A.png"
+        Xbox.B -> "images/help/xbox/360_B.png"
+        Xbox.X -> "images/help/xbox/360_X.png"
+        Xbox.Y -> "images/help/xbox/360_Y.png"
+        Xbox.BACK -> "images/help/xbox/360_Back.png"
+        Xbox.START -> "images/help/xbox/360_Start.png"
+        Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
+        Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
+        HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
+        HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
+        HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
+        else -> "images/help/generic/unknown.png"
     }
+}
 
-    private fun getKeyboardImagePath(button: Int): String {
-        return when (button) {
-            HELP_HUD_ALL -> "images/help/keyboard/Keyboard_White_Arrow_All.png"
-            HELP_HUD_UPDOWN -> "images/help/keyboard/Keyboard_White_Arrow_UpDown.png"
-            HELP_HUD_LEFTRIGHT -> "images/help/keyboard/Keyboard_White_Arrow_LeftRight.png"
-            Keys.NUMPAD_0 -> "images/help/keyboard/Keyboard_White_0.png"
-            Keys.NUMPAD_1 -> "images/help/keyboard/Keyboard_White_1.png"
-            Keys.NUMPAD_2 -> "images/help/keyboard/Keyboard_White_2.png"
-            Keys.NUMPAD_3 -> "images/help/keyboard/Keyboard_White_3.png"
-            Keys.NUMPAD_4 -> "images/help/keyboard/Keyboard_White_4.png"
-            Keys.NUMPAD_5 -> "images/help/keyboard/Keyboard_White_5.png"
-            Keys.NUMPAD_6 -> "images/help/keyboard/Keyboard_White_6.png"
-            Keys.NUMPAD_7 -> "images/help/keyboard/Keyboard_White_7.png"
-            Keys.NUMPAD_8 -> "images/help/keyboard/Keyboard_White_8.png"
-            Keys.NUMPAD_9 -> "images/help/keyboard/Keyboard_White_9.png"
-            Keys.NUM_0 -> "images/help/keyboard/Keyboard_White_0.png"
-            Keys.NUM_1 -> "images/help/keyboard/Keyboard_White_1.png"
-            Keys.NUM_2 -> "images/help/keyboard/Keyboard_White_2.png"
-            Keys.NUM_3 -> "images/help/keyboard/Keyboard_White_3.png"
-            Keys.NUM_4 -> "images/help/keyboard/Keyboard_White_4.png"
-            Keys.NUM_5 -> "images/help/keyboard/Keyboard_White_5.png"
-            Keys.NUM_6 -> "images/help/keyboard/Keyboard_White_6.png"
-            Keys.NUM_7 -> "images/help/keyboard/Keyboard_White_7.png"
-            Keys.NUM_8 -> "images/help/keyboard/Keyboard_White_8.png"
-            Keys.NUM_9 -> "images/help/keyboard/Keyboard_White_9.png"
-            Keys.A -> "images/help/keyboard/Keyboard_White_A.png"
-            Keys.ALT_RIGHT -> "images/help/keyboard/Keyboard_White_Alt.png"
-            Keys.ALT_LEFT -> "images/help/keyboard/Keyboard_White_Alt.png"
-            Keys.DOWN -> "images/help/keyboard/Keyboard_White_Arrow_Down.png"
-            Keys.LEFT -> "images/help/keyboard/Keyboard_White_Arrow_Left.png"
-            Keys.RIGHT -> "images/help/keyboard/Keyboard_White_Arrow_Right.png"
-            Keys.UP -> "images/help/keyboard/Keyboard_White_Arrow_Up.png"
-            Keys.B -> "images/help/keyboard/Keyboard_White_B.png"
-            Keys.BACKSPACE -> "images/help/keyboard/Keyboard_White_Backspace.png"
-            Keys.LEFT_BRACKET -> "images/help/keyboard/Keyboard_White_Bracket_Left.png"
-            Keys.RIGHT_BRACKET -> "images/help/keyboard/Keyboard_White_Bracket_Right.png"
-            Keys.C -> "images/help/keyboard/Keyboard_White_C.png"
-            Keys.CONTROL_LEFT -> "images/help/keyboard/Keyboard_White_Ctrl.png"
-            Keys.CONTROL_RIGHT -> "images/help/keyboard/Keyboard_White_Ctrl.png"
-            Keys.D -> "images/help/keyboard/Keyboard_White_D.png"
+fun getPlaystationImagePath(button: Int): String {
+    return when (button) {
+        Playstation.CIRCLE -> "images/help/playstation/circle.png"
+        Playstation.CROSS -> "images/help/playstation/cross.png"
+        Playstation.TRIANGLE -> "images/help/playstation/triangle.png"
+        Playstation.SQUARE -> "images/help/playstation/square.png"
+        Playstation.START -> "images/help/playstation/start.png"
+        Playstation.SELECT -> "images/help/playstation/select.png"
+        Playstation.L1 -> "images/help/playstation/l1.png"
+        Playstation.L2 -> "images/help/playstation/l2.png"
+        Playstation.R1 -> "images/help/playstation/r1.png"
+        Playstation.R2 -> "images/help/playstation/r2.png"
+        HELP_HUD_ALL -> "images/help/playstation/all.png"
+        HELP_HUD_UPDOWN -> "images/help/playstation/updown.png"
+        HELP_HUD_LEFTRIGHT -> "images/help/playstation/leftright.png"
+        else -> "images/help/generic/unknown.png"
+    }
+}
+
+fun getGenericImagePath(button: Int): String {
+    return when (button) {
+        0 -> "images/help/generic/1.png"
+        1 -> "images/help/generic/2.png"
+        2 -> "images/help/generic/3.png"
+        3 -> "images/help/generic/4.png"
+        4 -> "images/help/generic/5.png"
+        5 -> "images/help/generic/6.png"
+        6 -> "images/help/generic/7.png"
+        7 -> "images/help/generic/8.png"
+        8 -> "images/help/generic/9.png"
+        9 -> "images/help/generic/10.png"
+        10 -> "images/help/generic/11.png"
+        11 -> "images/help/generic/12.png"
+        12 -> "images/help/generic/13.png"
+        13 -> "images/help/generic/14.png"
+        14 -> "images/help/generic/15.png"
+        15 -> "images/help/generic/16.png"
+        16 -> "images/help/generic/17.png"
+        17 -> "images/help/generic/18.png"
+        18 -> "images/help/generic/19.png"
+        19 -> "images/help/generic/20.png"
+        HELP_HUD_ALL -> "images/help/generic/all.png"
+        HELP_HUD_UPDOWN -> "images/help/generic/updown.png"
+        HELP_HUD_LEFTRIGHT -> "images/help/generic/leftright.png"
+        else -> "images/help/generic/unknown.png"
+    }
+}
+
+fun getKeyboardImagePath(button: Int): String {
+    return when (button) {
+        HELP_HUD_ALL -> "images/help/keyboard/Keyboard_White_Arrow_All.png"
+        HELP_HUD_UPDOWN -> "images/help/keyboard/Keyboard_White_Arrow_UpDown.png"
+        HELP_HUD_LEFTRIGHT -> "images/help/keyboard/Keyboard_White_Arrow_LeftRight.png"
+        Keys.NUMPAD_0 -> "images/help/keyboard/Keyboard_White_0.png"
+        Keys.NUMPAD_1 -> "images/help/keyboard/Keyboard_White_1.png"
+        Keys.NUMPAD_2 -> "images/help/keyboard/Keyboard_White_2.png"
+        Keys.NUMPAD_3 -> "images/help/keyboard/Keyboard_White_3.png"
+        Keys.NUMPAD_4 -> "images/help/keyboard/Keyboard_White_4.png"
+        Keys.NUMPAD_5 -> "images/help/keyboard/Keyboard_White_5.png"
+        Keys.NUMPAD_6 -> "images/help/keyboard/Keyboard_White_6.png"
+        Keys.NUMPAD_7 -> "images/help/keyboard/Keyboard_White_7.png"
+        Keys.NUMPAD_8 -> "images/help/keyboard/Keyboard_White_8.png"
+        Keys.NUMPAD_9 -> "images/help/keyboard/Keyboard_White_9.png"
+        Keys.NUM_0 -> "images/help/keyboard/Keyboard_White_0.png"
+        Keys.NUM_1 -> "images/help/keyboard/Keyboard_White_1.png"
+        Keys.NUM_2 -> "images/help/keyboard/Keyboard_White_2.png"
+        Keys.NUM_3 -> "images/help/keyboard/Keyboard_White_3.png"
+        Keys.NUM_4 -> "images/help/keyboard/Keyboard_White_4.png"
+        Keys.NUM_5 -> "images/help/keyboard/Keyboard_White_5.png"
+        Keys.NUM_6 -> "images/help/keyboard/Keyboard_White_6.png"
+        Keys.NUM_7 -> "images/help/keyboard/Keyboard_White_7.png"
+        Keys.NUM_8 -> "images/help/keyboard/Keyboard_White_8.png"
+        Keys.NUM_9 -> "images/help/keyboard/Keyboard_White_9.png"
+        Keys.A -> "images/help/keyboard/Keyboard_White_A.png"
+        Keys.ALT_RIGHT -> "images/help/keyboard/Keyboard_White_Alt.png"
+        Keys.ALT_LEFT -> "images/help/keyboard/Keyboard_White_Alt.png"
+        Keys.DOWN -> "images/help/keyboard/Keyboard_White_Arrow_Down.png"
+        Keys.LEFT -> "images/help/keyboard/Keyboard_White_Arrow_Left.png"
+        Keys.RIGHT -> "images/help/keyboard/Keyboard_White_Arrow_Right.png"
+        Keys.UP -> "images/help/keyboard/Keyboard_White_Arrow_Up.png"
+        Keys.B -> "images/help/keyboard/Keyboard_White_B.png"
+        Keys.BACKSPACE -> "images/help/keyboard/Keyboard_White_Backspace.png"
+        Keys.LEFT_BRACKET -> "images/help/keyboard/Keyboard_White_Bracket_Left.png"
+        Keys.RIGHT_BRACKET -> "images/help/keyboard/Keyboard_White_Bracket_Right.png"
+        Keys.C -> "images/help/keyboard/Keyboard_White_C.png"
+        Keys.CONTROL_LEFT -> "images/help/keyboard/Keyboard_White_Ctrl.png"
+        Keys.CONTROL_RIGHT -> "images/help/keyboard/Keyboard_White_Ctrl.png"
+        Keys.D -> "images/help/keyboard/Keyboard_White_D.png"
 //            Keys.DEL -> "images/help/keyboard/Keyboard_White_Del.png"
-            Keys.E -> "images/help/keyboard/Keyboard_White_E.png"
-            Keys.END -> "images/help/keyboard/Keyboard_White_End.png"
-            Keys.ENTER -> "images/help/keyboard/Keyboard_White_Enter.png"
-            Keys.ESCAPE -> "images/help/keyboard/Keyboard_White_Esc.png"
-            Keys.F -> "images/help/keyboard/Keyboard_White_F.png"
-            Keys.F1 -> "images/help/keyboard/Keyboard_White_F1.png"
-            Keys.F10 -> "images/help/keyboard/Keyboard_White_F10.png"
-            Keys.F11 -> "images/help/keyboard/Keyboard_White_F11.png"
-            Keys.F12 -> "images/help/keyboard/Keyboard_White_F12.png"
-            Keys.F2 -> "images/help/keyboard/Keyboard_White_F2.png"
-            Keys.F3 -> "images/help/keyboard/Keyboard_White_F3.png"
-            Keys.F4 -> "images/help/keyboard/Keyboard_White_F4.png"
-            Keys.F5 -> "images/help/keyboard/Keyboard_White_F5.png"
-            Keys.F6 -> "images/help/keyboard/Keyboard_White_F6.png"
-            Keys.F7 -> "images/help/keyboard/Keyboard_White_F7.png"
-            Keys.F8 -> "images/help/keyboard/Keyboard_White_F8.png"
-            Keys.F9 -> "images/help/keyboard/Keyboard_White_F9.png"
-            Keys.G -> "images/help/keyboard/Keyboard_White_G.png"
-            Keys.H -> "images/help/keyboard/Keyboard_White_H.png"
-            Keys.HOME -> "images/help/keyboard/Keyboard_White_Home.png"
-            Keys.I -> "images/help/keyboard/Keyboard_White_I.png"
-            Keys.INSERT -> "images/help/keyboard/Keyboard_White_Insert.png"
-            Keys.J -> "images/help/keyboard/Keyboard_White_J.png"
-            Keys.K -> "images/help/keyboard/Keyboard_White_K.png"
-            Keys.L -> "images/help/keyboard/Keyboard_White_L.png"
-            Keys.M -> "images/help/keyboard/Keyboard_White_M.png"
-            Keys.MINUS -> "images/help/keyboard/Keyboard_White_Minus.png"
-            Keys.N -> "images/help/keyboard/Keyboard_White_N.png"
-            Keys.O -> "images/help/keyboard/Keyboard_White_O.png"
-            Keys.P -> "images/help/keyboard/Keyboard_White_P.png"
-            Keys.PAGE_DOWN -> "images/help/keyboard/Keyboard_White_Page_Down.png"
-            Keys.PAGE_UP -> "images/help/keyboard/Keyboard_White_Page_Up.png"
-            Keys.PLUS -> "images/help/keyboard/Keyboard_White_Plus.png"
-            Keys.Q -> "images/help/keyboard/Keyboard_White_Q.png"
-            Keys.R -> "images/help/keyboard/Keyboard_White_R.png"
-            Keys.S -> "images/help/keyboard/Keyboard_White_S.png"
-            Keys.SEMICOLON -> "images/help/keyboard/Keyboard_White_Semicolon.png"
-            Keys.SHIFT_LEFT -> "images/help/keyboard/Keyboard_White_Shift.png"
-            Keys.SHIFT_RIGHT -> "images/help/keyboard/Keyboard_White_Shift.png"
-            Keys.SLASH -> "images/help/keyboard/Keyboard_White_Slash.png"
-            Keys.SPACE -> "images/help/keyboard/Keyboard_White_Space.png"
-            Keys.T -> "images/help/keyboard/Keyboard_White_T.png"
-            Keys.TAB -> "images/help/keyboard/Keyboard_White_Tab.png"
-            Keys.GRAVE -> "images/help/keyboard/Keyboard_White_Tilda.png"
-            Keys.U -> "images/help/keyboard/Keyboard_White_U.png"
-            Keys.V -> "images/help/keyboard/Keyboard_White_V.png"
-            Keys.W -> "images/help/keyboard/Keyboard_White_W.png"
-            Keys.X -> "images/help/keyboard/Keyboard_White_X.png"
-            Keys.Y -> "images/help/keyboard/Keyboard_White_Y.png"
-            Keys.Z -> "images/help/keyboard/Keyboard_White_Z.png"
-            else -> "images/help/generic/unknown.png"
-        }
+        Keys.E -> "images/help/keyboard/Keyboard_White_E.png"
+        Keys.END -> "images/help/keyboard/Keyboard_White_End.png"
+        Keys.ENTER -> "images/help/keyboard/Keyboard_White_Enter.png"
+        Keys.ESCAPE -> "images/help/keyboard/Keyboard_White_Esc.png"
+        Keys.F -> "images/help/keyboard/Keyboard_White_F.png"
+        Keys.F1 -> "images/help/keyboard/Keyboard_White_F1.png"
+        Keys.F10 -> "images/help/keyboard/Keyboard_White_F10.png"
+        Keys.F11 -> "images/help/keyboard/Keyboard_White_F11.png"
+        Keys.F12 -> "images/help/keyboard/Keyboard_White_F12.png"
+        Keys.F2 -> "images/help/keyboard/Keyboard_White_F2.png"
+        Keys.F3 -> "images/help/keyboard/Keyboard_White_F3.png"
+        Keys.F4 -> "images/help/keyboard/Keyboard_White_F4.png"
+        Keys.F5 -> "images/help/keyboard/Keyboard_White_F5.png"
+        Keys.F6 -> "images/help/keyboard/Keyboard_White_F6.png"
+        Keys.F7 -> "images/help/keyboard/Keyboard_White_F7.png"
+        Keys.F8 -> "images/help/keyboard/Keyboard_White_F8.png"
+        Keys.F9 -> "images/help/keyboard/Keyboard_White_F9.png"
+        Keys.G -> "images/help/keyboard/Keyboard_White_G.png"
+        Keys.H -> "images/help/keyboard/Keyboard_White_H.png"
+        Keys.HOME -> "images/help/keyboard/Keyboard_White_Home.png"
+        Keys.I -> "images/help/keyboard/Keyboard_White_I.png"
+        Keys.INSERT -> "images/help/keyboard/Keyboard_White_Insert.png"
+        Keys.J -> "images/help/keyboard/Keyboard_White_J.png"
+        Keys.K -> "images/help/keyboard/Keyboard_White_K.png"
+        Keys.L -> "images/help/keyboard/Keyboard_White_L.png"
+        Keys.M -> "images/help/keyboard/Keyboard_White_M.png"
+        Keys.MINUS -> "images/help/keyboard/Keyboard_White_Minus.png"
+        Keys.N -> "images/help/keyboard/Keyboard_White_N.png"
+        Keys.O -> "images/help/keyboard/Keyboard_White_O.png"
+        Keys.P -> "images/help/keyboard/Keyboard_White_P.png"
+        Keys.PAGE_DOWN -> "images/help/keyboard/Keyboard_White_Page_Down.png"
+        Keys.PAGE_UP -> "images/help/keyboard/Keyboard_White_Page_Up.png"
+        Keys.PLUS -> "images/help/keyboard/Keyboard_White_Plus.png"
+        Keys.Q -> "images/help/keyboard/Keyboard_White_Q.png"
+        Keys.R -> "images/help/keyboard/Keyboard_White_R.png"
+        Keys.S -> "images/help/keyboard/Keyboard_White_S.png"
+        Keys.SEMICOLON -> "images/help/keyboard/Keyboard_White_Semicolon.png"
+        Keys.SHIFT_LEFT -> "images/help/keyboard/Keyboard_White_Shift.png"
+        Keys.SHIFT_RIGHT -> "images/help/keyboard/Keyboard_White_Shift.png"
+        Keys.SLASH -> "images/help/keyboard/Keyboard_White_Slash.png"
+        Keys.SPACE -> "images/help/keyboard/Keyboard_White_Space.png"
+        Keys.T -> "images/help/keyboard/Keyboard_White_T.png"
+        Keys.TAB -> "images/help/keyboard/Keyboard_White_Tab.png"
+        Keys.GRAVE -> "images/help/keyboard/Keyboard_White_Tilda.png"
+        Keys.U -> "images/help/keyboard/Keyboard_White_U.png"
+        Keys.V -> "images/help/keyboard/Keyboard_White_V.png"
+        Keys.W -> "images/help/keyboard/Keyboard_White_W.png"
+        Keys.X -> "images/help/keyboard/Keyboard_White_X.png"
+        Keys.Y -> "images/help/keyboard/Keyboard_White_Y.png"
+        Keys.Z -> "images/help/keyboard/Keyboard_White_Z.png"
+        else -> "images/help/generic/unknown.png"
     }
-
 }
 
 fun showExitConfirmation(emulio: Emulio, stage: Stage) {

@@ -3,6 +3,7 @@ package com.github.emulio.ui.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
@@ -113,16 +115,39 @@ abstract class YesNoDialog(title: String, val dialogMessage: String, emulio: Emu
         contentTable.add(Table().apply {
             add(Label(dialogMessage, emulio.skin)).align(Align.center).minHeight(100f).expandX()
             row()
-            add(ImageTextButton("Yes".translate(), emulio.skin, "confirm").apply {
+
+            add(Button(emulio.skin).apply {
+                val lastConfig = emulio.data["lastInput"] as InputConfig
+                val imgSize = 25f
+                add(Image(Texture(Gdx.files.internal(getButtonImagePath(lastConfig.name, lastConfig.confirm)), true).apply {
+                    setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                }).apply {
+                    setScaling(Scaling.fit)
+                    setAlign(Align.center)
+                }).height(imgSize).width(imgSize)
+                add(Label("Yes".translate(), emulio.skin, "title-small"))
+
                 addClickListener {
                     onConfirmButton(AnyInputConfig)
                 }
             }).expandX().right()
-            add(ImageTextButton("No".translate(), emulio.skin, "cancel").apply {
+
+            add(Button(emulio.skin).apply {
+                val lastConfig = emulio.data["lastInput"] as InputConfig
+                val imgSize = 25f
+                add(Image(Texture(Gdx.files.internal(getButtonImagePath(lastConfig.name, lastConfig.cancel)), true).apply {
+                    setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                }).apply {
+                    setScaling(Scaling.fit)
+                    setAlign(Align.center)
+                }).height(imgSize).width(imgSize)
+                add(Label("No".translate(), emulio.skin, "title-small"))
+
                 addClickListener {
                     onCancelButton(AnyInputConfig)
                 }
             }).expandX().left()
+
         }).expand().fill()
     }
 
@@ -147,11 +172,22 @@ class InfoDialog(title: String, val dialogMessage: String, emulio: Emulio) : Emu
         contentTable.add(Table().apply {
             add(Label(dialogMessage, emulio.skin)).minHeight(100f).expand().fill()
             row()
-            add(ImageTextButton("Ok".translate(), emulio.skin, "confirm").apply {
+
+            add(Button(emulio.skin).apply {
+                val lastConfig = emulio.data["lastInput"] as InputConfig
+                val imgSize = 25f
+                add(Image(Texture(Gdx.files.internal(getButtonImagePath(lastConfig.name, lastConfig.confirm)), true).apply {
+                    setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                }).apply {
+                    setScaling(Scaling.fit)
+                    setAlign(Align.center)
+                }).height(imgSize).width(imgSize)
+                add(Label("Ok".translate(), emulio.skin, "title-small"))
+
                 addClickListener {
                     onConfirmButton(AnyInputConfig)
                 }
-            }).expandX()
+            })
         }).expand().fill()
     }
 
