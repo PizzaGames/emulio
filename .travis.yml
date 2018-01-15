@@ -21,8 +21,8 @@ before_install:
 # Deployment to GitHub-releases
 before_deploy:
   - ./gradlew desktop:dist
-  - java -jar
-  - java -jar launch4j/Launch4j/launch4j.jar launch4j/launch4j.xml
+#  - java -jar
+#  - java -jar launch4j/Launch4j/launch4j.jar launch4j/launch4j.xml
 
 deploy:
   provider: releases
