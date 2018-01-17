@@ -455,22 +455,18 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	override fun onCancelButton(input: InputConfig) {
         updateHelp()
-		lbLoading.setText("CancelButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onUpButton(input: InputConfig) {
         updateHelp()
-		lbLoading.setText("UpButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onDownButton(input: InputConfig) {
         updateHelp()
-		lbLoading.setText("DownButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onFindButton(input: InputConfig) {
         updateHelp()
-		lbLoading.setText("onFindButton ${System.currentTimeMillis()}")
 	}
 
 	override fun onOptionsButton(input: InputConfig) {
@@ -482,7 +478,6 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 	override fun onSelectButton(input: InputConfig) {
         updateHelp()
-		lbLoading.setText("onSelectButton ${System.currentTimeMillis()}")
 	}
 
 	private fun updatePlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {
