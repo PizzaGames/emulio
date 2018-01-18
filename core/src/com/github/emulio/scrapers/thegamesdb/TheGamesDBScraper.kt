@@ -1,7 +1,10 @@
 package com.github.emulio.scrapers.thegamesdb
 
 import com.thoughtworks.xstream.XStream
-import com.thoughtworks.xstream.annotations.*
+import com.thoughtworks.xstream.annotations.XStreamAlias
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute
+import com.thoughtworks.xstream.annotations.XStreamConverter
+import com.thoughtworks.xstream.annotations.XStreamImplicit
 import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
 import com.thoughtworks.xstream.io.xml.StaxDriver
 import mu.KotlinLogging
@@ -49,8 +52,25 @@ object TheGamesDBScraper {
 
 
     private fun getXStream() = XStream(StaxDriver()).apply {
-//        XStream.setupDefaultSecurity(this)
-//        allowTypes()
+        XStream.setupDefaultSecurity(this)
+        allowTypes(arrayOf(
+                DataGetGamesList::class.java,
+                DataGetGame::class.java,
+                DataArt::class.java,
+                DataGetPlatform::class.java,
+                DataPlatformGames::class.java,
+                Game::class.java,
+                AlternateTitle::class.java,
+                Genres::class.java,
+                Similar::class.java,
+                DataPlatformsList::class.java,
+                Platform::class.java,
+                FanartImages::class.java,
+                Fanart::class.java,
+                Original::class.java,
+                Boxart::class.java,
+                Banner::class.java
+        ))
     }
 
     fun platformGames(platform: String): DataPlatformGames {
@@ -272,10 +292,10 @@ data class DataGetPlatform(
  * Official documentation:
  * http://wiki.thegamesdb.net/index.php/PlatformGames
  */
-class DataPlatformGames {
+data class DataPlatformGames(
     @XStreamImplicit(itemFieldName = "Game")
     var games: List<Game> = listOf()
-}
+)
 data class Game(
         val id: Int?,
         val GameTitle: String?,
@@ -301,15 +321,16 @@ data class Game(
 data class AlternateTitle(
     var title: String
 )
-class Genres {
+data class Genres(
     @XStreamImplicit(itemFieldName = "genre")
     var genres: List<String> = listOf()
-}
+)
 
-class Similar {
+data class Similar(
     @XStreamImplicit(itemFieldName = "Game")
     var games: List<Game> = listOf()
-}
+)
+
 
 /**
  * Classes used to represent the data from:
@@ -343,24 +364,19 @@ data class Platform(
     val Images: FanartImages?
 )
 
-class FanartImages {
+data class FanartImages(
     @XStreamImplicit(itemFieldName = "fanart")
-    var games: List<Fanart> = listOf()
+    var games: List<Fanart> = listOf(),
 
     @XStreamImplicit(itemFieldName = "boxart")
-    var boxart: List<Boxart>? = null
+    var boxart: List<Boxart>? = null,
     @XStreamImplicit(itemFieldName = "banner")
-    var banner: List<Banner>? = null
-    var consoleart: String? = null
-    var controllerart: String? = null
-    var screenshot: Fanart? = null
+    var banner: List<Banner>? = null,
+    var consoleart: String? = null,
+    var controllerart: String? = null,
+    var screenshot: Fanart? = null,
     var clearlogo: String? = null
-
-    override fun toString(): String {
-        return "FanartImages(games=$games, boxart=$boxart, banner=$banner, consoleart=$consoleart, controllerart=$controllerart, screenshot=$screenshot, clearlogo=$clearlogo)"
-    }
-
-}
+)
 data class Fanart(
     val original: Original?,
     val thumb: String?
