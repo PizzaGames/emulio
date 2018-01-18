@@ -1,118 +1,245 @@
 package com.github.emulio.scrapers.thegamesdb
 
 import com.thoughtworks.xstream.XStream
-import com.thoughtworks.xstream.annotations.XStreamImplicit
+import com.thoughtworks.xstream.annotations.*
+import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter
 import com.thoughtworks.xstream.io.xml.StaxDriver
+import mu.KotlinLogging
+import org.apache.commons.io.IOUtils
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.net.URLEncoder
 import kotlin.system.measureTimeMillis
 
 /**
+ * Documentation of api can be found in: http://wiki.thegamesdb.net/index.php?title=API_Introduction
+ *
  * <b>Note:</b>
  *
  * Xstream is used here to parse all xmls, this is used due to easyness to use, but
  * the performance is a little compromized, maybe this can be changed to a better/
- * more performatic parser (but xstream have a good performance, so, make sure you
+ * more performatic parser (but xStream have a good performance, so, make sure you
  * have a good choice)
  */
 object TheGamesDBScraper {
+    val logger = KotlinLogging.logger { }
 
     fun platformsList(): DataPlatformsList {
+        logger.debug { "platformsList" }
+        val xStream = getXStream()
+        xStream.alias("Data", DataPlatformsList::class.java)
+        xStream.alias("Platform", Platform::class.java)
+        val url = "http://thegamesdb.net/api/GetPlatformsList.php"
 
-        val xstream = getXStream()
-        xstream.alias("Data", DataPlatformsList::class.java)
-        xstream.alias("Platform", Platform::class.java)
+        return performRequest(url, xStream) as DataPlatformsList
+    }
 
-        return HttpClients.createDefault().use { httpClient ->
-            val httpGet = HttpGet("http://thegamesdb.net/api/GetPlatformsList.php")
-            httpClient.execute(httpGet).use { response ->
-                response.entity.content.use { stream ->
-                    xstream.fromXML(stream) as DataPlatformsList
-                }
+    private fun performRequest(url: String, xStream: XStream) = HttpClients.createDefault().use { httpClient ->
+        logger.debug { "performRequest: $url"  }
+        val httpGet = HttpGet(url)
+        httpClient.execute(httpGet).use { response ->
+            response.entity.content.use { stream ->
+                xStream.fromXML(stream)
             }
         }
     }
 
+
     private fun getXStream() = XStream(StaxDriver()).apply {
-        //XStream.setupDefaultSecurity(this)
+//        XStream.setupDefaultSecurity(this)
 //        allowTypes()
     }
 
-    fun platformGames(platform: String): DataPlatformGame {
-        val xstream = getXStream()
-        xstream.alias("Data", DataPlatformGame::class.java)
-        xstream.processAnnotations(DataPlatformGame::class.java)
+    fun platformGames(platform: String): DataPlatformGames {
+        logger.debug { "platformGames" }
+        val xStream = getXStream()
+        xStream.alias("Data", DataPlatformGames::class.java)
+        xStream.processAnnotations(DataPlatformGames::class.java)
 
-        return HttpClients.createDefault().use { httpClient ->
-            val httpGet = HttpGet("http://thegamesdb.net/api/PlatformGames.php?platform=${URLEncoder.encode(platform, "UTF-8")}")
+        val url = "http://thegamesdb.net/api/PlatformGames.php?platform=${URLEncoder.encode(platform, "UTF-8")}"
 
-            httpClient.execute(httpGet).use { response ->
-                response.entity.content.use { stream ->
-                    xstream.fromXML(stream) as DataPlatformGame
-
-                }
-            }
-        }
+        return performRequest(url, xStream) as DataPlatformGames
     }
 
-    fun getPlatform(id: Int): DataPlatform {
-        val xstream = getXStream()
-        xstream.alias("Data", DataPlatform::class.java)
-        xstream.alias("Platform", Platform::class.java)
-        xstream.alias("Images", FanartImages::class.java)
-        xstream.processAnnotations(FanartImages::class.java)
-        xstream.alias("fanart", Fanart::class.java)
+    fun getPlatform(id: Int): DataGetPlatform {
+        logger.debug { "getPlatform" }
+        val xStream = getXStream()
+        xStream.alias("Data", DataGetPlatform::class.java)
+        xStream.alias("Platform", Platform::class.java)
+        xStream.alias("Images", FanartImages::class.java)
+        xStream.processAnnotations(FanartImages::class.java)
+        xStream.processAnnotations(Fanart::class.java)
+        xStream.processAnnotations(Original::class.java)
+        xStream.processAnnotations(Boxart::class.java)
+        xStream.processAnnotations(Banner::class.java)
+        xStream.alias("fanart", Fanart::class.java)
+        val url = "http://thegamesdb.net/api/GetPlatform.php?id=$id"
 
-        return HttpClients.createDefault().use { httpClient ->
-            val httpGet = HttpGet("http://thegamesdb.net/api/GetPlatform.php?id=$id")
-
-            httpClient.execute(httpGet).use { response ->
-                response.entity.content.use { stream ->
-                    xstream.fromXML(stream) as DataPlatform
-                }
-            }
-        }
+        return performRequest(url, xStream) as DataGetPlatform
     }
 
     fun getArt(id: Int): DataArt {
-        val xstream = getXStream()
-        xstream.alias("Data", DataArt::class.java)
-        xstream.alias("Images", FanartImages::class.java)
-        xstream.processAnnotations(FanartImages::class.java)
-        xstream.alias("fanart", Fanart::class.java)
+        logger.debug { "getArt" }
+        val xStream = getXStream()
+        xStream.alias("Data", DataArt::class.java)
+        xStream.alias("Images", FanartImages::class.java)
+        xStream.processAnnotations(Fanart::class.java)
+        xStream.processAnnotations(Original::class.java)
+        xStream.processAnnotations(Boxart::class.java)
+        xStream.processAnnotations(Banner::class.java)
+        xStream.processAnnotations(FanartImages::class.java)
+        xStream.alias("fanart", Fanart::class.java)
 
-        return HttpClients.createDefault().use { httpClient ->
-            val httpGet = HttpGet("http://thegamesdb.net/api/GetArt.php?id=$id")
+        val url = "http://thegamesdb.net/api/GetArt.php?id=$id"
 
+        return performRequest(url, xStream) as DataArt
+    }
+
+    fun getGame(id: Int? = null, name: String? = null, exactName: String? = null, platform: String? = null): DataGetGame {
+        logger.debug { "getGame" }
+        val xStream = getXStream()
+        xStream.alias("Data", DataGetGame::class.java)
+        xStream.processAnnotations(DataGetGame::class.java)
+        xStream.alias("Platform", Platform::class.java)
+        xStream.alias("Game", Game::class.java)
+        xStream.alias("Images", FanartImages::class.java)
+        xStream.processAnnotations(FanartImages::class.java)
+        xStream.processAnnotations(Fanart::class.java)
+        xStream.processAnnotations(Original::class.java)
+        xStream.processAnnotations(Boxart::class.java)
+        xStream.processAnnotations(Banner::class.java)
+        xStream.alias("fanart", Fanart::class.java)
+
+        check(id != null || name != null) { "A name or id must be provided"}
+
+        val url = StringBuilder("http://thegamesdb.net/api/GetGame.php?")
+
+        if (id != null) {
+            url.append("id=$id&")
+        }
+
+        if (name != null) {
+            url.append("name=$name&")
+        }
+
+        if (exactName != null) {
+            url.append("exactname=$exactName&")
+        }
+
+        if (platform != null) {
+            url.append("platform=$platform&")
+        }
+
+        url.setLength(url.length - 1) // always will end with & so we remove it here
+
+        return performRequest(url.toString(), xStream) as DataGetGame
+    }
+
+    fun getGamesList(name: String? = null, genre: String? = null, platform: String? = null): DataGetGamesList {
+        logger.debug { "getGamesList" }
+        val xStream = getXStream()
+        xStream.alias("Data", DataGetGamesList::class.java)
+        xStream.processAnnotations(DataGetGamesList::class.java)
+        xStream.alias("Platform", Platform::class.java)
+        xStream.alias("Game", Game::class.java)
+        xStream.processAnnotations(Genres::class.java)
+        xStream.processAnnotations(Game::class.java)
+        xStream.alias("Images", FanartImages::class.java)
+        xStream.processAnnotations(Fanart::class.java)
+        xStream.processAnnotations(Original::class.java)
+        xStream.processAnnotations(Boxart::class.java)
+        xStream.processAnnotations(Banner::class.java)
+        xStream.processAnnotations(FanartImages::class.java)
+        xStream.alias("fanart", Fanart::class.java)
+
+        check(name != null || genre != null) { "A name or genre must be provided"}
+
+        val url = StringBuilder("http://thegamesdb.net/api/GetGamesList.php?")
+
+        if (name != null) {
+            url.append("name=$name&")
+        }
+
+        if (genre != null) {
+            url.append("genre=$genre&")
+        }
+
+        if (platform != null) {
+            url.append("platform=$platform&")
+        }
+
+        url.setLength(url.length - 1) // always will end with & so we remove it here
+
+        return performRequest(url.toString(), xStream) as DataGetGamesList
+    }
+
+    fun downloadImage(baseUrl: String, path: String, destiny: File) {
+        downloadImage("$baseUrl$path", destiny)
+    }
+
+    fun downloadImage(url: String, destiny: File) {
+        HttpClients.createDefault().use { httpClient ->
+            val httpGet = HttpGet(url)
             httpClient.execute(httpGet).use { response ->
                 response.entity.content.use { stream ->
-                    xstream.fromXML(stream) as DataArt
+                    readStream(destiny, stream)
                 }
             }
+        }
+    }
+
+    private fun readStream(destiny: File, stream: InputStream?): Int {
+        return FileOutputStream(destiny).use { fos ->
+            IOUtils.copy(stream, fos)
         }
     }
 
 
 }
 
-fun main(args: Array<String>) {
+// Sample api tests
+//fun main(args: Array<String>) {
 //    println("; time: ${measureTimeMillis { print("platformsList: ${TheGamesDBScraper.platformsList()}") }}")
 //    println("; time: ${measureTimeMillis { print("platformGames: ${TheGamesDBScraper.platformGames("microsoft xbox 360")}") }}")
 //    println("; time: ${measureTimeMillis { print("getPlatform: ${TheGamesDBScraper.getPlatform(15)}") }}")
-    println("; time: ${measureTimeMillis { print("getArt: ${TheGamesDBScraper.getArt(15)}") }}")
+//    println("; time: ${measureTimeMillis { print("getArt: ${TheGamesDBScraper.getArt(15)}") }}")
+//    println("; time: ${measureTimeMillis { print("getGame: ${TheGamesDBScraper.getGame(id=15)}") }}")
+//    println("; time: ${measureTimeMillis { print("getGamesList: ${TheGamesDBScraper.getGamesList(name="donkey")}") }}")
+//    TheGamesDBScraper.downloadImage("http://thegamesdb.net/banners/", "fanart/original/15-2.jpg", File("g:/15-2.jpg"))
+//    println("xStream time: ${measureTimeMillis { XStream(StaxDriver()) }}")
+//}
 
 
-    println("xstream time: ${measureTimeMillis { XStream(StaxDriver()) }}")
-}
 
-//documentation of api can be found in: http://wiki.thegamesdb.net/index.php?title=API_Introduction
+/**
+ * Classes used to represent the data from:
+ * http://thegamesdb.net/api/GetGamesList.php?name=x-men
+ *
+ * Official documentation:
+ * http://wiki.thegamesdb.net/index.php/GetGamesList
+ */
+data class DataGetGamesList(
+        val baseImgUrl: String?,
+        @XStreamImplicit(itemFieldName = "Game")
+        var games: List<Game> = listOf()
+)
 
-//missing
-//getGame
-//getGamesList
-//image downloads
 
+/**
+ * Classes used to represent the data from:
+ * http://thegamesdb.net/api/GetGame.php?id=2
+ *
+ * Official documentation:
+ * http://wiki.thegamesdb.net/index.php/GetGame
+ */
+data class DataGetGame(
+    val baseImgUrl: String?,
+    @XStreamImplicit(itemFieldName = "Game")
+    var games: List<Game> = listOf()
+)
 
 /**
  * Classes used to represent the data from:
@@ -133,7 +260,7 @@ data class DataArt(
  * Official documentation:
  * http://wiki.thegamesdb.net/index.php/GetPlatform
  */
-data class DataPlatform(
+data class DataGetPlatform(
     val baseImgUrl: String?,
     var Platform: Platform?
 )
@@ -145,17 +272,44 @@ data class DataPlatform(
  * Official documentation:
  * http://wiki.thegamesdb.net/index.php/PlatformGames
  */
-class DataPlatformGame {
+class DataPlatformGames {
     @XStreamImplicit(itemFieldName = "Game")
     var games: List<Game> = listOf()
 }
 data class Game(
-    val id: Int?,
-    val GameTitle: String?,
-    val ReleaseDate: String?,
-    val thumb: String?
+        val id: Int?,
+        val GameTitle: String?,
+        val ReleaseDate: String?,
+        val AlternateTitles: AlternateTitle?,
+        val thumb: String?,
+        val Overview: String?,
+        val ESRB: String?,
+        @XStreamAlias("Co-op")
+        val CoOp: String?,
+        val Players: Int?,
+        val Genres: Genres?,
+        val Youtube: String?,
+        val Publisher: String?,
+        val Developer: String?,
+        val Similar: Similar?,
+        val Platform: String?,
+        val PlatformId: Int?,
+        val Rating: Float?,
+        val Images: FanartImages?
 )
 
+data class AlternateTitle(
+    var title: String
+)
+class Genres {
+    @XStreamImplicit(itemFieldName = "genre")
+    var genres: List<String> = listOf()
+}
+
+class Similar {
+    @XStreamImplicit(itemFieldName = "Game")
+    var games: List<Game> = listOf()
+}
 
 /**
  * Classes used to represent the data from:
@@ -189,7 +343,6 @@ data class Platform(
     val Images: FanartImages?
 )
 
-//FIXME this class needs to use the boxart and all other necessary attributes.
 class FanartImages {
     @XStreamImplicit(itemFieldName = "fanart")
     var games: List<Fanart> = listOf()
@@ -202,11 +355,52 @@ class FanartImages {
     var controllerart: String? = null
     var screenshot: Fanart? = null
     var clearlogo: String? = null
+
+    override fun toString(): String {
+        return "FanartImages(games=$games, boxart=$boxart, banner=$banner, consoleart=$consoleart, controllerart=$controllerart, screenshot=$screenshot, clearlogo=$clearlogo)"
+    }
+
 }
 data class Fanart(
-    val original: String?, //TODO width, height
+    val original: Original?,
     val thumb: String?
 )
-class Boxart
-class Banner
+
+@XStreamConverter(value= ToAttributedValueConverter::class, strings= ["value"])
+data class Original(
+    @XStreamAsAttribute
+    var height: Int?,
+    @XStreamAsAttribute
+    var width: Int?,
+    @XStreamAsAttribute
+    var thumb: String?,
+    @XStreamAsAttribute
+    var side: String?,
+    var value: String?
+)
+@XStreamConverter(value= ToAttributedValueConverter::class, strings= ["value"])
+data class Boxart(
+    @XStreamAsAttribute
+    var height: Int?,
+    @XStreamAsAttribute
+    var width: Int?,
+    @XStreamAsAttribute
+    var thumb: String?,
+    @XStreamAsAttribute
+    var side: String?,
+    var value: String?
+)
+@XStreamConverter(value= ToAttributedValueConverter::class, strings= ["value"])
+data class Banner(
+    @XStreamAsAttribute
+    var height: Int?,
+    @XStreamAsAttribute
+    var width: Int?,
+    @XStreamAsAttribute
+    var thumb: String?,
+    @XStreamAsAttribute
+    var side: String?,
+    var value: String?
+)
+
 
