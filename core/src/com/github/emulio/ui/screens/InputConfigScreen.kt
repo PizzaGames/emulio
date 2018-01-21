@@ -688,6 +688,10 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
             switchScreen(backCallback.invoke())
         }))
 
+        saveConfig()
+    }
+
+    private fun saveConfig() {
         val configFile = File(emulio.workdir, "emulio-config.yaml")
         YamlUtils.saveEmulioConfig(configFile, emulio.config)
     }

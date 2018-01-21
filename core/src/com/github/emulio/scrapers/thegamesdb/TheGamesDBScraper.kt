@@ -15,7 +15,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.URLEncoder
-import kotlin.system.measureTimeMillis
 
 /**
  * Documentation of api can be found in: http://wiki.thegamesdb.net/index.php?title=API_Introduction
@@ -231,8 +230,6 @@ object TheGamesDBScraper {
 //    TheGamesDBScraper.downloadImage("http://thegamesdb.net/banners/", "fanart/original/15-2.jpg", File("g:/15-2.jpg"))
 //    println("xStream time: ${measureTimeMillis { XStream(StaxDriver()) }}")
 //}
-
-
 
 /**
  * Classes used to represent the data from:

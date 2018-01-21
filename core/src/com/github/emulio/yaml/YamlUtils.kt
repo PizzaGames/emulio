@@ -46,8 +46,9 @@ object YamlUtils {
             val romsExtensions = expandList(platform["roms.extensions"])
 			val romsPath = File(platform["roms.path"] as String)
 			val runCommand = expandList(platform["run.command"])
+            val name = (platform["platform.name"] as String?) ?: platformName
 			
-			platforms += Platform(romsPath, runCommand, romsExtensions, platformName)
+			platforms += Platform(romsPath, runCommand, romsExtensions, platformName, name)
 		}
 
 		logger.info { "Platform configuration file read in ${System.currentTimeMillis() - start}ms" }

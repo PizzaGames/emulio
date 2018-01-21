@@ -598,14 +598,13 @@ fun getKeyboardImagePath(button: Int): String {
     }
 }
 
-fun showExitConfirmation(emulio: Emulio, stage: Stage) {
-    object : YesNoDialog("Quit Emulio?".translate(), "Are you sure you want to quit emulio?".translate(), emulio) {
-        override fun onCancelDialog() {
-        }
-        override fun onConfirmDialog() {
-            Gdx.app.exit()
-        }
-    }.show(stage)
+fun showExitConfirmation(emulio: Emulio, stage: Stage, cancelCallback: () -> Unit = {}, confirmCallback: () -> Unit = {}) {
+    YesNoDialog("Quit Emulio?".translate(), "Are you sure you want to quit emulio?".translate(), emulio,
+            cancelCallback,
+            {
+                confirmCallback()
+                Gdx.app.exit()
+        }).show(stage)
 }
 
 fun createColorTexture(rgba: Int, width: Int = 1, height: Int = 1): Texture {

@@ -102,14 +102,20 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
 
 }
 
-abstract class YesNoDialog(title: String, val dialogMessage: String, emulio: Emulio) : EmulioDialog(title, emulio) {
+open class YesNoDialog(title: String, val dialogMessage: String, emulio: Emulio,
+                           private val cancelCallback: () -> Unit = {},
+                           private val confirmCallback: () -> Unit = {}) : EmulioDialog(title, emulio) {
 
     init {
         initGUI()
     }
 
-    abstract fun onConfirmDialog()
-    abstract fun onCancelDialog()
+    open fun onConfirmDialog() {
+        confirmCallback()
+    }
+    open fun onCancelDialog() {
+        cancelCallback()
+    }
 
     private fun initGUI() {
         contentTable.add(Table().apply {
@@ -213,9 +219,8 @@ class MainMenuDialog(emulio: Emulio, val backCallback: () -> EmulioScreen, scree
 
     private val menuItems = mapOf(
             "Scraper" to {
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
-
-
+                closeDialog(true)
+                screen.switchScreen(ScraperScreen(emulio, backCallback))
             },
             "Sound Settings" to {
                 InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
