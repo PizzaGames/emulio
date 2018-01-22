@@ -11,10 +11,7 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
-import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
-import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
@@ -244,30 +241,32 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
         val selectorTexture = createColorTexture(0x878787FF.toInt())
         val lightTexture = createColorTexture(0xADADADFF.toInt())
 
-        val platformDetail = Table().apply {
-            pad(5f)
-            add(Label("Platform detail", Label.LabelStyle(mainFont, Color.WHITE).apply {
-                background = TextureRegionDrawable(TextureRegion(selectorTexture))
-            })).expand().center()
+        val platformDetail = Window("alo mundo", emulio.skin, "naked").apply {
+//            pad(5f)
 
-            row()
 
-            add(Label("Total:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
-                background = TextureRegionDrawable(TextureRegion(lightTexture))
-            })).expand().fillX()
-            row()
+//            add(Label("Platform detail", Label.LabelStyle(mainFont, Color.WHITE).apply {
+//                background = TextureRegionDrawable(TextureRegion(selectorTexture))
+//            })).expand().center()
 
-            add(Label("Scraped:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
-                background = TextureRegionDrawable(TextureRegion(lightTexture))
-            })).expand().fillX()
-            row()
+//            row()
 
-            add(Label("Missing:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
-                background = TextureRegionDrawable(TextureRegion(lightTexture))
-            })).expand().fillX()
+//            add(Label("Total:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
+//                background = TextureRegionDrawable(TextureRegion(lightTexture))
+//            })).expand().fillX()
+//            row()
+//
+//            add(Label("Scraped:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
+//                background = TextureRegionDrawable(TextureRegion(lightTexture))
+//            })).expand().fillX()
+//            row()
+//
+//            add(Label("Missing:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
+//                background = TextureRegionDrawable(TextureRegion(lightTexture))
+//            })).expand().fillX()
         }
 
-        platformDetail.background = TextureRegionDrawable(TextureRegion(selectorTexture))
+//        platformDetail.background = TextureRegionDrawable(TextureRegion(selectorTexture))
         root.add(platformDetail).expand().fillX()
     }
 
