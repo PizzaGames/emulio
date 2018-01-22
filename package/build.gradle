@@ -1,0 +1,40 @@
+
+apply plugin: "org.mini2Dx.parcl"
+
+mainClassName = "com.github.emulio.desktop.DesktopLauncher"
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://mini2dx.org/maven/content/repositories/thirdparty" }
+        maven { url "https://mini2dx.org/maven/content/repositories/releases" }
+    }
+    dependencies {
+        classpath "org.mini2Dx:parcl:1.2.1"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+parcl {
+
+    exe {
+        exeName = "emulio"
+    }
+    app {
+        appName = "Emulio"
+        icon = "core/assets/images/emulio.ico"
+        applicationCategory = "public.app-category.adventure-games"
+        displayName = 'Emulio'
+        identifier = 'org.github.emulio'
+        copyright = 'See license info (GPL3)'
+
+        mainJar = "desktop/build/libs/emulio.jar"
+    }
+    linux {
+        binName = "emulio"
+    }
+}
