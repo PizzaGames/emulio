@@ -42,6 +42,8 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     private val selector: Image
     private val root: Table
 
+    private lateinit var platformsList: com.badlogic.gdx.scenes.scene2d.ui.List<String>
+
     init {
         Gdx.input.inputProcessor = inputController
 
@@ -200,7 +202,7 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     private fun buildScrapPlatformPage(mainFont: BitmapFont?, emulio: Emulio) {
         root.clearChildren()
 
-        val platformsList = com.badlogic.gdx.scenes.scene2d.ui.List<String>(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
+        platformsList = com.badlogic.gdx.scenes.scene2d.ui.List<String>(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
             font = mainFont
             fontColorSelected = Color.WHITE
             fontColorUnselected = Color(0x878787FF.toInt())
@@ -392,10 +394,12 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 
     override fun onUpButton(input: InputConfig) {
         updateHelp(input)
+        scrollPlatforms(-1)
     }
 
     override fun onDownButton(input: InputConfig) {
         updateHelp(input)
+        scrollPlatforms(1)
     }
 
     override fun onLeftButton(input: InputConfig) {
@@ -431,5 +435,13 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     override fun onExitButton(input: InputConfig) {
         updateHelp(input)
         showCloseDialog()
+    }
+
+    private fun scrollPlatforms(amount: Int) {
+        val nextIndex = platformsList.selectedIndex + amount
+
+        if (nextIndex in 0 until  platformsList.items.size){
+            platformsList.selectedIndex = nextIndex
+        }
     }
 }
