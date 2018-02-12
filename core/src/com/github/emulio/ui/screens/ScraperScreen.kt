@@ -210,7 +210,7 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
         val selectorTexture = createColorTexture(0x878787FF.toInt())
         val lightTexture = createColorTexture(0xADADADFF.toInt())
 
-        val platformDetail = Window("alo mundo", emulio.skin, "naked").apply {
+//        val platformDetail = Window("alo mundo", emulio.skin, "naked").apply {
 //            pad(5f)
 
 
@@ -233,10 +233,13 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 //            add(Label("Missing:", Label.LabelStyle(mainFont, Color.DARK_GRAY).apply {
 //                background = TextureRegionDrawable(TextureRegion(lightTexture))
 //            })).expand().fillX()
-        }
+//        }
 
 //        platformDetail.background = TextureRegionDrawable(TextureRegion(selectorTexture))
-        root.add(platformDetail).expand().fillX()
+
+        ScraperWindow(emulio.skin).actors.forEach { actor ->
+            root.add(actor)
+        }
     }
 
 
