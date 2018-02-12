@@ -105,6 +105,7 @@ project(":tests") {
         testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
         testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         testCompile "org.mockito:mockito-core:2.+"
+        testCompile "com.nhaarman:mockito-kotlin:1.5.0"
     }
 }
 
