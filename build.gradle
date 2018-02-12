@@ -96,8 +96,6 @@ project(":tests") {
         compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-
-
         testCompile 'junit:junit:5.+'
         testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0-M2")
         testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.0-M2")
@@ -105,9 +103,7 @@ project(":tests") {
         testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
         testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-
         testCompile "org.mockito:mockito-core:2.+"
-
     }
 }
 

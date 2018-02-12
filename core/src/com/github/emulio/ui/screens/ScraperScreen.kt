@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -13,14 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
-import com.github.emulio.ui.input.InputListener
-import com.github.emulio.ui.input.InputManager
+import com.github.emulio.model.Platform
+import com.github.emulio.ui.input.*
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 
@@ -42,7 +40,7 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     private val selector: Image
     private val root: Table
 
-    private lateinit var platformsList: com.badlogic.gdx.scenes.scene2d.ui.List<String>
+    private lateinit var platformsScrollList: EmlScrollList<Platform>
 
     init {
         Gdx.input.inputProcessor = inputController
@@ -193,8 +191,6 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 
         buildScrapPlatformPage(mainFont, emulio)
 
-
-
         stage.addActor(root)
 
     }
@@ -202,43 +198,14 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     private fun buildScrapPlatformPage(mainFont: BitmapFont?, emulio: Emulio) {
         root.clearChildren()
 
-        platformsList = com.badlogic.gdx.scenes.scene2d.ui.List<String>(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
-            font = mainFont
-            fontColorSelected = Color.WHITE
-            fontColorUnselected = Color(0x878787FF.toInt())
-            val selectorTexture = createColorTexture(0x878787FF.toInt())
-            selection = TextureRegionDrawable(TextureRegion(selectorTexture))
-
-        }).apply {
-            emulio.platforms.forEach { platform ->
-                items.add(platform.name)
-            }
-
-            width = screenWidth / 2
-            height = 100f
-
-            addListener(object : ClickListener() {
-                override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    //performClick()
-                }
-            })
-
-            selectedIndex = 0
+        val platformsGDXList = EmlGDXList(emulio.platforms , mainFont,screenWidth / 2) {
+            platform -> platform.name
         }
+        val platformsGDXScroll = EmlGDXScroll(platformsGDXList.listView)
 
+        root.add(platformsGDXScroll.scroll).expand().fill()
 
-        val listScrollPane = ScrollPane(platformsList, ScrollPane.ScrollPaneStyle()).apply {
-            setFlickScroll(true)
-            setScrollBarPositions(false, true)
-
-            setScrollingDisabled(true, false)
-            setSmoothScrolling(true)
-
-            isTransform = true
-
-        }
-
-        root.add(listScrollPane).expand().fill()
+        platformsScrollList = EmlScrollList(platformsGDXScroll, platformsGDXList)
 
         val selectorTexture = createColorTexture(0x878787FF.toInt())
         val lightTexture = createColorTexture(0xADADADFF.toInt())
@@ -394,12 +361,12 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 
     override fun onUpButton(input: InputConfig) {
         updateHelp(input)
-        scrollPlatforms(-1)
+        platformsScrollList.scroll(-1)
     }
 
     override fun onDownButton(input: InputConfig) {
         updateHelp(input)
-        scrollPlatforms(1)
+        platformsScrollList.scroll(1)
     }
 
     override fun onLeftButton(input: InputConfig) {
@@ -435,13 +402,5 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     override fun onExitButton(input: InputConfig) {
         updateHelp(input)
         showCloseDialog()
-    }
-
-    private fun scrollPlatforms(amount: Int) {
-        val nextIndex = platformsList.selectedIndex + amount
-
-        if (nextIndex in 0 until  platformsList.items.size){
-            platformsList.selectedIndex = nextIndex
-        }
     }
 }
