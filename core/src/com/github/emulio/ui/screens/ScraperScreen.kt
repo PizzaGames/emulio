@@ -247,7 +247,7 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 
     private fun updateScraperWindow() {
         val platform = emulio.platforms[platformsScrollList.selectedIndex]
-        scraperWindow.view.setPlatform(platform, emulio.theme[platform]!!)
+        scraperWindow.view.updatePlatformTheme(emulio.theme[platform]!!)
     }
 
     private fun obtainNextIndex(currentIndex: Int): Int {
