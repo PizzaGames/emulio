@@ -8,5 +8,5 @@ container {
 }
 
 image {
-    scaling: fill;
+    scaling: fit;
 }
