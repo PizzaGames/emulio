@@ -1,3 +1,6 @@
-<window title="Hello World" titleAlign="center">
-    Teste
+<:importStyleSheet>templates/ScrapperWindow.lss</:importStyleSheet>
+<window id="scrapperWindow">
+    <container>
+        <image id="scraperPlatformImage" scaling="fill" />
+    </container>
 </window>

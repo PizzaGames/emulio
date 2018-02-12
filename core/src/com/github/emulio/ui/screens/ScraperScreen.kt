@@ -41,6 +41,7 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     private val root: Table
 
     private lateinit var platformsScrollList: EmlScrollList<Platform>
+    private lateinit var scraperWindow: ScraperWindow
 
     init {
         Gdx.input.inputProcessor = inputController
@@ -203,7 +204,7 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
         }
         val platformsGDXScroll = EmlGDXScroll(platformsGDXList.listView)
 
-        root.add(platformsGDXScroll.scroll).expand().fill()
+        root.add(platformsGDXScroll.scroll)
 
         platformsScrollList = EmlScrollList(platformsGDXScroll, platformsGDXList)
 
@@ -237,11 +238,17 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 
 //        platformDetail.background = TextureRegionDrawable(TextureRegion(selectorTexture))
 
-        ScraperWindow(emulio.skin).actors.forEach { actor ->
+        scraperWindow = ScraperWindow(stage,emulio.skin)
+        scraperWindow.actors.forEach { actor ->
             root.add(actor)
         }
+        updateScraperWindow()
     }
 
+    private fun updateScraperWindow() {
+        val platform = emulio.platforms[platformsScrollList.selectedIndex]
+        scraperWindow.view.setPlatform(platform)
+    }
 
     private fun obtainNextIndex(currentIndex: Int): Int {
         return if (currentIndex == options.size - 1) {
@@ -365,11 +372,15 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
     override fun onUpButton(input: InputConfig) {
         updateHelp(input)
         platformsScrollList.scroll(-1)
+
+        updateScraperWindow()
     }
 
     override fun onDownButton(input: InputConfig) {
         updateHelp(input)
         platformsScrollList.scroll(1)
+
+        updateScraperWindow()
     }
 
     override fun onLeftButton(input: InputConfig) {

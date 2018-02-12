@@ -5,6 +5,8 @@ class EmlScrollList<T>(scroll: EmlScroll, itemsList: EmlList)
     private val list = itemsList
     private val scroll = scroll
 
+    val selectedIndex: Int get() = list.selectedIndex
+
     fun scroll(amount: Int) {
         val nextIndex = (this.list.selectedIndex + amount)
 
