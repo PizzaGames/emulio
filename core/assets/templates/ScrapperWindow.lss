@@ -1,0 +1,12 @@
+window {
+    titleAlign: center;
+}
+
+container {
+    width: 670;
+    height: 400;
+}
+
+image {
+    scaling: fit;
+}

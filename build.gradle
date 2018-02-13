@@ -9,6 +9,7 @@ buildscript {
     ext.kotlinVersion = '1.2.10'
 
     dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0-M2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
@@ -64,6 +65,47 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        compile "com.github.czyzby:gdx-lml-vis:1.9.1.9.6"
+    }
+}
+
+project(":tests") {
+    apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'kotlin'
+
+    sourceSets.test.java.srcDirs = ["src/"]
+
+    task createTestResources << {
+        def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
+        if (System.env.MOCK_MAKER != null) {
+            logger.info("Using MockMaker ${System.env.MOCK_MAKER}")
+            mockMakerFile.parentFile.mkdirs()
+            mockMakerFile.createNewFile()
+            mockMakerFile.write(System.env.MOCK_MAKER)
+        } else {
+            logger.info("Using default MockMaker")
+        }
+    }
+
+    dependencies {
+        compile project(":core")
+
+        compile "junit:junit:5.+"
+
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        compile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+
+        compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+        testCompile 'junit:junit:5.+'
+        testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0-M2")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.0-M2")
+
+        testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        testCompile "com.nhaarman:mockito-kotlin:1.5.0"
     }
 }
 
