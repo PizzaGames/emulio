@@ -2,16 +2,15 @@ package com.github.emulio
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Cursor
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
-import com.github.emulio.ui.screens.SplashScreen
 import java.io.File
 import java.io.InputStream
 import mu.KotlinLogging
-
+import com.badlogic.gdx.graphics.Pixmap
+import com.github.emulio.ui.screens.DevSplashScreen
 
 class Emulio(val options: EmulioOptions) : Game() {
 
@@ -34,10 +33,22 @@ class Emulio(val options: EmulioOptions) : Game() {
              - Enjoy!
         """ }
 
-		screen = SplashScreen(this)
-//        Gdx.input.isCursorCatched = true
-//        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair)
+		screen = DevSplashScreen(this)
 
+        changeDefaultCursor()
+
+    }
+
+    private fun changeDefaultCursor() {
+        Gdx.input.isCursorCatched = true
+        val cursorPixmap = Pixmap(Gdx.files.internal("images/cursor.png"))
+        val xHotspot = cursorPixmap.width / 2
+        val yHotspot = cursorPixmap.height / 2
+        val cursor = Gdx.graphics.newCursor(cursorPixmap, xHotspot, yHotspot)
+
+        Gdx.graphics.setCursor(cursor)
+
+        cursorPixmap.dispose()
     }
 
 
@@ -58,7 +69,6 @@ class Emulio(val options: EmulioOptions) : Game() {
     }
 
     fun getLanguageStream(): InputStream {
-
         val languageStream = Emulio::class.java.getResourceAsStream(config.languagePath)
 
         check(languageStream != null, {"Unable to find language file. ${config.languagePath}"})
@@ -66,8 +76,6 @@ class Emulio(val options: EmulioOptions) : Game() {
     }
 
     val data: MutableMap<String, Any> = mutableMapOf()
-
-
 }
 
 

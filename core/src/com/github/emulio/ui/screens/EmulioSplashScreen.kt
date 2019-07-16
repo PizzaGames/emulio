@@ -26,7 +26,7 @@ import mu.KotlinLogging
 import java.io.File
 
 
-class SplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
+class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 	val logger = KotlinLogging.logger { }
 
