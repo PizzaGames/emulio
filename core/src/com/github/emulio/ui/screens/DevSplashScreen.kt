@@ -25,23 +25,10 @@ class DevSplashScreen(emulio:Emulio) : EmulioScreen(emulio) {
                     Actions.delay(1f),
                     Actions.fadeIn(0.250f),
                     Actions.delay(1f),
-                    Actions.fadeOut(0.250f)
-            ))
-        })
-
-        stage.addActor(Image(Texture("images/kotlin.png")).apply {
-            color.a = 0f
-            x = screenWidth - width - 10f
-            y = 10f
-
-            addAction(SequenceAction(
-                Actions.delay(1f),
-                Actions.fadeIn(0.250f),
-                Actions.delay(1f),
-                Actions.fadeOut(0.250f),
-                Actions.run {
-                    onCompleteAnimation()
-                }
+                    Actions.fadeOut(0.250f),
+                    Actions.run {
+                        onCompleteAnimation()
+                    }
             ))
         })
 

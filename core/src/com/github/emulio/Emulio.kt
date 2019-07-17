@@ -40,7 +40,8 @@ class Emulio(val options: EmulioOptions) : Game() {
     }
 
     private fun changeDefaultCursor() {
-        Gdx.input.isCursorCatched = true
+        //Gdx.input.isCursorCatched = true
+
         val cursorPixmap = Pixmap(Gdx.files.internal("images/cursor.png"))
         val xHotspot = cursorPixmap.width / 2
         val yHotspot = cursorPixmap.height / 2
