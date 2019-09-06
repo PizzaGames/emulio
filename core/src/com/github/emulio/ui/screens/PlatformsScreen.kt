@@ -437,7 +437,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.".translate())
 		lbLoading.setPosition(10f, 20f)
 
-		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
+		logger.error(exception) { "An internal error have occurred, please check your configuration files." }
 	}
 
 	override fun onConfirmButton(input: InputConfig) {
@@ -466,18 +466,25 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onFindButton(input: InputConfig) {
-        updateHelp()
+		logger.debug { "Help menu triggered" }
+		updateHelp()
 	}
 
 	override fun onOptionsButton(input: InputConfig) {
-        updateHelp()
-		showMainMenu({
-            PlatformsScreen(emulio, currentPlatform)
-        })
+		logger.debug { "Main Menu triggered" }
+		updateHelp()
+		showMainMenu {
+			PlatformsScreen(emulio, currentPlatform)
+		}
 	}
 
 	override fun onSelectButton(input: InputConfig) {
+		logger.debug { "Options Menu triggered" }
         updateHelp()
+
+		showOptionsMenu {
+			PlatformsScreen(emulio, currentPlatform)
+		}
 	}
 
 	private fun updatePlatform(platforms: List<Platform>, lastIdx: Int, currentIndex: Int) {

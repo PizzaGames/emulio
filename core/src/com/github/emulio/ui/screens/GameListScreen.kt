@@ -117,7 +117,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         return games.none { it.id != null || it.description != null || it.image != null }
     }
 
-    private var guiready: Boolean = false
+    private var guiReady: Boolean = false
 
     private fun initGUI() {
 		val theme = emulio.theme[platform]!!
@@ -136,7 +136,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     override fun onScreenLoad() {
         logger.debug { "onScreenLoad" }
-        guiready = true
+        guiReady = true
 
         if (games.size > 1) {
             listView.selectedIndex = 0
@@ -1047,7 +1047,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     override fun onCancelButton(input: InputConfig) {
         updateHelp()
-        if (!guiready) return
+        if (!guiReady) return
 
         if (needSelectionView && !isSelectionListView) {
             listView.remove()
@@ -1064,15 +1064,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     override fun onUpButton(input: InputConfig) {
         updateHelp()
-        if (!guiready) return
+        if (!guiReady) return
 
         selectNext(-1)
     }
 
     override fun onDownButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return
+        logger.debug { "onDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
+        if (!guiReady) return
 
         selectNext()
 	}
@@ -1080,8 +1080,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     override fun onLeftButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onLeftButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return
+        logger.debug { "onLeftButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
+        if (!guiReady) return
 
         val platforms = emulio.platforms
         val index = platforms.indexOf(platform)
@@ -1097,8 +1097,8 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	override fun onRightButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onRightButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return
+        logger.debug { "onRightButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
+        if (!guiReady) return
 
         val platforms = emulio.platforms
         val index = platforms.indexOf(platform)
@@ -1113,41 +1113,45 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
 	override fun onFindButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
+        logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
 
-        if (!guiready) return
+        if (!guiReady) return
 	}
     
 	override fun onOptionsButton(input: InputConfig) {
         updateHelp()
-        showMainMenu({
+        showMainMenu{
             GameListScreen(emulio, platform)
-        })
+        }
 	}
 
 	override fun onSelectButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onSelectButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return
+        logger.debug { "onSelectButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
+        if (!guiReady) return
+
+        showOptionsMenu {
+            GameListScreen(emulio, platform) // TODO give the selected game here
+        }
 	}
 
 	override fun onPageUpButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onPageUpButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return
+        logger.debug { "onPageUpButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
+        if (!guiReady) return
         selectNext(-10)
 	}
 
 	override fun onPageDownButton(input: InputConfig) {
         updateHelp()
-        logger.debug { "onPageDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiready" }
-        if (!guiready) return
+        logger.debug { "onPageDownButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
+        if (!guiReady) return
         selectNext(10)
 	}
 
 	override fun onExitButton(input: InputConfig) {
         updateHelp()
-        if (!guiready) return
+        if (!guiReady) return
 
         showCloseDialog()
 

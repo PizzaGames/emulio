@@ -72,7 +72,7 @@ class Emulio(val options: EmulioOptions) : Game() {
     fun getLanguageStream(): InputStream {
         val languageStream = Emulio::class.java.getResourceAsStream(config.languagePath)
 
-        check(languageStream != null, {"Unable to find language file. ${config.languagePath}"})
+        check(languageStream != null) {"Unable to find language file. ${config.languagePath}"}
         return languageStream
     }
 

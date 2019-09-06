@@ -24,13 +24,14 @@ import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Playstation
 import com.github.emulio.model.Xbox
+import com.github.emulio.ui.screens.dialogs.MainMenuDialog
+import com.github.emulio.ui.screens.dialogs.OptionsMenuDialog
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.math.BigInteger
 
 
 abstract class EmulioScreen(open val emulio: Emulio) : Screen {
-
 
     private val logger = KotlinLogging.logger { }
 
@@ -160,6 +161,10 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
     fun showMainMenu(screenCreatorOnBack: () -> EmulioScreen) {
         MainMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
+    }
+
+    fun showOptionsMenu(screenCreatorOnBack: () -> EmulioScreen) {
+        OptionsMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
     }
 
     private var helpItems: HelpItems? = null
