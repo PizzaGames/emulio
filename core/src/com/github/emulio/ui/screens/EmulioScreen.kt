@@ -24,11 +24,17 @@ import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Playstation
 import com.github.emulio.model.Xbox
+import com.github.emulio.process.ProcessException
+import com.github.emulio.process.ProcessLauncher
+import com.github.emulio.ui.screens.dialogs.InfoDialog
 import com.github.emulio.ui.screens.dialogs.MainMenuDialog
 import com.github.emulio.ui.screens.dialogs.OptionsMenuDialog
+import com.github.emulio.ui.screens.dialogs.YesNoDialog
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
+import java.io.File
 import java.math.BigInteger
+import kotlin.system.exitProcess
 
 
 abstract class EmulioScreen(open val emulio: Emulio) : Screen {
@@ -135,11 +141,16 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
 
 	override fun dispose() {
+        logger.trace { "dispose: ${javaClass.name} " }
 		stage.dispose()
 	}
 
+    public fun restart() {
+        switchScreen(DevSplashScreen(emulio))
+    }
+
 	fun switchScreen(newScreen: Screen) {
-        logger.debug { "switchScreen" }
+        logger.info { "Changing screen to: ${newScreen.javaClass.name}" }
 		stage.root.color.a = 1f
 
         release()
@@ -165,6 +176,42 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
     fun showOptionsMenu(screenCreatorOnBack: () -> EmulioScreen) {
         OptionsMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
+    }
+
+    fun launchPlatformConfigEditor() {
+        val editor = try {
+            ProcessLauncher.executeProcess(listOf("cmd", "/c", "code", "-v").toTypedArray())
+            "code"
+        } catch (e: ProcessException) {
+            // FIXME: if linux, use another command
+            "notepad"
+        }
+
+        val platformsFile = emulio.options.platformsFile
+        if (!platformsFile.exists()) {
+            val templateFile = File(platformsFile.parent, platformsFile.nameWithoutExtension + "-template.yaml")
+            if (templateFile.exists()) {
+                templateFile.copyTo(platformsFile, true)
+            } else {
+                platformsFile.createNewFile()
+            }
+        }
+
+        ProcessLauncher.executeProcess(listOf("cmd", "/c", editor, platformsFile.absolutePath).toTypedArray())
+    }
+
+    fun showReloadConfirmation() {
+        YesNoDialog("Restart?".translate(), """
+			Do you want to restart and reload configurations? (Yes: reload, No: quits)
+			""".trimIndent().translate(), emulio,
+                cancelCallback = {
+                    logger.info { "Exiting Emulio." }
+                    exitProcess(0)
+                },
+                confirmCallback = {
+                    logger.info { "Reloading Emulio." }
+                    restart()
+                }).show(this.stage)
     }
 
     private var helpItems: HelpItems? = null
@@ -605,11 +652,11 @@ fun getKeyboardImagePath(button: Int): String {
 
 fun showExitConfirmation(emulio: Emulio, stage: Stage, cancelCallback: () -> Unit = {}, confirmCallback: () -> Unit = {}) {
     YesNoDialog("Quit Emulio?".translate(), "Are you sure you want to quit emulio?".translate(), emulio,
-            cancelCallback,
-            {
+            cancelCallback = cancelCallback,
+            confirmCallback = {
                 confirmCallback()
                 Gdx.app.exit()
-        }).show(stage)
+            }).show(stage)
 }
 
 fun createColorTexture(rgba: Int, width: Int = 1, height: Int = 1): Texture {

@@ -20,6 +20,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
+import kotlin.math.ceil
+import kotlin.math.min
 
 const val FORCE_PNG_CONVERSION = false
 
@@ -27,13 +29,13 @@ object ThemeReader {
 
 	private val logger = KotlinLogging.logger {}
 
-    fun extractSimpleTheme(themedir: File, themeName: String, emulio: Emulio): Flowable<Pair<Float, File>> {
+    fun extractSimpleTheme(themeDir: File, themeName: String, emulio: Emulio): Flowable<Pair<Float, File>> {
         return Flowable.create({ emitter ->
 
             val start = System.currentTimeMillis()
 
-            if (!themedir.isDirectory && !themedir.mkdirs()) {
-                error("Error creating '${themedir.absolutePath}'. Please check your file permissions.")
+            if (!themeDir.isDirectory && !themeDir.mkdirs()) {
+                error("Error creating '${themeDir.absolutePath}'. Please check your file permissions.")
             }
 
             val themeStream = Emulio::class.java.getResourceAsStream("/initialsetup/simple-theme.zip")
@@ -49,7 +51,7 @@ object ThemeReader {
                 while (entry != null) {
                     current += entry.compressedSize
 
-                    val extractedFile = File(themedir.parentFile.absolutePath + File.separator + entry.name)
+                    val extractedFile = File(themeDir.parentFile.absolutePath + File.separator + entry.name)
                     if (entry.isDirectory) {
                         if (!extractedFile.isDirectory && !extractedFile.mkdirs()) {
                             error("Error creating '${extractedFile.absolutePath}'. Please check your file permissions.")
@@ -158,10 +160,10 @@ object ThemeReader {
 			}
 
 			if (maxSizeX != null) {
-				width = Math.ceil(Math.min(width, (screenWidth * maxSizeX)))
+				width = ceil(min(width, (screenWidth * maxSizeX)))
 			}
 
-			val preferredHeightCeil = Math.ceil(preferredHeight)
+			val preferredHeightCeil = ceil(preferredHeight)
 			var height = if (sizeY != null) {
 				screenHeight * sizeY
 			} else {
@@ -169,7 +171,7 @@ object ThemeReader {
 			}
 
 			if (maxSizeY != null) {
-				height = Math.ceil(Math.min(height, (screenHeight * maxSizeY)))
+				height = ceil(min(height, (screenHeight * maxSizeY)))
 			}
 
 			val preferredRatio = preferredWidthCeil / preferredHeightCeil
@@ -179,8 +181,6 @@ object ThemeReader {
             height *= 2
 
 			if (desiredRatio != preferredRatio) {
-				println("Outside ratio!")
-
                 val spx = width
                 val spy = height
 
@@ -191,11 +191,11 @@ object ThemeReader {
                 val nph = preferredHeight / rw
 
                 if (spx >= npw && spy >= nph) {
-                    width = Math.ceil(npw)
-                    height = Math.ceil(nph)
+                    width = ceil(npw)
+                    height = ceil(nph)
                 } else {
-                    width = Math.ceil(preferredWidth / rh)
-                    height = Math.ceil(preferredHeight / rh)
+                    width = ceil(preferredWidth / rh)
+                    height = ceil(preferredHeight / rh)
                 }
 
 			}

@@ -15,6 +15,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.URLEncoder
+import kotlin.system.measureTimeMillis
 
 /**
  * Documentation of api can be found in: http://wiki.thegamesdb.net/index.php?title=API_Introduction
@@ -132,7 +133,7 @@ object TheGamesDBScraper {
         xStream.processAnnotations(Banner::class.java)
         xStream.alias("fanart", Fanart::class.java)
 
-        check(id != null || name != null) { "A name or id must be provided"}
+        check(id != null || name != null) { "A name or id must be provided" }
 
         val url = StringBuilder("http://thegamesdb.net/api/GetGame.php?")
 
@@ -220,16 +221,16 @@ object TheGamesDBScraper {
 }
 
 // Sample api tests
-//fun main(args: Array<String>) {
-//    println("; time: ${measureTimeMillis { print("platformsList: ${TheGamesDBScraper.platformsList()}") }}")
-//    println("; time: ${measureTimeMillis { print("platformGames: ${TheGamesDBScraper.platformGames("microsoft xbox 360")}") }}")
-//    println("; time: ${measureTimeMillis { print("getPlatform: ${TheGamesDBScraper.getPlatform(15)}") }}")
-//    println("; time: ${measureTimeMillis { print("getArt: ${TheGamesDBScraper.getArt(15)}") }}")
-//    println("; time: ${measureTimeMillis { print("getGame: ${TheGamesDBScraper.getGame(id=15)}") }}")
-//    println("; time: ${measureTimeMillis { print("getGamesList: ${TheGamesDBScraper.getGamesList(name="donkey")}") }}")
-//    TheGamesDBScraper.downloadImage("http://thegamesdb.net/banners/", "fanart/original/15-2.jpg", File("g:/15-2.jpg"))
-//    println("xStream time: ${measureTimeMillis { XStream(StaxDriver()) }}")
-//}
+fun main(args: Array<String>) {
+    println("; time: ${measureTimeMillis { print("platformsList: ${TheGamesDBScraper.platformsList()}") }}")
+    println("; time: ${measureTimeMillis { print("platformGames: ${TheGamesDBScraper.platformGames("microsoft xbox 360")}") }}")
+    println("; time: ${measureTimeMillis { print("getPlatform: ${TheGamesDBScraper.getPlatform(15)}") }}")
+    println("; time: ${measureTimeMillis { print("getArt: ${TheGamesDBScraper.getArt(15)}") }}")
+    println("; time: ${measureTimeMillis { print("getGame: ${TheGamesDBScraper.getGame(id=15)}") }}")
+    println("; time: ${measureTimeMillis { print("getGamesList: ${TheGamesDBScraper.getGamesList(name="donkey")}") }}")
+    TheGamesDBScraper.downloadImage("http://thegamesdb.net/banners/", "fanart/original/15-2.jpg", File("g:/15-2.jpg"))
+    println("xStream time: ${measureTimeMillis { XStream(StaxDriver()) }}")
+}
 
 /**
  * Classes used to represent the data from:

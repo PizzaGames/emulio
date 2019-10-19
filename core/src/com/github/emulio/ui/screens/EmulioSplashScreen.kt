@@ -12,18 +12,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
+import com.github.emulio.exceptions.PlatformConfigNotFoundException
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
+import com.github.emulio.process.ProcessException
+import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.runners.PlatformReader
 import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
+import com.github.emulio.ui.screens.dialogs.InfoDialog
+import com.github.emulio.ui.screens.dialogs.YesNoDialog
 import com.github.emulio.utils.gdxutils.Subscribe
+import com.github.emulio.utils.translate
 import com.github.emulio.yaml.YamlUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 import java.io.File
+import kotlin.math.min
+import kotlin.system.exitProcess
 
 
 class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
@@ -120,18 +128,18 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	}
 
     private fun observeConfig() {
-		val observable: Observable<Pair<EmulioConfig, Boolean>> = Observable.create({ subscriber ->
-            val configFile = File(emulio.workdir, "emulio-config.yaml")
+		val observable: Observable<Pair<EmulioConfig, Boolean>> = Observable.create { subscriber ->
+			val configFile = File(emulio.workdir, "emulio-config.yaml")
 
-            val createConfig = !configFile.exists()
-            if (createConfig) {
-                logger.info { "Configuration file not found, creating a default" }
+			val createConfig = !configFile.exists()
+			if (createConfig) {
+				logger.info { "Configuration file not found, creating a default" }
 				YamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
 			}
 
 			subscriber.onNext(Pair(YamlUtils.parseEmulioConfig(configFile), createConfig))
 			subscriber.onComplete()
-		})
+		}
 
 		observable
 				.subscribeOn(Schedulers.computation())
@@ -160,20 +168,63 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
 
 	private fun observePlatforms() {
-		val platformsObservable: Observable<List<Platform>> = Observable.create({ subscriber ->
+		val platformsObservable: Observable<List<Platform>> = Observable.create { subscriber ->
 			val platforms = PlatformReader(emulio).invoke()
 			subscriber.onNext(platforms)
 			subscriber.onComplete()
-		})
+		}
 
 		platformsObservable
 				.subscribeOn(Schedulers.computation())
 				.observeOn(GdxScheduler)
 				.subscribe({
 					onPlatformsLoaded(it)
-
-				}, { onError(it) })
+				}, {
+					if (it is PlatformConfigNotFoundException) {
+						askForPlatformWizard()
+					} else {
+						onError(it)
+					}
+				})
 	}
+
+	private fun askForPlatformWizard() {
+		YesNoDialog("Platform Config".translate(), """
+								Platform config file not found. Emulio can help you to configure this file, do you want to proceed
+								to the wizard? Otherwise you can edit the file mannually (the file is easy to understand)
+							""".trimIndent().translate(), emulio,
+				"Proceed to Wizard".translate(),
+				"Edit Manually".translate(),
+				confirmCallback = {
+					platformWizardConfirmed()
+				},
+				cancelCallback = {
+					platformWizardCancelled()
+				}).show(this.stage)
+	}
+
+	private fun platformWizardConfirmed() {
+		restart()
+	}
+
+	private fun platformWizardCancelled() {
+		InfoDialog("Platform Config".translate(), """
+					Emulio will try to open the yaml file in your preffered editor. When you finish, you can return to emulio to reload.
+				""".trimIndent().translate(), emulio,
+				confirmCallback = {
+					launchConfigEditor()
+				}).show(this.stage)
+	}
+
+	private fun launchConfigEditor() {
+		launchPlatformConfigEditor()
+		showReloadConfirmation()
+	}
+
+
+
+
+
 
 	private fun onError(exception: Throwable) {
         val message = exception.message ?: "An internal error have occurred, please check your configuration files."
@@ -181,13 +232,13 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
         lbLoading.setText(message)
 		lbLoading.setPosition(10f, 20f)
 
-		logger.error(exception, { "An internal error have occurred, please check your configuration files." })
+		logger.error(exception) { "An internal error have occurred, please check your configuration files." }
 
-        showErrorDialog(message)
+		showErrorDialog(message)
 		// Exit app on keypress?
 	}
 
-	fun onPlatformsLoaded(platforms: List<Platform>) {
+	private fun onPlatformsLoaded(platforms: List<Platform>) {
 		this.platforms = platforms
 		emulio.platforms = platforms
 
@@ -199,7 +250,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
         val themeName = emulio.config.uiConfig.themeName
         val themesFolder = File(emulio.workdir, "themes")
-        val themeFolder  = File(themesFolder, themeName)
+        val themeFolder  = File(themesFolder, themeName!!)
 
         if (themeName == "simple" && !themeFolder.isDirectory) {
             ThemeReader
@@ -238,7 +289,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
                             logger.debug { "theme read for platform '$platformName'" }
                             lbLoading.setText("Loading theme for platform $platformName")
 
-                            themesMap.put(platform, theme)
+							themesMap[platform] = theme
                         },
                         onError = { ex ->
                             onError(ex)
@@ -267,7 +318,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
     override fun render(delta: Float) {
 		//Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
+		stage.act(min(Gdx.graphics.deltaTime, 1 / 30f))
 		stage.draw()
 	}
 

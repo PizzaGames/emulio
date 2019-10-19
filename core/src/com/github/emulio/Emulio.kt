@@ -19,11 +19,13 @@ class Emulio(val options: EmulioOptions) : Game() {
 	override fun create() {
 
         logger.info { """
-             ______     __    __     __  __     __         __     ______
-            /\  ___\   /\ "-./  \   /\ \/\ \   /\ \       /\ \   /\  __ \
-            \ \  __\   \ \ \-./\ \  \ \ \_\ \  \ \ \____  \ \ \  \ \ \/\ \
-             \ \_____\  \ \_\ \ \_\  \ \_____\  \ \_____\  \ \_\  \ \_____\
-              \/_____/   \/_/  \/_/   \/_____/   \/_____/   \/_/   \/_____/
+                                      ___                  
+                                     /\_ \    __           
+               __    ___ ___   __  __\//\ \  /\_\    ___   
+             /'__`\/' __` __`\/\ \/\ \ \ \ \ \/\ \  / __`\ 
+            /\  __//\ \/\ \/\ \ \ \_\ \ \_\ \_\ \ \/\ \L\ \
+            \ \____\ \_\ \_\ \_\ \____/ /\____\\ \_\ \____/
+             \/____/\/_/\/_/\/_/\/___/  \/____/ \/_/\/___/ 
 
              - Welcome to the next level, starting emulio.
              - Remember to check the log files once in a while.
@@ -85,5 +87,6 @@ data class EmulioOptions(
         val minimizeApplication: () -> Unit,
         val restoreApplication: () -> Unit,
         val screenSize: Pair<Int, Int>?,
-        val fullscreen: Boolean
+        val fullscreen: Boolean,
+        val platformsFile: File = File(workdir, "emulio-platforms.yaml")
 )

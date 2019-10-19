@@ -433,7 +433,6 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	private fun onError(exception: Throwable) {
-
 		lbLoading.setText(exception.message ?: "An internal error have occurred, please check your configuration files.".translate())
 		lbLoading.setPosition(10f, 20f)
 
@@ -441,11 +440,13 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onConfirmButton(input: InputConfig) {
+		logger.trace { "onConfirmButton" }
         updateHelp()
 
         val currentGames = emulio.listGames(currentPlatform)
         if (currentGames.isEmpty()) {
             if (!loaded) {
+				logger.info { "Confirm button pressed, but the games list are still being loaded." }
                 lbCount.setText("Still loading this section...".translate())
             }
             return
@@ -454,6 +455,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	}
 
 	override fun onCancelButton(input: InputConfig) {
+		logger.trace { "onCancelButton()" }
         updateHelp()
 	}
 

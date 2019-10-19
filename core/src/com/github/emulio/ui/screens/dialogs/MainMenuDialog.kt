@@ -28,24 +28,35 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
     private val listScrollPane: ScrollPane
 
     private val menuItems = mapOf(
-            "Scraper" to {
+            "Scraper".translate() to {
                 closeDialog(true)
                 screen.switchScreen(ScraperScreen(emulio, backCallback))
             },
-            "Sound Settings" to {
+            "General Settings".translate() to {
                 InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
             },
-            "UI Settings" to {
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
-            },
-            "Other settings" to {
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
-            },
-            "Input settings" to {
+            "Input settings".translate() to {
                 closeDialog(true)
                 screen.switchScreen(InputConfigScreen(emulio, backCallback))
             },
-            "Quit Emulio" to {
+            "Platform Config".translate() to {
+                YesNoDialog("Platform Config".translate(), """
+                        The platforms can be edited/configured using a Wizard or editing manually.  
+                    """.trimIndent().translate(), emulio,
+                    "Proceed to Wizard".translate(),
+                    "Edit Manually".translate(),
+                    cancelCallback = {
+                        screen.launchPlatformConfigEditor()
+                        screen.showReloadConfirmation()
+                    },
+                    confirmCallback = {
+                        InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
+                    }).show(stg)
+            },
+            "Restart Emulio".translate() to {
+                screen.showReloadConfirmation()
+            },
+            "Quit Emulio".translate() to {
                 showExitConfirmation(emulio, stg)
             }
     )
