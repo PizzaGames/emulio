@@ -25,7 +25,7 @@ class ScraperWindow(stage: Stage, skin: Skin) {
     val view: ScraperView
 
     init {
-        VisUI.load()
+        if (!VisUI.isLoaded()) VisUI.load()
         val parser = VisLml.parser().skin(skin).build()
 
         val template = Gdx.files.internal("templates/ScraperWindow.lml")

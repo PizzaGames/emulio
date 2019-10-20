@@ -1,4 +1,4 @@
-package com.github.emulio.ui.screens
+package com.github.emulio.ui.screens.wizard
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -19,10 +19,13 @@ import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.ui.input.*
+import com.github.emulio.ui.screens.EmulioScreen
+import com.github.emulio.ui.screens.HelpItems
+import com.github.emulio.ui.screens.createColorTexture
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 
-class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen, private val firstRun: Boolean = false) : EmulioScreen(emulio), InputListener {
+class ScraperWizardScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen, private val firstRun: Boolean = false) : EmulioScreen(emulio), InputListener {
 
     private val logger = KotlinLogging.logger { }
 
@@ -68,14 +71,14 @@ class ScraperScreen(emulio: Emulio, private val backCallback: () -> EmulioScreen
 
         val hudHeight = screenHeight * 0.065f
         initHelpHuds(0f, hudHeight, HelpItems(
-            txtCancel = "Back".translate().toUpperCase(),
-            txtConfirm = "Confirm".translate().toUpperCase(),
-            txtUpDown = "Choose Platform".translate().toUpperCase(),
-            txtLeftRight = "Navigate".translate().toUpperCase(),
+                txtCancel = "Back".translate().toUpperCase(),
+                txtConfirm = "Confirm".translate().toUpperCase(),
+                txtUpDown = "Choose Platform".translate().toUpperCase(),
+                txtLeftRight = "Navigate".translate().toUpperCase(),
 
 
-            alpha = 0.8f,
-            txtColor = Color.DARK_GRAY
+                alpha = 0.8f,
+                txtColor = Color.DARK_GRAY
         ))
 
         val lbScreenTitle = Label("Scraper".translate(), emulio.skin, "title").apply {

@@ -23,6 +23,7 @@ import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.ui.screens.dialogs.InfoDialog
 import com.github.emulio.ui.screens.dialogs.YesNoDialog
+import com.github.emulio.ui.screens.wizard.PlatformWizardScreen
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.translate
 import com.github.emulio.yaml.YamlUtils
@@ -204,7 +205,12 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 	}
 
 	private fun platformWizardConfirmed() {
-		restart()
+		switchScreen(PlatformWizardScreen(emulio, {
+			InfoDialog("Restart required".translate(), """
+				To continue, will be necessary to restart Emulio.
+			""".trimIndent().translate(), emulio).show(this.stage)
+			DevSplashScreen(emulio)
+		}))
 	}
 
 	private fun platformWizardCancelled() {
@@ -220,10 +226,6 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 		launchPlatformConfigEditor()
 		showReloadConfirmation()
 	}
-
-
-
-
 
 
 	private fun onError(exception: Throwable) {

@@ -1,13 +1,7 @@
 package com.github.emulio.model
 
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.PovDirection
-import com.badlogic.gdx.scenes.scene2d.ui.Image
-import jdk.internal.util.xml.impl.Input
-import org.apache.batik.util.XBLConstants
-import java.io.File
-
 
 class EmulioConfig {
 	lateinit var graphicsConfig: GraphicsConfig
@@ -38,7 +32,6 @@ class EmulioConfig {
 			down = Keys.DOWN
 			left = Keys.LEFT
 			right = Keys.RIGHT
-			
 			
 			find = Keys.F3
 			

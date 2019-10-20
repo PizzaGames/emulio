@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
 import com.github.emulio.model.InputConfig
 import com.github.emulio.ui.screens.*
+import com.github.emulio.ui.screens.wizard.PlatformWizardScreen
+import com.github.emulio.ui.screens.wizard.ScraperWizardScreen
 import com.github.emulio.utils.translate
 
 class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScreen, screen: EmulioScreen, private val stg: Stage = screen.stage) : EmulioDialog("Main Menu".translate(), emulio, "main-menu") {
@@ -30,7 +32,7 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
     private val menuItems = mapOf(
             "Scraper".translate() to {
                 closeDialog(true)
-                screen.switchScreen(ScraperScreen(emulio, backCallback))
+                screen.switchScreen(ScraperWizardScreen(emulio, backCallback))
             },
             "General Settings".translate() to {
                 InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
@@ -50,7 +52,7 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
                         screen.showReloadConfirmation()
                     },
                     confirmCallback = {
-                        InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
+                        screen.switchScreen(PlatformWizardScreen(emulio, backCallback))
                     }).show(stg)
             },
             "Restart Emulio".translate() to {
