@@ -3,7 +3,7 @@ language: java # can be 'java' if there is no android build target
 #  components:
 #    - build-tools-20.0.0
 #    - android-20
-jdk: oraclejdk9
+jdk: openjdk8
 
 # Cache gradle dependencies (should be faster to download them from cache)
 cache:
