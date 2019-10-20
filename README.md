@@ -1,9 +1,13 @@
 
 ![logo](https://i.imgur.com/wiJroeX.png)
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![Build Status](https://travis-ci.org/PizzaGames/emulio.svg?branch=master)](https://travis-ci.org/PizzaGames/emulio)
 [![codebeat badge](https://codebeat.co/badges/7130fcf8-b3b3-4325-8479-188336e1d4d0)](https://codebeat.co/projects/github-com-pizzagames-emulio-master)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![GitHub issues](https://img.shields.io/github/issues/PizzaGames/emulio)
+![Kotlin](https://img.shields.io/badge/language-kotlin-orange)
+
 
 # emulio
 Emulators frontend inspired by EmulationStation but written in a better platform to support better usability and eye candy.
@@ -15,6 +19,8 @@ EmulationStation project is great but the Windows/Linux version is abandoned and
 So I decided to create the emulio project. That is written in a much easier programming language and using modern components such as libgdx and kotlin to have a better maintenance and possibly future developers to help me in the development
 
 Initially this is focused on Windows, Linux and MAC platforms, but in the long term the idea is to be totally cross-platform. LibGDX are going to be the limit, that means, what LibGDX supports, we will try to keep this supported as well
+
+
 
 ## Documentation
 You can check our wiki pages. It consists in two parts. One for Users and other for developers. Check out our wiki [here](https://github.com/PizzaGames/emulio/wiki)
@@ -74,8 +80,16 @@ To build and run emulio from command line:
 You can check more documentation in the libgdx official documentation page:
 
 - https://libgdx.badlogicgames.com/documentation/gettingstarted/Running%20and%20Debugging.html
+- 
 
+### Java and other dev dependencies
 
+I have plans to migrate to the newer versions of Java and Gradle, but for the moment, I prefer to invest my time fixing the issues and implementing emulio itself. I tried to upgrade to a new version and suffered a little bit with it. For the moment the current version that you **need** (doesn't work with newer version) is:
+
+- Java 1.8 
+- Gradle 4.6 (you can use the gradlew included in this project of course.)
+
+No more dependencies so far. 
 
 ## Backlog/Current status
 
