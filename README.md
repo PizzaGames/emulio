@@ -20,6 +20,9 @@ So I decided to create the emulio project. That is written in a much easier prog
 
 Initially this is focused on Windows, Linux and MAC platforms, but in the long term the idea is to be totally cross-platform. LibGDX are going to be the limit, that means, what LibGDX supports, we will try to keep this supported as well
 
+A preview on the latest build:
+
+[![Click to see in action](http://img.youtube.com/vi/Pxyf4JIO8aU/0.jpg)](https://www.youtube.com/watch?v=Pxyf4JIO8aU "Emulio latest snapshot")
 
 
 ## Documentation
