@@ -10,14 +10,10 @@ sourceSets {
     }
 }
 
-eclipse.project {
-    name = appName + "-core"
-}
-
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     compile 'org.yaml:snakeyaml:1.17'
     compile 'io.github.microutils:kotlin-logging:1.4.4'
     compile 'org.slf4j:slf4j-api:1.7.7'
