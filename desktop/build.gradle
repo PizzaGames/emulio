@@ -1,4 +1,5 @@
 apply plugin: "kotlin"
+apply plugin: "edu.sc.seis.launch4j"
 
 sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
@@ -63,10 +64,23 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.6'
     }
 }
 repositories {
     mavenCentral()
+    jcenter()
+}
+
+launch4j {
+    outfile = "emulio.exe"
+    productName = "emulio"
+    mainClassName = "com.github.emulio.desktop.DesktopLauncher"
+    icon = "${projectDir}/../core/assets/images/emulio.ico"
+    splashFileName = "${projectDir}/../core/assets/images/splash.bmp"
+    dontWrapJar = false
+    copyright = "GPL 3 License"
+    jar = "${projectDir}/build/libs/emulio.jar"
 }
 
 dependencies {
@@ -78,8 +92,5 @@ dependencies {
 
 }
 
-task createExe(type: Exec) {
-    commandLine "java", "-jar", "${projectDir}/../launch4j/Launch4j/launch4j.jar", "${projectDir}/../launch4j/launch4j.xml"
-}
 
 
