@@ -110,7 +110,7 @@ project(":tests") {
     dependencies {
         compile project(":core")
 
-        compile "junit:junit:5.+"
+        compile "junit:junit:4.12"
 
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
@@ -118,7 +118,7 @@ project(":tests") {
         compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-        testCompile 'junit:junit:5.+'
+        testCompile 'junit:junit:4.12'
         testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0-M2")
         testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.0-M2")
 
