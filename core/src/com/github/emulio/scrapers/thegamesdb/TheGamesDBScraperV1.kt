@@ -27,7 +27,8 @@ import kotlin.system.measureTimeMillis
  * more performatic parser (but xStream have a good performance, so, make sure you
  * have a good choice)
  */
-object TheGamesDBScraper {
+@Deprecated("Use TheGamesDBScraperV2")
+object TheGamesDBScraperV1 {
     val logger = KotlinLogging.logger { }
 
     fun platformsList(): DataPlatformsList {
@@ -222,13 +223,13 @@ object TheGamesDBScraper {
 
 // Sample api tests
 fun main(args: Array<String>) {
-    println("; time: ${measureTimeMillis { print("platformsList: ${TheGamesDBScraper.platformsList()}") }}")
-    println("; time: ${measureTimeMillis { print("platformGames: ${TheGamesDBScraper.platformGames("microsoft xbox 360")}") }}")
-    println("; time: ${measureTimeMillis { print("getPlatform: ${TheGamesDBScraper.getPlatform(15)}") }}")
-    println("; time: ${measureTimeMillis { print("getArt: ${TheGamesDBScraper.getArt(15)}") }}")
-    println("; time: ${measureTimeMillis { print("getGame: ${TheGamesDBScraper.getGame(id=15)}") }}")
-    println("; time: ${measureTimeMillis { print("getGamesList: ${TheGamesDBScraper.getGamesList(name="donkey")}") }}")
-    TheGamesDBScraper.downloadImage("http://thegamesdb.net/banners/", "fanart/original/15-2.jpg", File("g:/15-2.jpg"))
+    println("; time: ${measureTimeMillis { print("platformsList: ${TheGamesDBScraperV1.platformsList()}") }}")
+    println("; time: ${measureTimeMillis { print("platformGames: ${TheGamesDBScraperV1.platformGames("microsoft xbox 360")}") }}")
+    println("; time: ${measureTimeMillis { print("getPlatform: ${TheGamesDBScraperV1.getPlatform(15)}") }}")
+    println("; time: ${measureTimeMillis { print("getArt: ${TheGamesDBScraperV1.getArt(15)}") }}")
+    println("; time: ${measureTimeMillis { print("getGame: ${TheGamesDBScraperV1.getGame(id=15)}") }}")
+    println("; time: ${measureTimeMillis { print("getGamesList: ${TheGamesDBScraperV1.getGamesList(name="donkey")}") }}")
+    TheGamesDBScraperV1.downloadImage("http://thegamesdb.net/banners/", "fanart/original/15-2.jpg", File("g:/15-2.jpg"))
     println("xStream time: ${measureTimeMillis { XStream(StaxDriver()) }}")
 }
 
