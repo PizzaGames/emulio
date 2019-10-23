@@ -43,6 +43,8 @@ deploy:
   provider: releases
   api_key:
     secure: 8AMTgbIjWdpVBkNTza3ZX6D9dLZLg8MJySSv4FiVJwjJU+InNICXGGkegKV+bT8IFupOhs7UJbMVcTjg60ckZTISUcOFpRRSkVCzsMYgWHYAu+lQNp33qdilzhJ/h0V90CxPmTDzMeCt/JTUQVZ2HlPM/7EnV1zDXwgv6tdj7ocFHtsyRsc4jC3tjxvqWhawfAoOpXGipHxwoKT4Z98kXcWSoSVn38oOZ6v3G2PzjMnnZadzEyNmqQ8E8uONxZfj18dKgNqx5PsJzpX/048hNZo3XE9CYjuXq6/01nagodgmoepxI52bH9IGeGGKggLQx1JsP0UahYJjDpanklknqLO7S/52dLnh+sId/6dKpPb8gMy1yAmh16DFZWbYZVb9D6zTY0v9L4tiBE58I3N0W8qcyolCTVQZv7IIZrkpInlPJfscLpq8n+oNrIS67v0/duPXd9Vjo2jLT2JERXejI9mMi84cc2QpXwt/1S5rjknUVi5+LhWAPmb9qEP3UsB0AIW5RbZYz6fm81LQow7nY6mt9iD3dmrfeBSWt9s03ENMKDX7GPr/S+qe6TvcsbILqODCRAuPaMcvQifE1k2q8xrFPEDR9wjOYPumVTBXGz5HMCOl6yy0tk0bqPmj+GdRFttNIkI5GV3PPWz6qBiouUPULqkRQUl8bpoLkjuUjLU=
-  file: "desktop/build/libs/emulio.jar"
+  file:
+    - "./destkop/build/libs/emulio.jar"
+    - "./desktop/build/launch4j/emulio.exe"
   on:
     repo: PizzaGames/emulio
