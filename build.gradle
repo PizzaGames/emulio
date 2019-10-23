@@ -108,7 +108,7 @@ project(":tests") {
     }
 
     dependencies {
-        compile project(":core")
+        //compile project(":core")
 
         compile "junit:junit:4.12"
 
