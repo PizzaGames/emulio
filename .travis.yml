@@ -47,4 +47,5 @@ deploy:
     - "./destkop/build/libs/emulio.jar"
     - "./desktop/build/launch4j/emulio.exe"
   on:
+    tags: true
     repo: PizzaGames/emulio
