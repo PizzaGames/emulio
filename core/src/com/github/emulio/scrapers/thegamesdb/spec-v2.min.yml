@@ -1,0 +1,4212 @@
+swagger: '2.0'
+info:
+  description: API Documentations
+  version: 1.0.0
+  title: TheGamesDB API
+  # put the contact info for your development or API team
+#  contact:
+#    email: you@your-company.com
+  license:
+    name: GNU General Public License v3.0
+    url: https://github.com/TheGamesDB/TheGamesDBv2/blob/master/LICENSE
+# tags are used for organizing operations
+tags:
+- name: Games
+- name: Platforms
+- name: Genres
+- name: Developers
+- name: Publishers
+paths:
+  /Games/ByGameID:
+    get:
+      tags:
+      - Games
+      operationId: GamesByGameID
+      summary: "Fetch game(s) by id"
+      description: "can request additional information can be requestes through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: id
+        description: "(Required) - supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GamesByGameID'
+        400:
+          description: bad input parameter
+  /Games/ByGameName:
+    get:
+      tags:
+      - Games
+      operationId: GamesByGameName
+      summary: "Fetch game(s) by name"
+      description: "can request additional information can be requestes through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: "(Required) - Search term"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: "filter[platform]"
+        description: "(Optional) - platform `id` can be obtain from the platforms api below, supports `,` delimited list"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GamesByGameName'
+        400:
+          description: bad input parameter
+  /Games/ByPlatformID:
+    get:
+      tags:
+      - Games
+      operationId: GamesByPlatformID
+      summary: "Fetch game(s) by platform id"
+      description: "can request additional information can be requestes through `fields` and `include` params"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: id
+        description: "(Required) - platform `id` can be obtain from the platforms api below, supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `players`, `publishers`, `genres`, `overview`, `last_updated`, `rating`, `platform`, `coop`, `youtube`, `os`, `processor`, `ram`, `hdd`, `video`, `sound`, `alternates`"
+        required: false
+        type: string
+      - in: query
+        name: include
+        description: "(Optional) - valid `,` delimited options: `boxart`, `platform`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GamesByPlatformID'
+        400:
+          description: bad input parameter
+  /Games/Images:
+    get:
+      tags:
+      - Games
+      operationId: GamesImages
+      summary: "Fetch game(s) images by game(s) id"
+      description: "results can be filtered with `filter[type]` param"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: games_id
+        description: "(Required) - game(s) `id` can be obtain from the above games api, supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: filter[type]
+        description: "(Optional) - valid `,` delimited options: `fanart`, `banner`, `boxart`, `screenshot`, `clearlogo`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GamesImages'
+        400:
+          description: bad input parameter
+  /Games/Updates:
+    get:
+      tags:
+      - Games
+      operationId: GamesUpdates
+      summary: "Fetch games update"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: last_edit_id
+        description: "(Required)"
+        required: true
+        type: integer
+      - in: query
+        name: time
+        description: "(Optional)"
+        required: false
+        type: integer
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GamesUpdates'
+        400:
+          description: bad input parameter
+  /Platforms:
+    get:
+      tags:
+      - Platforms
+      operationId: Platforms
+      summary: "Fetch platforms list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `icon`, `console`, `controller`, `developer`, `manufacturer`, `media`, `cpu`, `memory`, `graphics`, `sound`, `maxcontrollers`, `display`, `overview`, `youtube`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Platforms'
+        400:
+          description: bad input parameter
+  /Platforms/ByPlatformID:
+    get:
+      tags:
+      - Platforms
+      operationId: PlatformsByPlatformID
+      summary: "Fetch platforms list by id"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: id
+        description: "(Required) - supports `,` delimited list"
+        required: true
+        type: integer
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `icon`, `console`, `controller`, `developer`, `manufacturer`, `media`, `cpu`, `memory`, `graphics`, `sound`, `maxcontrollers`, `display`, `overview`, `youtube`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlatformsByPlatformID'
+        400:
+          description: bad input parameter
+  /Platforms/ByPlatformName:
+    get:
+      tags:
+      - Platforms
+      operationId: PlatformsByPlatformName
+      summary: "Fetch platforms by name"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: fields
+        description: "(Optional) - valid `,` delimited options: `icon`, `console`, `controller`, `developer`, `manufacturer`, `media`, `cpu`, `memory`, `graphics`, `sound`, `maxcontrollers`, `display`, `overview`, `youtube`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlatformsByPlatformName'
+        400:
+          description: bad input parameter
+  /Platforms/Images:
+    get:
+      tags:
+      - Platforms
+      operationId: PlatformsImages
+      summary: "Fetch platform(s) images by platform(s) id"
+      description: "results can be filtered with `filter[type]` param"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      - in: query
+        name: platforms_id
+        description: "(Required) - platform(s) `id` can be obtain from the above platforms api, supports `,` delimited list"
+        required: true
+        type: string
+      - in: query
+        name: filter[type]
+        description: "(Optional) - valid `,` delimited options: `fanart`, `banner`, `boxart`"
+        required: false
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlatformsImages'
+        400:
+          description: bad input parameter
+  /Genres:
+    get:
+      tags:
+      - Genres
+      operationId: Genres
+      summary: "Fetch Genres list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Genres'
+        400:
+          description: bad input parameter
+  /Developers:
+    get:
+      tags:
+      - Developers
+      operationId: Developers
+      summary: "Fetch Developers list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Developers'
+        400:
+          description: bad input parameter
+  /Publishers:
+    get:
+      tags:
+      - Publishers
+      operationId: Publishers
+      summary: "Fetch Publishers list"
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: apikey
+        description: "(Required)"
+        required: true
+        type: string
+      responses:
+        200:
+          description: result
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Publishers'
+        400:
+          description: bad input parameter
+definitions:
+  GamesByGameID:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - include
+    - pages
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - games
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          games:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 0
+                game_title:
+                  type: string
+                release_date:
+                  type: string
+                platform:
+                  type: integer
+                  minimum: 0
+                players:
+                  type: integer
+                  minimum: 0
+                overview:
+                  type: string
+                last_updated:
+                  type: string
+                rating:
+                  type: string
+                coop:
+                  type: string
+                youtube:
+                  type: string
+                os:
+                  type: string
+                processor:
+                  type: string
+                ram:
+                  type: string
+                hdd:
+                  type: string
+                video:
+                  type: string
+                sound:
+                  type: string
+                developers:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                genres:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                publishers:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                alternates:
+                  type: array
+                  items:
+                    type: string
+            example:
+              - id: 1
+                game_title: 'Halo: Combat Evolved'
+                release_date: '2001-11-15'
+                platform: 1
+                players: 1
+                overview: 'In Halo''s twenty-sixth century setting, the player assumes the role of the Master Chief, a cybernetically enhanced super-soldier. The player is accompanied by Cortana, an artificial intelligence who occupies the Master Chief''s neural interface. Players battle various aliens on foot and in vehicles as they attempt to uncover the secrets of the eponymous Halo, a ring-shaped artificial planet.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'dR3Hm8scbEw'
+                os: '98SE/ME/2000/XP'
+                processor: '733mhz'
+                ram: '128 MB'
+                hdd: '1.2GB'
+                video: '32 MB / 3D T&L capable'
+                sound: null
+                developers: [1389]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+              - id: 2
+                game_title: 'Crysis'
+                release_date: '2007-11-13'
+                platform: 1
+                players: 4
+                overview: 'From the makers of Far Cry, Crysis offers FPS fans the best-looking, most highly-evolving gameplay, requiring the player to use adaptive tactics and total customization of weapons and armor to survive in dynamic, hostile environments including Zero-G. 
+Earth, 2019. A team of US scientists makes a frightening discovery on an island in the South China Sea. All contact with the team is lost when the North Korean Government quickly seals off the area. The United States responds by dispatching an elite team of Delta Force Operators to recon the situation. As tension rises between the two nations, a massive alien ship reveals itself in the middle of the island. The ship generates an immense force sphere that freezes a vast portion of the island and drastically alters the global weather system. Now the US and North Korea must join forces to battle the alien menace. With hope rapidly fading, you must fight epic battles through tropical jungle, frozen landscapes, and finally into the heart of the alien ship itself for the ultimate Zero G showdown.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'i3vO01xQ-DM'
+                os: 'Windows XP/Vista'
+                processor: '2.8GHz (XP), 3.2GHz (Vista)'
+                ram: '1GB (XP), 1.5GB (Vista)'
+                hdd: '12GB'
+                video: '256MB, DirectX 9.0c'
+                sound: 'DirectX 9.0c compatible'
+                developers: [1970]
+                genres: [8]
+                publishers: [2]
+                alternates: null
+              - id: 4
+                game_title: 'Star Fox 64'
+                release_date: '1997-06-30'
+                platform: 3
+                players: 4
+                overview: 'The Lylat system has been invaded!  Join Fox McCloud and his Star Fox team as they fight to save the galaxy from the clutches of the evil Andross.  Travel to many different 3-D worlds.  Battle the enemy in the air and on the ground and listen in as Fox McCloud interacts with a cast of characters.
+See how it feels to feel what you see!  The N64 Rumble Pak controller accessory instantly transmits all the bumps and blasts during the action.  It’s a new jolt to your game play experience!
+* Four Players compete simultaneously in Vs. mode!
+* Game Pak memory saves the top 10 scores!
+* Outstanding cinema scenes tell the Star Fox saga!'
+                last_updated: '2018-08-11 15:01:11'
+                rating: 'E - Everyone'
+                coop: 'No'
+                youtube: 'jsEcmfPwnHo'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [6037]
+                genres: [1, 8]
+                publishers: [3]
+                alternates: [Lylat Wars (EU), Lylat Wars]
+      include:
+        type: object
+        required:
+        - boxart
+        - platform
+        properties:
+          boxart:
+            type: object
+            required:
+            - base_url
+            - data
+            properties:
+              base_url:
+                type: object
+                required:
+                - original
+                - small
+                - thumb
+                - cropped_center_thumb
+                - medium
+                - large
+                properties:
+                  original:
+                    type: string
+
+                  small:
+                    type: string
+
+                  thumb:
+                    type: string
+
+                  cropped_center_thumb:
+                    type: string
+
+                  medium:
+                    type: string
+
+                  large:
+                    type: string
+
+              data:
+                type: object
+                required:
+                - "1"
+                - "2"
+                - "4"
+                properties:
+                  1:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 23413
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/1-1.jpg'
+                        resolution: '1529x2156'
+                      - id: 23414
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/1-1.jpg'
+                        resolution: '1527x2156'
+                  2:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 1549
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/2-1.jpg'
+                        resolution: '1525x2160'
+                      - id: 15336
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/2-1.jpg'
+                        resolution: '1525x2162'
+                  4:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 846
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/4-1.jpg'
+                        resolution: '1000x705'
+                      - id: 847
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/4-1.jpg'
+                        resolution: '1000x705'
+          platform:
+            type: object
+            required:
+            - data
+            properties:
+              data:
+                type: object
+                required:
+                - "3"
+                - "1"
+                properties:
+                  3:
+                    type: object
+                    required:
+                    - id
+                    - name
+                    - alias
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 0
+                      name:
+                        type: string
+
+                      alias:
+                        type: string
+
+                  1:
+                    type: object
+                    required:
+                    - id
+                    - name
+                    - alias
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 0
+                      name:
+                        type: string
+
+                      alias:
+                        type: string
+
+      pages:
+        type: object
+        required:
+        - previous
+        - current
+        - next
+        properties:
+          previous:
+            type: string
+
+          current:
+            type: string
+
+          next:
+            type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  GamesByGameName:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - include
+    - pages
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - games
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          games:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 0
+                game_title:
+                  type: string
+                release_date:
+                  type: string
+                platform:
+                  type: integer
+                  minimum: 0
+                players:
+                  type: integer
+                  minimum: 0
+                overview:
+                  type: string
+                last_updated:
+                  type: string
+                rating:
+                  type: string
+                coop:
+                  type: string
+                youtube:
+                  type: string
+                os:
+                  type: string
+                processor:
+                  type: string
+                ram:
+                  type: string
+                hdd:
+                  type: string
+                video:
+                  type: string
+                sound:
+                  type: string
+                developers:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                genres:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                publishers:
+                  type: string
+                alternates:
+                  type: array
+                  items:
+                    type: string
+            example:
+              - id: 22729
+                game_title: 'Halo - Gallant Girl'
+                release_date: '2008-12-18'
+                platform: 1
+                players: 1
+                overview: 'You play as Kelly, one of the surviving Spartan Super Soldiers.
+After stumbling on a Covenant operation, Kelly must stop what could be the biggest threat to earth yet. With the help of Dr. Catherine Halsey she will explore an alien world with hidden Forerunner technology as deadly as any ring world.
+This Game Gear version is in full 8-Bit color. Small touches like the screen lines of the Game Gear help date the game and make it feel more like you''re playing on a real Sega Game Gear'
+                last_updated: '2018-07-11 21:05:32'
+                rating: null
+                coop: 'No'
+                youtube: 'DhUQx_Tamww'
+                os: 'Windows XP'
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [4654]
+                genres: [1, 2, 8, 15]
+                publishers: null
+                alternates: null
+              - id: 9
+                game_title: 'Halo 2'
+                release_date: '2007-05-31'
+                platform: 1
+                players: 2
+                overview: 'Halo 2 is the sequel to the highly successful and critically acclaimed Halo®: Combat Evolved. In Halo 2, the saga continues as Master Chief—a genetically enhanced super-soldier—is the only thing standing between the relentless Covenant and the destruction of all humankind.'
+                last_updated: '2018-08-11 15:01:11'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'Zz6FNKawJBc'
+                os: 'Windows 7 or Windows Vista'
+                processor: '2.0 gigahertz (GHz)'
+                ram: '1 GB RAM'
+                hdd: '7 GB of available hard disk space. The dedicated server and the map editor require more hard disk space.'
+                video: 'ATI X700 or Nvidia 6100 display adapter with 128 megabytes (MB) of RAM and the following features: Pixel shader: 2 or greater; Vertex shader: 2 or greater'
+                sound: 'Sound card, speakers, or headset'
+                developers: [1389]
+                genres: [1, 8]
+                publishers: [1]
+                alternates: null
+              - id: 6079
+                game_title: 'Halo 2'
+                release_date: '2004-11-09'
+                platform: 14
+                players: 4
+                overview: 'Halo 2 is the sequel to the highly successful and critically acclaimed Halo®: Combat Evolved. In Halo 2, the saga continues as Master Chief—a genetically enhanced super-soldier—is the only thing standing between the relentless Covenant and the destruction of all humankind.
+Also Available
+Halo 2 Limited Collector''s Edition
+This limited edition comes in a special tin box and includes commentaries, a "making of" feature, art galleries and more.'
+                last_updated: '2018-08-11 15:01:11'
+                rating: 'M - Mature'
+                coop: 'Yes'
+                youtube: 'fp_U8R-IDhA'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1389]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+              - id: 18226
+                game_title: 'Halo 2 Multiplayer Map Pack'
+                release_date: '2005-07-05'
+                platform: 14
+                players: 4
+                overview: null
+                last_updated: '2018-07-11 21:05:30'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1389]
+                genres: [1, 8]
+                publishers: [1]
+                alternates: null
+              - id: 24954
+                game_title: 'Halo 2600'
+                release_date: '2010-07-01'
+                platform: 22
+                players: 1
+                overview: 'The year is 2552. Planet Earth still exists, but overpopulation has forced many of her former residents to colonize other worlds. After contact with an outer colony was lost, a battlegroup was sent to investigate and was almost completely destroyed; only one badly damaged ship returned to tell of a seemingly unstoppable alien warship that had effortlessly annihilated their forces.
+This was humankind''s first encounter with a group of aliens they eventually came to know as the Covenant, a collective of alien races bent on wiping out humanity. A desperate plan is set in motion: board a Covenant vessel and learn the location of the Covenant home world. But before the mission begins, Covenant forces strike and annihilate the attack force.
+ 
+The Covenant are now on Earth''s doorstep. One ship escapes and makes a blind jump into deep space, hoping to lead the Covenant away from Earth. The ship crashes on Halo--an artificial ring world that is actually a weapon capable of destroying all life in the galaxy should it fall into the hands of the Covenant.
+You are the Master Chief--all that remains of a classified military project to build a series of genetically enhanced super- soldiers. You are humanity''s last and best hope against the Covenant--but you''re woefully out-matched, and survival is not guaranteed. Can you battle your way through the massive world that is Halo, defeat the Covenant, and save humanity?
+Halo 2600 is an original homebrew game created by Ed Fries for the Atari 2600. Ed Fries once worked as the VP of Game Publishing for Microsoft''s Xbox division and was instrumental in bringing Bungie Studios into the Microsoft studio family). AtariAge worked with Ed Fries to produce Halo 2600 in physical cartridge form, and a limited run was produced for the 2010 Classic Gaming Expo. After the Classic Gaming Expo, additional cartridges were produced using a different label to differentiate the two releases.
+In the game, Halo players control Master Chief in a non-scrolling exploration game with rooms to explore and a variety of enemies to shoot. The Chief faces a variety of enemies across 64 playfields, and must find hidden keys to unlock the game''s force-fields in order to reach the final boss encounter. But first, he needs a weapon...'
+                last_updated: '2018-07-17 03:58:28'
+                rating: null
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2644]
+                genres: [1, 2, 8]
+                publishers: [593]
+                alternates: null
+              - id: 90
+                game_title: 'Halo 3'
+                release_date: '2007-09-25'
+                platform: 15
+                players: 2
+                overview: 'Master Chief returns to a Covenant Dominated Earth on a mission to kill the final alien leader. Meanwhile, the Arbiter, Johnson, and Keyes form a loose alliance and escape from Delta Halo. The Covenant is ripped in civil war, and the Elites along with a handful of other alien races become sympathetic to the human cause. Delta Halo''s impromptu dis-activation has brought all of the Halos to a "remote activation phase". They can be activated from a facility called the ark, which happens to be on Earth.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'Yes'
+                youtube: 'xhzJumt6264'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1389]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+              - id: 55490
+                game_title: 'Halo 3: Essentials'
+                release_date: null
+                platform: 15
+                players: null
+                overview: 'Included with the Legendary edition of Halo 3'
+                last_updated: '2018-07-11 21:05:44'
+                rating: null
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: null
+                genres: null
+                publishers: null
+                alternates: null
+              - id: 30838
+                game_title: 'Halo 3: ODST'
+                release_date: '2015-05-30'
+                platform: 4920
+                players: null
+                overview: null
+                last_updated: '2018-07-11 21:05:36'
+                rating: null
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1389]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+              - id: 193
+                game_title: 'Halo 3: ODST'
+                release_date: '2009-09-22'
+                platform: 15
+                players: null
+                overview: 'A UNSC Orbital Drop Shock Trooper must locate his missing squad members in New Mombasa following a devastating slip space rupture caused by a Covenant cruiser.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'https://www.youtube.com/watch?v=oyZHajCu8GU'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1389]
+                genres: [1]
+                publishers: [1]
+                alternates: null
+              - id: 3597
+                game_title: 'Halo 4'
+                release_date: '2012-11-06'
+                platform: 15
+                players: 2
+                overview: 'Halo 4 is the start of a new saga in the Master Chief''s story. This saga is known as the Reclaimer Saga. At the end of the legendary mode of Halo 3 we see Master Chief Petty Officer John-117 orbiting a planet and hear him say to Cortana "Wake me when you need me". Well now is the time to be needed. The game starts where you last left off in a torn in half ship orbiting a planet around four years after the events of Halo 3. John wakes up to Cortana screaming "John I need you!" This creates the beginning of a new saga. In Halo 4 we see a new breed of enemies called the Prometheans. The Prometheans are AIs created by the Forerunners to protect a planet. Unfortunately you''re seen as a threat. However despite being made by the Forerunners the Prometheans have a much darker and more sinister plot. Also aside from the Prometheans, Cortana is turning rampant and has begun to turn on the Master Chief. As a new twist, the Master Chief will be working together with the Spartan IV''s the replacements to the Master Chief.'
+                last_updated: '2018-07-11 21:05:03'
+                rating: 'M - Mature'
+                coop: 'Yes'
+                youtube: 'oBk3c4UIcGw'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [63]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+              - id: 21335
+                game_title: 'Halo 5: Guardians'
+                release_date: '2015-10-27'
+                platform: 4920
+                players: 4
+                overview: '343 Industries continues the legendary first-person shooter series with Halo 5: Guardians -- the first Halo title for the Xbox One gaming platform. Halo 5 featuresthe most ambitious campaign and multiplayer experience in franchise history, all running at 60 frames per second on dedicated servers.
+A mysterious and unstoppable force threatens the galaxy, the Master Chief is missing and his loyalty questioned. Experience the most dramatic Halo story to date through the eyes of the Master Chief and Blue Team, and Spartan Locke and Fireteam Osiris – in a 4-player cooperative epic that spans three worlds. Challenge friends and rivals in new multiplayer modes: Warzone (massive 24-player battles featuring AI enemies and allies,) and Arena (pure 4-vs-4 competitive combat.)
+Also Available
+Halo 5: Guardians Limited Edition
+Halo 5: Guardians Limited Collector''s Edition
+A premium edition of Halo 5: Guardians for collectors and Halo fans alike. The Limited Collector''s Edition is the ultimate expression of Halo 5: Guardians with a commemorative statue designed by 343 Industries.1 The Master Chief and Spartan Locke appear as a team - but there''s another story... the statue splits and they separate, ready to face-off. Which scene tells the true story?'
+                last_updated: '2018-08-11 15:01:11'
+                rating: null
+                coop: 'Yes'
+                youtube: 'HnOX28WaRrE'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [63]
+                genres: [1, 8]
+                publishers: [1]
+                alternates: null
+              - id: 60180
+                game_title: 'Halo Infinite'
+                release_date: '1970-01-01'
+                platform: 4920
+                players: 1
+                overview: null
+                last_updated: null
+                rating: 'Not Rated'
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [63]
+                genres: [1, 8]
+                publishers: [1]
+                alternates: null
+              - id: 35122
+                game_title: 'Halo Online'
+                release_date: null
+                platform: 1
+                players: null
+                overview: null
+                last_updated: '2018-07-11 21:05:37'
+                rating: null
+                coop: 'No'
+                youtube: '612_qzVHRQg'
+                os: 'Windows 7 64'
+                processor: 'Core 2 Duo E6600/Athlon X2 7450'
+                ram: '4GB'
+                hdd: '4GB'
+                video: 'GeForce 9600 GT/Radeon HD 4750'
+                sound: null
+                developers: [7374]
+                genres: [8]
+                publishers: [3737]
+                alternates: null
+              - id: 847
+                game_title: 'Halo Wars'
+                release_date: '2009-03-03'
+                platform: 15
+                players: null
+                overview: 'The year is 2531, twenty years prior to the events in Halo: Combat Evolved and the Covenant have found something on the planet Garvest. The UNSC ship "Spirit of Fire" is sent to investigate and stop whatever the enemy is up to. What the crew finds could be the only thing that stands between humanity and certain annihilation by the Covenant. Command large armies, lead them into battle, control their every move and use their abilities to gain the upper hand in combat.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'Yes'
+                youtube: 'G5y61mxFBDE'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2817]
+                genres: [6]
+                publishers: [1]
+                alternates: null
+              - id: 43323
+                game_title: 'Halo Wars 2'
+                release_date: '2017-02-17'
+                platform: 1
+                players: 1
+                overview: 'Real-time strategy makes an explosive return to the Halo universe in Halo Wars 2. Lead Spartans, Warthogs and other classic Halo fighting forces in a brutal war against a terrifying new enemy on the biggest Halo battlefield ever.'
+                last_updated: '2018-07-11 21:05:40'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: 'kjN1eWhzPeA'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1891]
+                genres: [6]
+                publishers: [1279]
+                alternates: null
+              - id: 43184
+                game_title: 'Halo Wars 2'
+                release_date: '2017-02-21'
+                platform: 4920
+                players: 4
+                overview: 'Real-time strategy makes an explosive return to the Halo universe in Halo Wars 2. Lead Spartans, Warthogs and other classic Halo fighting forces in a brutal war against a terrifying new enemy on the biggest Halo battlefield ever.
+Also Available
+Halo Wars 2: Ultimate Edition'
+                last_updated: '2018-07-11 21:05:40'
+                rating: null
+                coop: 'Yes'
+                youtube: '6RHzU9r0t2c'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1891]
+                genres: [6]
+                publishers: [1]
+                alternates: null
+              - id: 47678
+                game_title: 'Halo Wars: Definitive Edition'
+                release_date: null
+                platform: 1
+                players: 4
+                overview: 'Set early in the iconic war between the Covenant and UNSC - made famous by the Halo FPS games - Halo Wars: Definitive Edition provides a unique angle on the war while bringing new heroes to the battlefield. Control large Halo armies and direct them in action-packed warfare.'
+                last_updated: '2018-07-11 21:05:40'
+                rating: null
+                coop: 'Yes'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: null
+                genres: [6]
+                publishers: [1]
+                alternates: null
+              - id: 43186
+                game_title: 'Halo Wars: Definitive Edition'
+                release_date: '2016-12-20'
+                platform: 4920
+                players: null
+                overview: 'Set early in the iconic war between the Covenant and UNSC - made famous by the Halo FPS games - Halo Wars: Definitive Edition provides a unique angle on the war while bringing new heroes to the battlefield. Control large Halo armies and direct them in action-packed warfare.'
+                last_updated: '2018-07-11 21:05:40'
+                rating: null
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [985]
+                genres: [4, 6]
+                publishers: [1]
+                alternates: null
+              - id: 1
+                game_title: 'Halo: Combat Evolved'
+                release_date: '2001-11-15'
+                platform: 1
+                players: 1
+                overview: 'In Halo''s twenty-sixth century setting, the player assumes the role of the Master Chief, a cybernetically enhanced super-soldier. The player is accompanied by Cortana, an artificial intelligence who occupies the Master Chief''s neural interface. Players battle various aliens on foot and in vehicles as they attempt to uncover the secrets of the eponymous Halo, a ring-shaped artificial planet.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'dR3Hm8scbEw'
+                os: '98SE/ME/2000/XP'
+                processor: '733mhz'
+                ram: '128 MB'
+                hdd: '1.2GB'
+                video: '32 MB / 3D T&L capable'
+                sound: null
+                developers: [1389]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+              - id: 3996
+                game_title: 'Halo: Combat Evolved'
+                release_date: '2001-11-15'
+                platform: 14
+                players: null
+                overview: 'In Halo''s twenty-sixth century setting, the player assumes the role of the Master Chief, a cybernetically enhanced super-soldier. The player is accompanied by Cortana, an artificial intelligence who occupies the Master Chief''s neural interface. Players battle various aliens on foot and in vehicles as they attempt to uncover the secrets of the eponymous Halo, a ring-shaped artificial planet.'
+                last_updated: '2018-07-11 21:05:03'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1389]
+                genres: [8]
+                publishers: [1]
+                alternates: null
+      include:
+        type: object
+        required:
+        - boxart
+        - platform
+        properties:
+          boxart:
+            type: object
+            required:
+            - base_url
+            - data
+            properties:
+              base_url:
+                type: object
+                required:
+                - original
+                - small
+                - thumb
+                - cropped_center_thumb
+                - medium
+                - large
+                properties:
+                  original:
+                    type: string
+
+                  small:
+                    type: string
+
+                  thumb:
+                    type: string
+
+                  cropped_center_thumb:
+                    type: string
+
+                  medium:
+                    type: string
+
+                  large:
+                    type: string
+
+              data:
+                type: object
+                required:
+                - "1"
+                - "9"
+                - "90"
+                - "193"
+                - "847"
+                - "3597"
+                - "3996"
+                - "6079"
+                - "18226"
+                - "21335"
+                - "22729"
+                - "24954"
+                - "30838"
+                - "35122"
+                - "43184"
+                - "43186"
+                - "43323"
+                - "47678"
+                - "55490"
+                - "60180"
+                properties:
+                  1:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 23413
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/1-1.jpg'
+                        resolution: '1529x2156'
+                      - id: 23414
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/1-1.jpg'
+                        resolution: '1527x2156'
+                  9:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 10033
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/9-1.jpg'
+                        resolution: '1520x2156'
+                      - id: 10034
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/9-2.jpg'
+                        resolution: '1527x2156'
+                  90:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 19321
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/90-1.jpg'
+                        resolution: '1530x2148'
+                      - id: 19322
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/90-1.jpg'
+                        resolution: '1518x2148'
+                  193:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 21520
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/193-1.jpg'
+                        resolution: '640x903'
+                      - id: 21521
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/193-1.jpg'
+                        resolution: '640x906'
+                  847:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 21522
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/847-1.jpg'
+                        resolution: '640x893'
+                      - id: 21523
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/847-1.jpg'
+                        resolution: '640x896'
+                  3597:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 34350
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/3597-1.jpg'
+                        resolution: '1685x2430'
+                  3996:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 9872
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/3996-1.jpg'
+                        resolution: '1502x2144'
+                      - id: 15598
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/3996-1.jpg'
+                        resolution: '1536x2156'
+                  6079:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 15599
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/6079-1.jpg'
+                        resolution: '1521x2156'
+                      - id: 15600
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/6079-1.jpg'
+                        resolution: '1536x2156'
+                  18226:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 50995
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/18226-1.jpg'
+                        resolution: '402x558'
+                  21335:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 126706
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/21335-1.jpg'
+                        resolution: '393x500'
+                  22729:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 67246
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/22729-1.jpg'
+                        resolution: '2000x2000'
+                  24954:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 71783
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/24954-1.png'
+                        resolution: '300x411'
+                  30838:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 81220
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/30838-1.jpg'
+                        resolution: '584x800'
+                  35122:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 100081
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/35122-1.png'
+                        resolution: '339x250'
+                  43184:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 115813
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/43184-1.png'
+                        resolution: '300x381'
+                  43186:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 117786
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/43186-1.jpg'
+                        resolution: '584x800'
+                  43323:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 115872
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/43323-1.jpg'
+                        resolution: '768x768'
+                  47678:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 122024
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/47678-1.jpg'
+                        resolution: '392x542'
+                  55490:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 137627
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/55490-1.jpg'
+                        resolution: '359x500'
+                  60180:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 200297
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/60180-1.jpg'
+                        resolution: null
+          platform:
+            type: object
+            required:
+            - "22"
+            - "14"
+            - "15"
+            - "4920"
+            - "1"
+            properties:
+              22:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+              14:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+              15:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+              4920:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+              1:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+      pages:
+        type: object
+        required:
+        - previous
+        - current
+        - next
+        properties:
+          previous:
+            type: string
+
+          current:
+            type: string
+
+          next:
+            type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  GamesByPlatformID:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - include
+    - pages
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - games
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          games:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 0
+                game_title:
+                  type: string
+                release_date:
+                  type: string
+                platform:
+                  type: integer
+                  minimum: 0
+                players:
+                  type: integer
+                  minimum: 0
+                overview:
+                  type: string
+                last_updated:
+                  type: string
+                rating:
+                  type: string
+                coop:
+                  type: string
+                youtube:
+                  type: string
+                os:
+                  type: string
+                processor:
+                  type: string
+                ram:
+                  type: string
+                hdd:
+                  type: string
+                video:
+                  type: string
+                sound:
+                  type: string
+                developers:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                genres:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                publishers:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 0
+                alternates:
+                  type: array
+                  items:
+                    type: string
+            example:
+              - id: 17
+                game_title: 'Devil May Cry 4'
+                release_date: '2008-02-05'
+                platform: 12
+                players: 1
+                overview: 'In the game, the player controls both Nero and Dante, and fights enemies in close combat using firearms, swords, and other weapons. The characters Lady and Trish from previous games in the series make appearances, along with new characters Nero, Kyrie, Credo, Gloria, and Agnus. The game is set after Devil May Cry but before Devil May Cry 2.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'Dp5fobWucds'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1436]
+                genres: [1, 4, 18]
+                publishers: [9]
+                alternates: null
+              - id: 21
+                game_title: 'Final Fantasy XIII'
+                release_date: '2010-03-09'
+                platform: 12
+                players: 1
+                overview: 'Final Fantasy XIII is a console role-playing video game developed and published by Square Enix for the PlayStation 3 and Xbox 360. Released in 2009 in Japan and North America and PAL regions in March 2010, it is the thirteenth major installment in the Final Fantasy series. The game includes fast-paced combat, a new system for the series for determining which abilities are developed for the characters called "Crystarium", and a customizable "Paradigm" system to control which abilities are used by the characters. Final Fantasy XIII includes elements from the previous games in the series, such as summoned monsters, chocobos, and airships.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: 'hDjkGUM7skk'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2808]
+                genres: [4]
+                publishers: [12]
+                alternates: null
+              - id: 31
+                game_title: 'Heavenly Sword'
+                release_date: '2007-09-12'
+                platform: 12
+                players: 1
+                overview: 'The gameplay of Heavenly Sword resembles a martial arts title focused on melee combat while featuring opportunities for ranged attacks. The main character, Nariko, uses a weapon called the "Heavenly Sword" which changes into one of three forms depending on what attack stance the player uses as part of a unique fighting style. Speed Stance, the default, provides an even balance between damage and speed, where the sword takes the form of two separate blades. Range Stance allows fast, long-ranging, but weaker attacks, with the sword resembling two blades, chained together. Power Stance is the most powerful, but slowest style, where attacks are made with the Sword in the shape of one large, two-handed blade.
+For exploration and certain battles, the game also makes use of "Quick Time Events" (QTE). During a QTE, a symbol for a certain button or for an action such as moving the analog stick to the right or left appears on screen and the player must match what is shown to successfully complete the scene.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: 'djY3_E2Z41M'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [6032]
+                genres: [1, 2, 10]
+                publishers: [19]
+                alternates: null
+              - id: 36
+                game_title: 'Killzone 2'
+                release_date: '2009-02-27'
+                platform: 12
+                players: null
+                overview: 'Killzone 2 is the third game in the Killzone franchise and continues the story two years after the events of the first two games. The game takes place on Helghan, the home-world of the Helghast who assaulted the Interplanetary Strategic Alliance''s colony on Vekta. The ISA retaliates on the Helghan''s own ground with the aim to secure the Helghast leader, Emperor Visari, and bring the Helghast war machine to a halt. Assuming the role of Sergeant Tomas "Sev" Sevchenko, a battle-hardened veteran and a member of the special forces unit known as the Legion. Under his command, players lead a group of highly trained soldiers on a mission to take out the Helghast threat.
+The gameplay consists of what the developers describe as Hollywood Realism, focusing on scripted, cinematic gameplay. The game is played entirely from the first-person perspective, except for the portions with vehicular combat with a tank and an exoskeleton. A large portion is dedicated to seeking cover and peeking from behind objects to open fire. Next to the single-player campaign, there is squad-based multiplayer called Warzone with five different kinds of missions (Assassination, Search & Retrieve, Search & Destroy, Bodycount and Capture & Hold) based on seven kinds of classes. There is support for up to 32 players, with the addition of bots to fill the remaining spots.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'b-4HNmuEAKg'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [3657]
+                genres: [1, 8]
+                publishers: [21]
+                alternates: null
+              - id: 37
+                game_title: 'Lair'
+                release_date: '2007-08-30'
+                platform: 12
+                players: null
+                overview: 'In a world ravaged by endless conflict and natural disaster, a call for peace turns into a bloodbath of betrayal and deceit. Playing as a warrior riding a voracious dragon trained for deadly aerial and ground combat, and capable of scorching, clawing and smashing thousands of enemies, gamers must defeat countless armies to save a civilization. Together, the gamer and the beast will attempt to change the destiny of a world on the brink of extinction.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: '467zs7pt0wE'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2976]
+                genres: [1]
+                publishers: [14]
+                alternates: null
+              - id: 45
+                game_title: 'Metal Gear Solid 4: Guns of the Patriots'
+                release_date: '2008-06-12'
+                platform: 12
+                players: 1
+                overview: 'Metal Gear Solid 4 is set in 2014, five years after the Big Shell incident and nine years after Shadow Moses incident. The world economy relies on continuous war, fought by PMCs, which outnumber government military forces. PMC soldiers are outfitted with nanomachines to enhance their abilities and control the stress on the battlefield. The control network created through these nanomachines is called Sons of the Patriots (SOP), and Liquid Ocelot is preparing to hijack the system. Snake accepts a request from Roy Campbell to terminate Liquid, with Otacon and Sunny providing mission support from the Nomad aircraft.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'pjYE7GkZg-A'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [4760]
+                genres: [1, 2]
+                publishers: [23]
+                alternates: null
+              - id: 46
+                game_title: 'Mirror''s Edge'
+                release_date: '2009-01-13'
+                platform: 12
+                players: null
+                overview: 'Mirror''s Edge introduces players to Faith, a "runner" in a world where communication channels are highly monitored and the movement of human traffic is closely watched. When Faith''s sister gets framed for a murder she did not commit, Faith finds herself on the edge of the city, on the wrong side of the law. 
+ Mirror''s Edge delivers players straight into the shoes of this modern day heroine as she traverses the vertigo-inducing cityscape, engaging in intense combat, fast-paced chases and challenging puzzles. With a never-before-seen sense of movement and perspective, players are drawn into Faith''s world.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: '2N1TJP1cxmo'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2576]
+                genres: [1, 2]
+                publishers: [2]
+                alternates: null
+              - id: 70
+                game_title: 'Uncharted: Drake''s Fortune'
+                release_date: '2007-11-19'
+                platform: 12
+                players: 1
+                overview: 'A 400-year-old clue in the coffin of Sir Francis Drake sets a modern-day fortune hunter on an exploration for the fabled treasure of El Dorado, leading to the discovery of a forgotten island in the middle of the Pacific Ocean. The search turns deadly when Nathan Drake becomes stranded on the island and hunted by mercenaries. Outnumbered and outgunned, Drake and his companions must fight to survive as they begin to unravel the terrible secrets hidden on the Island.
+Taking full advantage of the power of PS3, Uncharted: Drake’s Fortune is developed using proprietary technology that promises to impress players with incredibly realistic characters and lifelike environments. Building on its legacy of extraordinary storytelling, developer Naughty Dog has created an elaborate plot that will have players guessing at every turn. Uncharted: Drake''s Fortune, brings players into a world ripe with realism and unexpected juxtapositions.'
+                last_updated: '2018-08-11 15:01:11'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: '8TxYmAKCXSE'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [5839]
+                genres: [1, 2]
+                publishers: [14]
+                alternates: null
+              - id: 94
+                game_title: 'MotorStorm: Pacific Rift'
+                release_date: '2008-10-28'
+                platform: 12
+                players: null
+                overview: 'The game moves away from the desert environments of the original title and relocates itself in "a lush island environment, full of interactive vegetation"; and also includes monster trucks and four-player split-screen capability. Monster trucks are able to ride over cars (except big rigs), break most vegetation, and destroy structures. Bikes also have new capabilities so they can bunny hop and the driver can duck. Custom music tracks using a player''s own music stored on their PS3 hard drive are available as are trophies (to unlock more Drivers and Vehicles) and camera angles are improved for crashes; vehicle damage is also improved. Users can now select drivers from the Garage menu, thus not having to rely on picking the vehicles, depending on the Driver''s gender. "Speed" events are firstly introduced in the game, which consists numerous checkpoints in each tracks that users must pass through to achieve extra times before the timer runs out. Any class that isn''t the ATV or Bikes can ram their vehicles left or right. The ATV and Bike ram by their driver throwing punches at the other drivers.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: 'DZyXHESAC5U'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2911]
+                genres: [7]
+                publishers: [14]
+                alternates: null
+              - id: 97
+                game_title: 'Resistance: Fall of Man'
+                release_date: '2006-11-17'
+                platform: 12
+                players: null
+                overview: 'By 1949 an alien race known as the Chimera spread throughout Europe. Originating in Russia, the creatures propagate by infecting humans virally; mutating them into fellow Chimeran breeds. Their rapid infection and warfare overwhelm the continent as nations fall. Within months, the Chimera cross the English Channel by digging tunnels underneath and invade the United Kingdom, which quickly loses the war and has its troops scattered.
+In 1951, the game begins with the protagonist Sgt. Nathan Hale, on his way with a large United States task force, to retrieve a secret weapon that the British claim can be used against the Chimera in exchange for supplies. However, soon after landing in York, the forces are ambushed by the Chimera and the remnants are quickly wiped out by a Chimeran spire attack, which unleashes insect like creatures that infects all of the soldiers. Hale, the only survivor, resists the full effects of infection and does not go into a coma. Instead, he possesses increased strength, health regeneration and gold-coloured irises, somewhat like the Chimera.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: null
+                coop: 'No'
+                youtube: 'nJ8Yuq8qpbM'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [4232]
+                genres: [8]
+                publishers: [14]
+                alternates: null
+              - id: 98
+                game_title: 'SOCOM: U.S. Navy SEALs Confrontation'
+                release_date: '2008-10-14'
+                platform: 12
+                players: 4
+                overview: 'SOCOM: Confrontation focuses on online play and the global community and clans that support it. With support for Tournaments, Clan Ladders, Leader Boards, this latest title in the multi-million unit selling franchise is exactly what SOCOM fans have been clamoring for. Additionally, players will be able to modify their appearance through facial and physical customization. A global-scale experience, SOCOM Confrontation gives players the opportunity to battle against the best and brightest from the U.S., Europe and Asia. SOCOM Confrontation deploys with five new North African themed maps, including a 32-player version of "Crossroads." Additional themed packs for SOCOM Confrontation will be made available for download via the Playstation Store.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'Yes'
+                youtube: 'GVWQzvfDY18'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [7837]
+                genres: [8]
+                publishers: [21]
+                alternates: null
+              - id: 100
+                game_title: 'Spider-Man 3'
+                release_date: '2007-05-04'
+                platform: 12
+                players: 1
+                overview: 'The game''s plot expands on the film by including additional characters and elements from the Spider-Man comics and the Marvel Universe. Depending on the platform, different villains from the comics are featured, but all versions of the game feature the film''s main villains: Venom, New Goblin, and Sandman.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: 'O4JB4B4RXpg'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [9025]
+                genres: [1]
+                publishers: [33]
+                alternates: null
+              - id: 104
+                game_title: 'The Eye of Judgment'
+                release_date: '2007-10-24'
+                platform: 12
+                players: 3
+                overview: 'Sony Computer Entertainment introduces a new concept in trading card games with THE EYE OF JUDGMENT™ developed exclusively for PLAYSTATION®3 computer entertainment system. Utilizing Hasbro® and its Wizards of the Coast subsidiary''s trading card expertise, the immense power of the PS3® system, and the PLAYSTATION®Eye, Sony''s groundbreaking next-generation USB camera for PS3, THE EYE OF JUDGMENT provides a visually stunning experience that adds a third dimension to the trading card game genre.
+Developed by Sony Computer Entertainment Worldwide Studios, JAPAN Studio, THE EYE OF JUDGMENT presents a new style of gameplay where collectable trading cards, embedded with a CyberCode, are brought to life in the 3D game through use of the innovative PLAYSTATION Eye. Players compete by selecting a card and placing the coded card in front of the PLAYSTATION Eye for their respective creatures to come to life and battle on screen. Players take turns placing cards as they jostle for control; the winner is the first player to conquer five of the nine squares of the "9 Fields" battle mat. The gamers task is to conquer the board by deploying their cards more skillfully than their opponent.
+Players have four ways to play THE EYE OF JUDGMENT, single player against their PS3, against an opponent in two-player mode, against an opponent online, or letting the PS3 play out a round with the cards the player owns. THE EYE OF JUDGMENT comes with a starter deck of 30 character and spell cards manufactured by Hasbro.'
+                last_updated: '2018-08-11 15:01:11'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: '1OTdOjSfiSs'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [4441]
+                genres: [6]
+                publishers: [38]
+                alternates: null
+              - id: 201
+                game_title: 'Uncharted 2: Among Thieves'
+                release_date: '2009-10-13'
+                platform: 12
+                players: null
+                overview: 'Uncharted 2: Among Thieves is the story of Nathan Drake, a fortune-hunter with a shady reputation and an even shadier past who is lured back into the treacherous world of thieves and mercenary treasure-seekers. The tenth game by premier PlayStation 3 developer Naughty Dog, Uncharted 2: Among Thieves allows players to take control of Drake and embark on a journey that will push him to his physical, emotional and intellectual limits to discover the real truth behind the lost fleet of Marco Polo and the legendary Himalayan valley of Shambhala'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: 'tlkkceDkT88'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [5839]
+                genres: [1, 2]
+                publishers: [14]
+                alternates: null
+              - id: 319
+                game_title: 'Heavy Rain'
+                release_date: '2010-02-23'
+                platform: 12
+                players: 1
+                overview: 'Experience a gripping psychological crime thriller filled with innumerable twists and turns, where even the smallest actions and choices can cause dramatic consequences. The hunt is on for the Origami Killer, named after his calling card of leaving folded paper shapes on victims. Four characters, each with their own motives, take part in a desperate attempt to stop the killer from claiming a new victim.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'XsGJOmATjKM'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [6898]
+                genres: [2]
+                publishers: [14]
+                alternates: null
+              - id: 552
+                game_title: 'Ninja Gaiden Sigma'
+                release_date: '2007-07-03'
+                platform: 12
+                players: null
+                overview: 'Ninja Gaiden Sigma, stylized as Ninja Gaiden ?, is an action-adventure game developed by Team Ninja for the PlayStation 3. It is an enhanced port of Ninja Gaiden, originally released on Xbox in 2004, and is the second expansion to the game after Ninja Gaiden Black. The game was released in the summer of 2007 to very positive reviews. In 2012, a port for the PlayStation Vita, titled Ninja Gaiden Sigma Plus was released on the same day the console launched in Europe and North America.[1'
+                last_updated: '2018-07-11 21:05:01'
+                rating: null
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: null
+                genres: null
+                publishers: null
+                alternates: null
+              - id: 641
+                game_title: 'Bayonetta'
+                release_date: '2010-01-05'
+                platform: 12
+                players: null
+                overview: 'Bayonetta is a stylish and cinematic action game, directed by Hideki Kamiya.
+A witch with powers beyond the comprehension of mere mortals, Bayonetta faces-off against countless angelic enemies, many reaching epic proportions, in a game of 100% pure, unadulterated all-out action. Outlandish finishing moves are performed with balletic grace as Bayonetta flows from one fight to another. With magnificent over-the-top action taking place in stages that are a veritable theme park of exciting attractions, Bayonetta pushes the limits of the action genre, bringing to life its fast-paced, dynamic climax combat.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'M - Mature'
+                coop: 'No'
+                youtube: 'qD62SZwhP1M'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [1829, 7549]
+                genres: [1]
+                publishers: [15]
+                alternates: null
+              - id: 650
+                game_title: 'Final Fantasy XIV'
+                release_date: '2010-09-21'
+                platform: 12
+                players: null
+                overview: 'The game takes place in a land called Hydaelyn, mainly in a region named Eorzea, which will have a contemporaneously aesthetic blend of science fiction and classic fantasy elements.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: 'T - Teen'
+                coop: 'No'
+                youtube: null
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [2808]
+                genres: [4]
+                publishers: [12]
+                alternates: null
+              - id: 809
+                game_title: 'LittleBigPlanet'
+                release_date: '2008-10-27'
+                platform: 12
+                players: 4
+                overview: 'If you were to stand on LittleBigPlanet and try to imagine a more astounding, fantastic, and creative place, full of enthralling adventure, uncanny characters, and brilliant things to do... you couldn’t. All imagination is here, and what you do with it all is entirely up to you.
+Build new levels and expand the environment, collect the many and varied tools and objects to make your mark on this world, or just simply enjoy the people and puzzles they’ve set.
+LittleBigPlanet is the manifested embodiment of your perfect dream world...'
+                last_updated: '2018-08-11 15:01:11'
+                rating: 'E - Everyone'
+                coop: 'Yes'
+                youtube: 'QlRNggZoInE'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [5352]
+                genres: [5, 12, 15]
+                publishers: [19]
+                alternates: [Little Big Planet, LBP, LittleBIGPlanet, Little BIG Planet]
+              - id: 810
+                game_title: 'Gran Turismo 5'
+                release_date: '2010-11-24'
+                platform: 12
+                players: 1
+                overview: 'Gran Turismo 5  is the fifth edition of the Gran Turismo sim racing video game series. It is the first game in the franchise to provide a damage model, with variations of damage depending on whether a vehicle is a "Standard" or "Premium" car. The game also features weather effects, however they are only available on certain circuits. Optional Stereoscopic-3D resolution and Karting found a place in the game.Furthermore, new visual effects have been introduced, including dynamic skid marks, dust and the ability for drivers to flash their headlights. A course editor which allows the player to create new circuits by using tools that randomly generate track-parts according to certain player-selected specifications, including the number of corners, the time of day and the number of sectors. There are a variety of themes the player can choose from to act as a base for each circuit design. Themes also have an effect on track length and highest elevation.'
+                last_updated: '2018-07-11 21:05:01'
+                rating: null
+                coop: 'No'
+                youtube: 'l2uQ2ayvvWY'
+                os: null
+                processor: null
+                ram: null
+                hdd: null
+                video: null
+                sound: null
+                developers: [6739]
+                genres: [7]
+                publishers: [14]
+                alternates: null
+      include:
+        type: object
+        required:
+        - boxart
+        - platform
+        properties:
+          boxart:
+            type: object
+            required:
+            - base_url
+            - data
+            properties:
+              base_url:
+                type: object
+                required:
+                - original
+                - small
+                - thumb
+                - cropped_center_thumb
+                - medium
+                - large
+                properties:
+                  original:
+                    type: string
+
+                  small:
+                    type: string
+
+                  thumb:
+                    type: string
+
+                  cropped_center_thumb:
+                    type: string
+
+                  medium:
+                    type: string
+
+                  large:
+                    type: string
+
+              data:
+                type: object
+                required:
+                - "17"
+                - "21"
+                - "31"
+                - "36"
+                - "37"
+                - "45"
+                - "46"
+                - "70"
+                - "94"
+                - "97"
+                - "98"
+                - "100"
+                - "104"
+                - "201"
+                - "319"
+                - "552"
+                - "641"
+                - "650"
+                - "809"
+                - "810"
+                properties:
+                  17:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 9287
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/17-2.jpg'
+                        resolution: '668x768'
+                  21:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 21714
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/21-1.jpg'
+                        resolution: '640x739'
+                      - id: 21715
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/21-1.jpg'
+                        resolution: '640x731'
+                  31:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17001
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/31-1.jpg'
+                        resolution: '1494x1775'
+                      - id: 17002
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/31-1.jpg'
+                        resolution: '1521x1775'
+                  36:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17011
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/36-1.jpg'
+                        resolution: '1536x1758'
+                      - id: 17012
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/36-1.jpg'
+                        resolution: '1521x1758'
+                  37:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17015
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/37-1.jpg'
+                        resolution: '1536x1758'
+                      - id: 17016
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/37-1.jpg'
+                        resolution: '1527x1758'
+                  45:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17027
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/45-1.jpg'
+                        resolution: '1536x1758'
+                      - id: 17028
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/45-1.jpg'
+                        resolution: '1521x1758'
+                  46:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17029
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/46-1.jpg'
+                        resolution: '1539x1758'
+                      - id: 17030
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/46-1.jpg'
+                        resolution: '1524x1758'
+                  70:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 5049
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/70-1.jpg'
+                        resolution: '640x742'
+                      - id: 86416
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/70-1.jpg'
+                        resolution: '640x738'
+                  94:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 21726
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/94-1.jpg'
+                        resolution: '640x734'
+                      - id: 21727
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/94-1.jpg'
+                        resolution: '640x741'
+                  97:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17053
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/97-1.jpg'
+                        resolution: '1515x1760'
+                      - id: 17054
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/97-1.jpg'
+                        resolution: '1512x1760'
+                  98:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 21734
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/98-1.jpg'
+                        resolution: '640x836'
+                      - id: 21735
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/98-1.jpg'
+                        resolution: '640x738'
+                  100:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 12332
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/100-1.jpg'
+                        resolution: '1021x1176'
+                  104:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 16980
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/104-1.jpg'
+                        resolution: '1521x1758'
+                      - id: 66672
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/104-1.jpg'
+                        resolution: '433x500'
+                  201:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17079
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/201-1.jpg'
+                        resolution: '1533x1758'
+                      - id: 17080
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/201-1.jpg'
+                        resolution: '1521x1758'
+                  319:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 9677
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/319-1.jpg'
+                        resolution: '1390x1600'
+                  552:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17041
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/552-1.jpg'
+                        resolution: '1539x1758'
+                      - id: 17042
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/552-1.jpg'
+                        resolution: '1527x1758'
+                  641:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 53636
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/641-1.jpg'
+                        resolution: '1524x1762'
+                      - id: 61147
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/641-1.jpg'
+                        resolution: '1301x1500'
+                  650:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 10806
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/650-1.jpg'
+                        resolution: '1280x1452'
+                  809:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 17021
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/809-1.jpg'
+                        resolution: '1533x1758'
+                      - id: 17022
+                        type: 'boxart'
+                        side: 'back'
+                        filename: 'boxart/back/809-1.jpg'
+                        resolution: '1518x1758'
+                  810:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                        type:
+                          type: string
+                        side:
+                          type: string
+                        filename:
+                          type: string
+                        resolution:
+                          type: string
+                    example:
+                      - id: 11772
+                        type: 'boxart'
+                        side: 'front'
+                        filename: 'boxart/front/810-1.jpg'
+                        resolution: '1043x1200'
+          platform:
+            type: object
+            required:
+            - data
+            properties:
+              data:
+                type: object
+                required:
+                - "14"
+                - "12"
+                - "13"
+                properties:
+                  14:
+                    type: object
+                    required:
+                    - id
+                    - name
+                    - alias
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 0
+                      name:
+                        type: string
+
+                      alias:
+                        type: string
+
+                  12:
+                    type: object
+                    required:
+                    - id
+                    - name
+                    - alias
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 0
+                      name:
+                        type: string
+
+                      alias:
+                        type: string
+
+                  13:
+                    type: object
+                    required:
+                    - id
+                    - name
+                    - alias
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 0
+                      name:
+                        type: string
+
+                      alias:
+                        type: string
+
+      pages:
+        type: object
+        required:
+        - previous
+        - current
+        - next
+        properties:
+          previous:
+            type: string
+
+          current:
+            type: string
+
+          next:
+            type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  GamesImages:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - pages
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - base_url
+        - images
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          base_url:
+            type: object
+            required:
+            - original
+            - small
+            - thumb
+            - cropped_center_thumb
+            - medium
+            - large
+            properties:
+              original:
+                type: string
+
+              small:
+                type: string
+
+              thumb:
+                type: string
+
+              cropped_center_thumb:
+                type: string
+
+              medium:
+                type: string
+
+              large:
+                type: string
+
+          images:
+            type: object
+            required:
+            - "12"
+            - "13"
+            - "14"
+            properties:
+              12:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      minimum: 0
+                    type:
+                      type: string
+                    side:
+                      type: string
+                    filename:
+                      type: string
+                    resolution:
+                      type: string
+                example:
+                  - id: 21
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/12-1.jpg'
+                    resolution: '1920x1080'
+                  - id: 117
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/12-2.jpg'
+                    resolution: '1920x1080'
+                  - id: 118
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/12-3.jpg'
+                    resolution: '1920x1080'
+                  - id: 119
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/12-4.jpg'
+                    resolution: '1920x1080'
+                  - id: 120
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/12-5.jpg'
+                    resolution: '1920x1080'
+                  - id: 121
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/12-6.jpg'
+                    resolution: '1920x1080'
+                  - id: 1551
+                    type: 'boxart'
+                    side: 'front'
+                    filename: 'boxart/front/12-1.jpg'
+                    resolution: '1532x2176'
+              13:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      minimum: 0
+                    type:
+                      type: string
+                    side:
+                      type: string
+                    filename:
+                      type: string
+                    resolution:
+                      type: string
+                example:
+                  - id: 22
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-1.jpg'
+                    resolution: '1920x1080'
+                  - id: 500
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-2.jpg'
+                    resolution: '1920x1080'
+                  - id: 661
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-3.jpg'
+                    resolution: '1920x1080'
+                  - id: 1349
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-4.jpg'
+                    resolution: '1920x1080'
+                  - id: 1350
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-5.jpg'
+                    resolution: '1920x1080'
+                  - id: 1351
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-6.jpg'
+                    resolution: '1920x1080'
+                  - id: 1352
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-7.jpg'
+                    resolution: '1920x1080'
+                  - id: 1353
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-8.jpg'
+                    resolution: '1920x1080'
+                  - id: 1552
+                    type: 'boxart'
+                    side: 'front'
+                    filename: 'boxart/front/13-1.jpg'
+                    resolution: '800x1135'
+                  - id: 13880
+                    type: 'boxart'
+                    side: 'back'
+                    filename: 'boxart/back/13-1.jpg'
+                    resolution: '1487x2106'
+                  - id: 15957
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-9.jpg'
+                    resolution: '1920x1080'
+                  - id: 15958
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-10.jpg'
+                    resolution: '1920x1080'
+                  - id: 15959
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-11.jpg'
+                    resolution: '1920x1080'
+                  - id: 15960
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-12.jpg'
+                    resolution: '1920x1080'
+                  - id: 19246
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/13-13.jpg'
+                    resolution: '1920x1080'
+              14:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      minimum: 0
+                    type:
+                      type: string
+                    side:
+                      type: string
+                    filename:
+                      type: string
+                    resolution:
+                      type: string
+                example:
+                  - id: 23
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-1.jpg'
+                    resolution: '1920x1080'
+                  - id: 417
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-2.jpg'
+                    resolution: '1920x1080'
+                  - id: 918
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-3.jpg'
+                    resolution: '1920x1080'
+                  - id: 1315
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-4.jpg'
+                    resolution: '1920x1080'
+                  - id: 1545
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-5.jpg'
+                    resolution: '1920x1080'
+                  - id: 1773
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-6.jpg'
+                    resolution: '1920x1080'
+                  - id: 1774
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-7.jpg'
+                    resolution: '1920x1080'
+                  - id: 1961
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-8.jpg'
+                    resolution: '1920x1080'
+                  - id: 13300
+                    type: 'boxart'
+                    side: 'back'
+                    filename: 'boxart/back/14-1.jpg'
+                    resolution: '1524x2147'
+                  - id: 13301
+                    type: 'boxart'
+                    side: 'front'
+                    filename: 'boxart/front/14-2.jpg'
+                    resolution: '1527x2150'
+                  - id: 20494
+                    type: 'fanart'
+                    side: null
+                    filename: 'fanart/14-9.jpg'
+                    resolution: '1920x1080'
+      pages:
+        type: object
+        required:
+        - previous
+        - current
+        - next
+        properties:
+          previous:
+            type: string
+
+          current:
+            type: string
+
+          next:
+            type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  GamesUpdates:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - pages
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - updates
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          updates:
+            type: array
+            items:
+              type: object
+              properties:
+                edit_id:
+                  type: integer
+                  minimum: 0
+                game_id:
+                  type: integer
+                  minimum: 0
+                timestamp:
+                  type: string
+                type:
+                  type: string
+                value:
+                  type: string
+            example:
+              - edit_id: 23159
+                game_id: 60901
+                timestamp: '2018-09-05 21:21:27'
+                type: 'boxart'
+                value: 'boxart/front/60901-1.jpg'
+              - edit_id: 23158
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'rating'
+                value: 'E10+ - Everyone 10+'
+              - edit_id: 23157
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'platform'
+                value: 9
+              - edit_id: 23156
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'youtube'
+                value: null
+              - edit_id: 23155
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'coop'
+                value: 'No'
+              - edit_id: 23154
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'players'
+                value: 4
+              - edit_id: 23153
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'release_date'
+                value: '2008-11-16'
+              - edit_id: 23152
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'overview'
+                value: null
+              - edit_id: 23151
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'game_title'
+                value: 'Shaun White Snowboarding Road Trip (Target Limited Edition'
+              - edit_id: 23150
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'developers'
+                value: [9150]
+              - edit_id: 23149
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'genres'
+                value: [1]
+              - edit_id: 23148
+                game_id: 60901
+                timestamp: '2018-09-05 21:15:04'
+                type: 'game'
+                value: '[NEW]'
+              - edit_id: 23147
+                game_id: 37562
+                timestamp: '2018-09-05 20:08:02'
+                type: 'boxart'
+                value: 'boxart/front/37562-1.jpg'
+              - edit_id: 23146
+                game_id: 37562
+                timestamp: '2018-09-05 20:08:02'
+                type: 'boxart'
+                value: '[REMOVED]'
+              - edit_id: 23145
+                game_id: 60890
+                timestamp: '2018-09-05 18:47:33'
+                type: 'developers'
+                value: [10378]
+              - edit_id: 23144
+                game_id: 7094
+                timestamp: '2018-09-05 18:39:00'
+                type: 'release_date'
+                value: '2006-09-05'
+              - edit_id: 23143
+                game_id: 7094
+                timestamp: '2018-09-05 18:39:00'
+                type: 'genres'
+                value: [1, 15]
+              - edit_id: 23142
+                game_id: 32249
+                timestamp: '2018-09-05 18:38:26'
+                type: 'game_title'
+                value: 'Trine 2: Goblin Menace'
+              - edit_id: 23141
+                game_id: 44012
+                timestamp: '2018-09-05 18:37:34'
+                type: 'game_title'
+                value: 'The Penguins of Madagascar: Dr. Blowhole Returns - Again!'
+              - edit_id: 23140
+                game_id: 44012
+                timestamp: '2018-09-05 18:37:34'
+                type: 'developers'
+                value: [3635]
+              - edit_id: 23139
+                game_id: 44012
+                timestamp: '2018-09-05 18:37:34'
+                type: 'genres'
+                value: [1, 5]
+              - edit_id: 23138
+                game_id: 19304
+                timestamp: '2018-09-05 18:36:41'
+                type: 'release_date'
+                value: '2006-10-02'
+              - edit_id: 23137
+                game_id: 19304
+                timestamp: '2018-09-05 18:36:41'
+                type: 'game_title'
+                value: 'Disney''s The Little Mermaid: Ariel''s Undersea Adventure'
+              - edit_id: 23136
+                game_id: 3494
+                timestamp: '2018-09-05 18:32:37'
+                type: 'game_title'
+                value: 'Rayman: 10th Anniversary'
+              - edit_id: 23135
+                game_id: 3494
+                timestamp: '2018-09-05 18:32:37'
+                type: 'genres'
+                value: [1, 2, 15]
+              - edit_id: 23134
+                game_id: 42667
+                timestamp: '2018-09-05 18:31:55'
+                type: 'rating'
+                value: 'Not Rated'
+              - edit_id: 23133
+                game_id: 42667
+                timestamp: '2018-09-05 18:31:55'
+                type: 'game_title'
+                value: 'Playstation Underground Vol. 3 Issue 3'
+              - edit_id: 23132
+                game_id: 42667
+                timestamp: '2018-09-05 18:31:55'
+                type: 'genres'
+                value: [1]
+              - edit_id: 23131
+                game_id: 43622
+                timestamp: '2018-09-05 18:29:30'
+                type: 'game_title'
+                value: 'Glacier 3: The Meltdown'
+              - edit_id: 23130
+                game_id: 6806
+                timestamp: '2018-09-05 18:28:25'
+                type: 'release_date'
+                value: '2011-02-22'
+              - edit_id: 23129
+                game_id: 6806
+                timestamp: '2018-09-05 18:28:25'
+                type: 'game_title'
+                value: 'Giana Sisters DS'
+              - edit_id: 23128
+                game_id: 6806
+                timestamp: '2018-09-05 18:28:25'
+                type: 'developers'
+                value: [1108]
+              - edit_id: 23127
+                game_id: 6806
+                timestamp: '2018-09-05 18:28:25'
+                type: 'genres'
+                value: [1, 15]
+              - edit_id: 23126
+                game_id: 53494
+                timestamp: '2018-09-05 18:27:32'
+                type: 'rating'
+                value: 'Not Rated'
+              - edit_id: 23125
+                game_id: 53494
+                timestamp: '2018-09-05 18:27:32'
+                type: 'game_title'
+                value: 'Dungeon Rushers'
+              - edit_id: 23124
+                game_id: 53494
+                timestamp: '2018-09-05 18:27:32'
+                type: 'genres'
+                value: [4, 6]
+              - edit_id: 23123
+                game_id: 19440
+                timestamp: '2018-09-05 18:25:43'
+                type: 'boxart'
+                value: 'boxart/back/19440-1.jpg'
+              - edit_id: 23122
+                game_id: 19440
+                timestamp: '2018-09-05 18:25:20'
+                type: 'genres'
+                value: [1, 15]
+              - edit_id: 23121
+                game_id: 19440
+                timestamp: '2018-09-05 18:25:16'
+                type: 'rating'
+                value: 'Not Rated'
+              - edit_id: 23120
+                game_id: 19440
+                timestamp: '2018-09-05 18:25:16'
+                type: 'game_title'
+                value: 'Densetsu no Starfy'
+              - edit_id: 23119
+                game_id: 14446
+                timestamp: '2018-09-05 18:23:56'
+                type: 'game_title'
+                value: 'American McGee Presents Bad Day LA'
+              - edit_id: 23118
+                game_id: 14446
+                timestamp: '2018-09-05 18:23:56'
+                type: 'publishers'
+                value: [698]
+              - edit_id: 23117
+                game_id: 14446
+                timestamp: '2018-09-05 18:23:55'
+                type: 'developers'
+                value: [2813]
+              - edit_id: 23116
+                game_id: 14446
+                timestamp: '2018-09-05 18:23:51'
+                type: 'boxart'
+                value: 'boxart/back/14446-1.jpg'
+              - edit_id: 23115
+                game_id: 60900
+                timestamp: '2018-09-05 18:15:05'
+                type: 'game_title'
+                value: 'Prison Architect'
+              - edit_id: 23114
+                game_id: 60900
+                timestamp: '2018-09-05 09:39:26'
+                type: 'boxart'
+                value: 'boxart/front/60900-1.jpg'
+              - edit_id: 23113
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'rating'
+                value: 'M - Mature'
+              - edit_id: 23112
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'platform'
+                value: 4920
+              - edit_id: 23111
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'youtube'
+                value: 'https://www.youtube.com/watch?v=lASb8niHpdM'
+              - edit_id: 23110
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'coop'
+                value: 'No'
+              - edit_id: 23109
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'players'
+                value: 1
+              - edit_id: 23108
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'release_date'
+                value: '2016-07-01'
+              - edit_id: 23107
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'overview'
+                value: 'Build and manage a Maximum Security Prison. As the sun casts its early morning rays on a beautiful patch of countryside the clock starts ticking. You''ve got to crack on and build a holding cell to detain the job lot of maximum security prisoners that are trundling to your future prison on their yellow bus. As your workmen lay the last brick you don''t have a moment to let them rest as they need to get started on the first proper cell block so you can make room for the next prisoner intake. Once they''ve all got a place to lay their weary heads the fun can really start. You''ll need a canteen, infirmary and a guard room, oh, and don''t forget to plumb in a toilet, or things will get messy, but what about a workout area? Or solitary confinement cells? Or an execution chamber? Inspired by Dungeon Keeper, Dwarf Fortress and Theme Hospital and with over 1 million players having spent time inside, Prison Architect is the worlds best lock-em-up.'
+              - edit_id: 23106
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'game_title'
+                value: 'PRISON ARCHITECT'
+              - edit_id: 23105
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'publishers'
+                value: [868]
+              - edit_id: 23104
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'developers'
+                value: [10117, 4304]
+              - edit_id: 23103
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'genres'
+                value: [6]
+              - edit_id: 23102
+                game_id: 60900
+                timestamp: '2018-09-05 09:38:30'
+                type: 'game'
+                value: '[NEW]'
+              - edit_id: 23101
+                game_id: 60899
+                timestamp: '2018-09-05 08:29:04'
+                type: 'youtube'
+                value: 'kPLugtCvgrY'
+              - edit_id: 23100
+                game_id: 43004
+                timestamp: '2018-09-05 08:02:08'
+                type: 'overview'
+                value: 'Take a wild adventure around the Roman Empire to free the villagers held captive by Caesar''s vast army. You''ll join two heroes, Asterix and Obelix, as they use powerful combinations and attack moves to battle hordes of enemies. Your attacks include twister fusion, power hammer, earthquake, atomic magic potion, and more. In addition to fighting, you can race and ride vehicles, solve puzzles, and use different devices. You''ll need all the resources you can find to rescue your friends, who are triple locked to carts and guarded by legions of Romans.'
+              - edit_id: 23099
+                game_id: 43004
+                timestamp: '2018-09-05 08:02:08'
+                type: 'game_title'
+                value: 'Asterix & Obelix: Kick Buttix'
+              - edit_id: 23098
+                game_id: 43004
+                timestamp: '2018-09-05 08:02:08'
+                type: 'developers'
+                value: [2880]
+              - edit_id: 23097
+                game_id: 43004
+                timestamp: '2018-09-05 08:02:05'
+                type: 'boxart'
+                value: 'boxart/back/43004-1.jpg'
+              - edit_id: 23096
+                game_id: 43004
+                timestamp: '2018-09-05 08:02:05'
+                type: 'boxart'
+                value: '[REMOVED]'
+              - edit_id: 23095
+                game_id: 43004
+                timestamp: '2018-09-05 08:01:59'
+                type: 'boxart'
+                value: 'boxart/front/43004-1.jpg'
+              - edit_id: 23094
+                game_id: 43004
+                timestamp: '2018-09-05 08:01:59'
+                type: 'boxart'
+                value: '[REMOVED]'
+      pages:
+        type: object
+        required:
+        - previous
+        - current
+        - next
+        properties:
+          previous:
+            type: string
+
+          current:
+            type: string
+
+          next:
+            type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  Platforms:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - platforms
+        properties:
+          count:
+            type: integer
+            minimum: 0
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  PlatformsByPlatformID:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - platforms
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          platforms:
+            type: object
+            required:
+            - "14"
+            - "12"
+            - "13"
+            properties:
+              14:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                - icon
+                - console
+                - controller
+                - developer
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+                  icon:
+                    type: string
+
+                  console:
+                    type: string
+
+                  controller:
+                    type: string
+
+                  developer:
+                    type: string
+
+              12:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                - icon
+                - console
+                - controller
+                - developer
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+                  icon:
+                    type: string
+
+                  console:
+                    type: string
+
+                  controller:
+                    type: string
+
+                  developer:
+                    type: string
+
+              13:
+                type: object
+                required:
+                - id
+                - name
+                - alias
+                - icon
+                - console
+                - controller
+                - developer
+                properties:
+                  id:
+                    type: integer
+                    minimum: 0
+                  name:
+                    type: string
+
+                  alias:
+                    type: string
+
+                  icon:
+                    type: string
+
+                  console:
+                    type: string
+
+                  controller:
+                    type: string
+
+                  developer:
+                    type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  PlatformsByPlatformName:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - platforms
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          platforms:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 0
+                name:
+                  type: string
+                alias:
+                  type: string
+                icon:
+                  type: string
+                console:
+                  type: string
+                controller:
+                  type: string
+                developer:
+                  type: string
+  PlatformsImages:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - pages
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - base_url
+        - images
+        properties:
+          count:
+            type: integer
+            minimum: 0
+          base_url:
+            type: object
+            required:
+            - original
+            - small
+            - thumb
+            - cropped_center_thumb
+            - medium
+            - large
+            properties:
+              original:
+                type: string
+
+              small:
+                type: string
+
+              thumb:
+                type: string
+
+              cropped_center_thumb:
+                type: string
+
+              medium:
+                type: string
+
+              large:
+                type: string
+
+          images:
+            type: object
+            required:
+            - "12"
+            - "13"
+            - "14"
+            properties:
+              12:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      minimum: 0
+                    type:
+                      type: string
+                    filename:
+                      type: string
+                example:
+                  - id: 72
+                    type: 'fanart'
+                    filename: 'platform/fanart/12-1.jpg'
+                  - id: 73
+                    type: 'fanart'
+                    filename: 'platform/fanart/12-2.jpg'
+                  - id: 253
+                    type: 'boxart'
+                    filename: 'platform/boxart/12-3.jpg'
+              13:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      minimum: 0
+                    type:
+                      type: string
+                    filename:
+                      type: string
+                example:
+                  - id: 32
+                    type: 'boxart'
+                    filename: 'platform/boxart/13-1.jpg'
+                  - id: 51
+                    type: 'fanart'
+                    filename: 'platform/fanart/13-1.jpg'
+                  - id: 64
+                    type: 'fanart'
+                    filename: 'platform/fanart/13-2.jpg'
+                  - id: 140
+                    type: 'fanart'
+                    filename: 'platform/fanart/13-3.jpg'
+              14:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      minimum: 0
+                    type:
+                      type: string
+                    filename:
+                      type: string
+                example:
+                  - id: 70
+                    type: 'fanart'
+                    filename: 'platform/fanart/14-1.jpg'
+                  - id: 146
+                    type: 'fanart'
+                    filename: 'platform/fanart/14-2.jpg'
+                  - id: 147
+                    type: 'fanart'
+                    filename: 'platform/fanart/14-3.jpg'
+                  - id: 176
+                    type: 'fanart'
+                    filename: 'platform/fanart/14-4.jpg'
+                  - id: 240
+                    type: 'boxart'
+                    filename: 'platform/boxart/14-2.jpg'
+      pages:
+        type: object
+        required:
+        - previous
+        - current
+        - next
+        properties:
+          previous:
+            type: string
+
+          current:
+            type: string
+
+          next:
+            type: string
+
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  Genres:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - genres
+        properties:
+          count:
+            type: integer
+            minimum: 0
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  Developers:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - developers
+        properties:
+          count:
+            type: integer
+            minimum: 0
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+  Publishers:
+    type: object
+    required:
+    - code
+    - status
+    - data
+    - remaining_monthly_allowance
+    - extra_allowance
+    properties:
+      code:
+        type: integer
+        minimum: 0
+      status:
+        type: string
+
+      data:
+        type: object
+        required:
+        - count
+        - publishers
+        properties:
+          count:
+            type: integer
+            minimum: 0
+      remaining_monthly_allowance:
+        type: integer
+        minimum: 0
+      extra_allowance:
+        type: integer
+        minimum: 0
+
+schemes: 
+- https
+host: api.thegamesdb.net
+basePath: /

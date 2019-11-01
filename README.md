@@ -87,10 +87,10 @@ You can check more documentation in the libgdx official documentation page:
 
 ### Java and other dev dependencies
 
-I have plans to migrate to the newer versions of Java and Gradle, but for the moment, I prefer to invest my time fixing the issues and implementing emulio itself. I tried to upgrade to a new version and suffered a little bit with it. For the moment the current version that you **need** (doesn't work with newer version) is:
+I have plans to migrate to the newer versions of Java, but for the moment, I prefer to invest my time fixing the issues and implementing emulio itself. I tried to upgrade to a new version and suffered a little bit with it. For the moment the current version that you **need** (doesn't work with newer version) is:
 
 - Java 1.8 
-- Gradle 4.6 (you can use the gradlew included in this project of course.)
+- Gradle 5.6.3 (you can use the gradlew included in this project of course.)
 
 No more dependencies so far. 
 

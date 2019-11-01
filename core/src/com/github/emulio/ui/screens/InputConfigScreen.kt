@@ -376,14 +376,11 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
     private fun obtainImage(idx: Int): String {
         val name = controllerNames[idx]
-        return if (isKeyboard(name)) {
-            "images/controllers/keyboard.png"
-        } else if (isXboxController(name)) {
-            "images/controllers/xbox.png"
-        } else if (isPlaystationController(name)) {
-            "images/controllers/playstation.png"
-        } else {
-            "images/controllers/snes.png"
+        return when {
+            isKeyboard(name) -> "images/controllers/keyboard.png"
+            isXboxController(name) -> "images/controllers/xbox.png"
+            isPlaystationController(name) -> "images/controllers/playstation.png"
+            else -> "images/controllers/snes.png"
         }
 
     }
@@ -459,7 +456,11 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
         animateLabel(lbCurrent, screenWidth, lbNext, name)
         animateController(obtainImage(nextIndex))
 
-        updateInputItems(populatedControllers[name]!!)
+        val inputConfig = populatedControllers[name]
+        if (inputConfig != null) {
+            updateInputItems(inputConfig)
+        }
+
 
         currentIndex = nextIndex
     }
