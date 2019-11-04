@@ -1,4 +1,4 @@
-package com.github.emulio.scrapers.thegamesdb
+package com.github.emulio.scrapers.thegamesdb.old
 
 import com.thoughtworks.xstream.XStream
 import com.thoughtworks.xstream.annotations.XStreamAlias
