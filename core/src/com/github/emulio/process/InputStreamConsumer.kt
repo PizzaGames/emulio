@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 
-class InputStreamConsumer(val inputStream: InputStream) : Runnable {
+class InputStreamConsumer(private val inputStream: InputStream) : Runnable {
 
 	val logger = KotlinLogging.logger { }
 

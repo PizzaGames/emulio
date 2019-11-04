@@ -179,14 +179,6 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
     }
 
     fun launchPlatformConfigEditor() {
-        val editor = try {
-            ProcessLauncher.executeProcess(listOf("cmd", "/c", "code", "-v").toTypedArray())
-            "code"
-        } catch (e: ProcessException) {
-            // FIXME: if linux, use another command
-            "notepad"
-        }
-
         val platformsFile = emulio.options.platformsFile
         if (!platformsFile.exists()) {
             val templateFile = File(platformsFile.parent, platformsFile.nameWithoutExtension + "-template.yaml")
@@ -197,7 +189,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
         }
 
-        ProcessLauncher.executeProcess(listOf("cmd", "/c", editor, platformsFile.absolutePath).toTypedArray())
+        ProcessLauncher.editFile(platformsFile)
     }
 
     fun showReloadConfirmation() {
