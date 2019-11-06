@@ -61,7 +61,7 @@ object TGDBScrapper {
     fun getGamesByPlatformId(platformId: Int,
                      fields: GameFields = GameFields(),
                      include: GameInclude = GameInclude(),
-                     page: Int): List<Game> {
+                     page: Int = 0): List<Game> {
         return tgdbGet(
                 url = "$baseUrl/Games/ByPlatformId",
                 params = mapOf(
@@ -301,19 +301,22 @@ object TGDBScrapper {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        println(key)
-        println(getPublishers())
-        println(getDevelopers())
-        println(getGenres())
-        println(getPlatforms().map { it.id to it.name })
-        println(getPlatformsById(-1))
-        println(getPlatformsById(4970))
-        println(getPlatformsById(4970, PlatformFields(youtube = true, console = true)))
-        println(getPlatformsById(4971, PlatformFields(icon = true, console = true)))
-        println(getPlatformsByName("Nintendo Switch"))
-        println(getPlatformsByName("Switch"))
-        println(getPlatformsByName("A"))
-        println(getPlatformsByName("Takeda"))
+//        println(key)
+//        println(getPublishers())
+//        println(getDevelopers())
+//        println(getGenres())
+//        println(getPlatforms().map { it.id to it.name })
+//        println(getPlatformsById(-1))
+//        println(getPlatformsById(4970))
+//        println(getPlatformsById(4970, PlatformFields(youtube = true, console = true)))
+//        println(getPlatformsById(4971, PlatformFields(icon = true, console = true)))
+//        println(getPlatformsByName("Nintendo Switch"))
+//        println(getPlatformsByName("Switch"))
+//        println(getPlatformsByName("A"))
+//        println(getPlatformsByName("Takeda"))
+
+        println(getPlatforms())
+        println(getGamesByPlatformId(10))
     }
 }
 
