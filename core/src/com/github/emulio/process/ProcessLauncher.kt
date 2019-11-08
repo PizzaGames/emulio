@@ -12,9 +12,11 @@ object ProcessLauncher {
     val logger = KotlinLogging.logger { }
 
     fun executeProcess(commandArray: Array<String>) {
-        logger.info { "executing process: [${commandArray.joinToString(" ")}]" }
+		val command = commandArray.joinToString(" ")
+
+		logger.info { "executing process: [$command]" }
         val runtime = Runtime.getRuntime()
-        val process = runtime.exec(commandArray)
+        val process = runtime.exec(command)
 
         //TODO avoid creation of new threads. Emulio will preferably have only 4 threads (UI, FileFinder, ExecutionProcess, ProcessStreamPipe)
 
@@ -29,7 +31,7 @@ object ProcessLauncher {
 		//TODO detect any return code problem here.
 
 		if (exitCode > 0) {
-			throw ProcessException("Error executing process [${commandArray.joinToString(" ")}], the return code was: [$exitCode], check log for more information.")
+			throw ProcessException("Error executing process [$command], the return code was: [$exitCode], check log for more information.")
 		}
     }
 

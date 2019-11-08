@@ -80,13 +80,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         val gamesMap = mutableMapOf<String, Game>()
         gamesFound.forEach { game ->
 
-            val gameFound: Game? = gamesMap[game.path.nameWithoutExtension]
-            if (gameFound != null) {
-                if (gameFound.path.name != game.path.nameWithoutExtension) {
-                    gamesMap[game.path.nameWithoutExtension] = game
-                    game.displayName = game.path.nameWithoutExtension
+            val nameWithoutExtension = game.path.nameWithoutExtension
 
-                } else if (gameFound.path.name == game.path.nameWithoutExtension) {
+            val gameFound: Game? = gamesMap[nameWithoutExtension]
+            if (gameFound != null) {
+                if (gameFound.path.name != nameWithoutExtension) {
+                    gamesMap[nameWithoutExtension] = game
+                    game.displayName = nameWithoutExtension
+
+                } else if (gameFound.path.name == nameWithoutExtension) {
 
                     val idxFound = supportedExtensions.indexOf(gameFound.path.extension)
                     val idxGame = supportedExtensions.indexOf(game.path.extension)
@@ -106,7 +108,9 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             }
         }
 
-        games = gamesMap.values.sortedBy { it.displayName!!.toLowerCase() }
+        games = gamesMap.values.sortedBy {
+            it.displayName!!.toLowerCase()
+        }
         needSelectionView = games.size > emulio.config.maxGamesList &&
                 emulio.config.maxGamesList != -1
 
@@ -571,7 +575,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             setSize(gamelistView)
 
             selectedGames.forEach { game ->
-                items.add(game.name ?: game.path.name)
+                items.add(game.displayName)
             }
         }
     }

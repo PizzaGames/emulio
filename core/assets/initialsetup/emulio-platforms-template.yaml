@@ -88,8 +88,8 @@ systems:
       - ${rom.file}
     # run.command: ${emulators.home}/genesis_sms/Fusion364/Fusion.exe ${rom.file} -sms -fullscreen
     platform.name: Sega Master System
-  pcengine:
-    roms.path: ${roms.home}/NEC Turbografx-16/roms
+  tg16:
+    roms.path: ${roms.home}/NEC Turbografx-16
     roms.extensions: [.zip .pce]
     run.command:
       - ${retroarch.home}/retroarch.exe
@@ -97,6 +97,15 @@ systems:
       - ${retroarch.cores}/mednafen_pce_libretro.dll
       - ${rom.file}
     platform.name: TurboGrafx-16
+  supergrafx:
+    roms.path: ${roms.home}/NEC SuperGraFX
+    roms.extensions: [.zip .pce]
+    run.command:
+      - ${retroarch.home}/retroarch.exe
+      - -L
+      - ${retroarch.cores}/mednafen_pce_libretro.dll
+      - ${rom.file}
+    platform.name: SuperGrafx
   genesis:
     roms.path: ${roms.home}/Sega Genesis/Sega Genesis
     roms.extensions: [.zip]
@@ -205,7 +214,7 @@ systems:
   ps2:
     roms.path: F:/DVD
     roms.extensions: [.iso, .cue, .mdf, .ccd]
-    run.command: ${emulators.home}/playstation2/pcsx2-v1.5.0-dev-3281-g877c4358d-windows-x86/pcsx2.exe --fullscreen --nogui ${rom.file}
+    run.command: ${emulators.home}/ps2/pcsx2-v1.5.0-dev-3281-g877c4358d-windows-x86/pcsx2.exe --fullscreen --nogui ${rom.file}
     platform.name: Playstation 2
   wii:
     roms.path: ${roms.home}/Nintendo Wii

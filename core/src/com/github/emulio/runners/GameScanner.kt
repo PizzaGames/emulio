@@ -55,9 +55,9 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 	private fun scanFiles(root: File, observableEmitter: FlowableEmitter<Game>, pathSet: MutableSet<String>, platform: Platform) {
 		val extensions = platform.romsExtensions.toSet()
 
-		Files.walk(root.toPath()).filter({ path ->
+		Files.walk(root.toPath()).filter { path ->
 			!pathSet.contains(path.toAbsolutePath().toString()) && extensions.contains(path.extension)
-		}).forEach { path ->
+		}.forEach { path ->
 			observableEmitter.onNext(Game(path.toFile(), platform))
 		}
 	}
