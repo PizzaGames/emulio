@@ -21,6 +21,7 @@ before_install:
 # Deployment to GitHub-releases
 before_deploy:
   - ./gradlew clean
+  - ./gradlew test
   - ./gradlew build
   - ./gradlew dist
   - ./gradlew desktop:createExe
