@@ -17,12 +17,13 @@ before_install:
 - chmod a+x gradle/wrapper/gradle-wrapper.jar
 
 # Default gradle task will be run automatically on build, no need to define it
-
-# Deployment to GitHub-releases
-before_deploy:
+script:
   - ./gradlew clean
   - ./gradlew test
   - ./gradlew build
+
+# Deployment to GitHub-releases
+before_deploy:
   - ./gradlew dist
   - ./gradlew desktop:createExe
 
