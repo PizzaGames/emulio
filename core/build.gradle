@@ -3,9 +3,16 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+test {
+    useJUnitPlatform()
+}
+
 sourceSets {
+    test {
+        java.srcDirs = ["src/test/"]
+    }
     main {
-        java.srcDirs = [ "src/" ]
+        java.srcDirs = [ "src/main/" ]
         resources.srcDirs = [ "resources/", "assets/" ]
     }
 }
@@ -27,4 +34,7 @@ dependencies {
     compile 'org.apache.httpcomponents:httpclient:4.5.4'
     compile 'com.github.PizzaGames:OZMod-libGdx:1.0.0'
     compile 'khttp:khttp:1.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    testRuntime 'org.junit.platform:junit-platform-runner:1.5.2'
 }
