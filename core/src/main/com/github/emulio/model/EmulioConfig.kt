@@ -43,7 +43,8 @@ class EmulioConfig {
 			
 			exit = Keys.ESCAPE
 		}
-		gamepadConfig = mapOf("Xbox Controller" to InputConfig().apply {
+
+		val gamepadXboxWired = "Xbox Controller" to InputConfig().apply {
 			type = InputType.JOYSTICK
 			name = "Xbox Controller"
 
@@ -67,13 +68,49 @@ class EmulioConfig {
 			//exit = Xbox.ESCAPE
 
 			axisLeftTrigger = Xbox.AXIS_LEFT_TRIGGER
-            axisRightTrigger = Xbox.AXIS_RIGHT_TRIGGER
+			axisRightTrigger = Xbox.AXIS_RIGHT_TRIGGER
 
 			axisX = Xbox.AXIS_LEFT_X
 			axisY = Xbox.AXIS_LEFT_Y
 
 
-		})
+		}
+
+		val gamepadXboxWireless = "Wireless Xbox Controller" to InputConfig().apply {
+			type = InputType.JOYSTICK
+			name = "Wireless Xbox Controller"
+
+			confirm = Xbox.A
+			cancel = Xbox.B
+
+			usePov = true
+			up = Xbox.POV_UP
+			down = Xbox.POV_DOWN
+			left = Xbox.POV_LEFT
+			right = Xbox.POV_RIGHT
+
+			find = Xbox.Y
+
+			options = Xbox.START
+			select = Xbox.BACK
+
+			pageUp = Xbox.L_BUMPER
+			pageDown = Xbox.R_BUMPER
+
+			//exit = Xbox.ESCAPE
+
+			axisLeftTrigger = Xbox.AXIS_LEFT_TRIGGER
+			axisRightTrigger = Xbox.AXIS_RIGHT_TRIGGER
+
+			axisX = Xbox.AXIS_LEFT_X
+			axisY = Xbox.AXIS_LEFT_Y
+
+
+		}
+
+		gamepadConfig = mapOf(
+				gamepadXboxWired,
+				gamepadXboxWireless)
 		debug = true
 	}
 }

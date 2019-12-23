@@ -26,10 +26,25 @@ object GamelistUpdaterService {
         xStream.setMode(XStream.NO_REFERENCES)
     }
 
+    /**
+     * This function is used to read a xml file on the gamelist.xml format.
+     *
+     * Note:
+     *  This reader is not the same as used to load all the GUI platforms, since that one is based
+     *  on the rx.java and is progressive, meanwhile the games are being shown in the UI the xml continues
+     *  to be readed in background with a high performance implementation. (com.github.emulio.XMLReader)
+     *
+     * @see com.github.emulio.xml.XMLReader
+     *
+     */
     fun readGameList(xmlFile: File): GameList {
         return xstreamStax.fromXML(xmlFile) as GameList
     }
 
+    /**
+     * This function is used to rewrite all the gamelist.xml file on a desired platform.
+     *
+     */
     fun writeGameList(gameList: GameList, outputXmlFile: File) {
         return FileWriter(outputXmlFile).use {
             xstreamStax.toXML(gameList, it)

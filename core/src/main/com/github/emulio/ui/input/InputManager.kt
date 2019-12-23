@@ -13,11 +13,14 @@ import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.InputConfig
 import mu.KotlinLogging
 
+const val DEADZONE: Float = 0.35f
 
-class InputManager(val listener: InputListener, val emulio: Emulio, val stage: Stage, val config: EmulioConfig = emulio.config) : InputProcessor, ControllerAdapter() {
+class InputManager(private val listener: InputListener,
+				   val emulio: Emulio,
+				   val stage: Stage,
+				   val config: EmulioConfig = emulio.config) : InputProcessor, ControllerAdapter() {
 
 	private val logger = KotlinLogging.logger { }
-	private val DEADZONE: Float = 0.35f
 
 	private var elapsedPressedButtonTime = 0f
 	private var elapsedPressedKeyTime = 0f
@@ -25,11 +28,11 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
     private var paused = false
 
     //delays
-    val povDelay = 0.25f
-    val keyRepeatInterval = 0.10f
-    val keyRepeatTriggerDelay = 0.5f
-    val controllerRepeatInterval = 0.3f
-    val controllerTriggerDelay = 0.25f
+    private val povDelay = 0.25f
+    private val keyRepeatInterval = 0.10f
+    private val keyRepeatTriggerDelay = 0.5f
+    private val controllerRepeatInterval = 0.3f
+    private val controllerTriggerDelay = 0.25f
 
 	class ControllerValues {
 		var button = 0
@@ -471,7 +474,7 @@ class InputManager(val listener: InputListener, val emulio: Emulio, val stage: S
             cfg.axisX ->
                 axisLeftRightMoved(cfg, controllerValues[controller]!!, value)
             cfg.axisY ->
-                axisUpDownMoved(cfg, controllerValues[controller]!!, -value)
+                axisUpDownMoved(cfg, controllerValues[controller]!!, value)
             cfg.axisLeftTrigger -> axisLTMoved(cfg, controllerValues[controller]!!, value)
             cfg.axisRightTrigger -> axisRTMoved(cfg, controllerValues[controller]!!, value)
         }

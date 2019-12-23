@@ -111,8 +111,13 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         games = gamesMap.values.sortedBy {
             it.displayName!!.toLowerCase()
         }
+
+        //TODO: remove the lines below
+        /*
         needSelectionView = games.size > emulio.config.maxGamesList &&
                 emulio.config.maxGamesList != -1
+
+         */
 
 		initGUI()
 	}
