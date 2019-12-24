@@ -41,6 +41,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 1
 	}
+	LIGHT_GRAY: {
+		r: 0.91
+		g: 0.91
+		b: 0.91
+		a: 1
+	}
 	RGBA_55_66_74_255: {
 		r: 0.21568628
 		g: 0.25882354
@@ -305,6 +311,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
 		up: emulio-button
+		down: emulio-button-pressed
 	}
 	toggle: {
 		up: button-c
@@ -327,6 +334,51 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 		up: button-close-c
 		down: button-close-pressed-c
 		over: button-close-over-c
+	}
+	ButtonWhite: {
+		parent: default
+		up: btn-white
+		down: btn-white-pressed
+		over: btn-white-hover
+		focused: btn-white-focus
+	}
+	ButtonBlue0: {
+		parent: default
+		up: btn-blue0
+		down: btn-blue0-pressed
+		over: btn-blue0-hover
+		focused: btn-blue0-focus
+	}
+	ButtonBlue: {
+		parent: default
+		up: btn-blue3
+		down: btn-blue3-pressed
+		over: btn-blue3-hover
+		focused: btn-blue3-focus
+	}
+	ButtonGreen: {
+		up: btn-green0
+		down: btn-green0-pressed
+		over: btn-green0-hover
+		focused: btn-green0-focus
+	}
+	ButtonRed: {
+		up: btn-red2
+		down: btn-red2-pressed
+		over: btn-red2-hover
+		focused: btn-red2-focus
+	}
+	ButtonYellow: {
+		up: btn-yellow
+		down: btn-yellow-pressed
+		over: btn-yellow-hover
+		focused: btn-yellow-focus
+	}
+	ButtonBlack: {
+		up: btn-black0
+		down: btn-black0-pressed
+		over: btn-black0-hover
+		focused: btn-black0-focus
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
@@ -429,6 +481,12 @@ com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 		fontColorUnselected: color
 		selection: color
 		background: list-c
+	}
+	naked: {
+		font: emulio-text-big
+		fontColorSelected: LIGHT_GRAY
+		fontColorUnselected: RGBA_55_66_74_255
+		selection: emulio-button-pressed
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {

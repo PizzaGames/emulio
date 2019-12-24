@@ -14,9 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
 import com.github.emulio.model.InputConfig
 import com.github.emulio.ui.screens.*
+import com.github.emulio.ui.screens.keyboard.VirtualKeyboardDialog
+import com.github.emulio.ui.screens.keyboard.VirtualKeyboardView
 import com.github.emulio.ui.screens.wizard.PlatformWizardScreen
 import com.github.emulio.ui.screens.wizard.ScraperWizardScreen
 import com.github.emulio.utils.translate
+import mu.KotlinLogging
+
+val logger = KotlinLogging.logger { }
 
 class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScreen, screen: EmulioScreen, private val stg: Stage = screen.stage) : EmulioDialog("Main Menu".translate(), emulio, "main-menu") {
 
@@ -35,7 +40,11 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
                 screen.switchScreen(ScraperWizardScreen(emulio, backCallback))
             },
             "General Settings".translate() to {
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
+                //InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
+
+                VirtualKeyboardDialog("Foo", "Message", emulio, stg) {
+                    logger.debug { "Back Callback!" }
+                }.show(stg)
             },
             "Input settings".translate() to {
                 closeDialog(true)

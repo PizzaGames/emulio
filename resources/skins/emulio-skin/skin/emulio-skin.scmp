@@ -3,1941 +3,3015 @@ atlasData: {
 	atlasCurrent: true
 	drawables: [
 		{
-			file: G:/workspace/emulio-skin/fonts/emulio-text.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-text-big.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-big
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-text-big-inverted.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/btn_white_matte.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-big-inverted
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-text-inverted.png
-			bgColor: {
-				r: 0
-				g: 0
-				b: 0
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-inverted
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-text-small.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-small
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-text-small-inverted.png
-			bgColor: {
-				r: 0
-				g: 0
-				b: 0
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-small-inverted
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-title.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-title
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-title-big1.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-title-big1
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-title-big2.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-title-big2
-		}
-		{
-			file: G:/workspace/emulio-skin/fonts/emulio-title-small.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-title-small
-		}
-		{
-			file: G:/workspace/emulio-skin/sources/btn_white_matte.9.png
-			bgColor: {
-				r: 0
-				g: 0
-				b: 0
-				a: 1
-			}
-			visible: true
 			tint: null
 			tintName: null
 			name: btn_white_matte
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/btn_black.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/btn_black.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: btn_black
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/btn_green_matte.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/btn_green_matte.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: btn_green_matte
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-arcade.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-arcade.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-arcade
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-arcade-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-arcade-pressed.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-arcade-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-close.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-close.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-close
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-close-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-close-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-close-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-close-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-close-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-close-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-maximize.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-maximize.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-maximize
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-maximize-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-maximize-over.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-maximize-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-maximize-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-maximize-pressed.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-maximize-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-minimize.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-minimize.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-minimize
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-minimize-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-minimize-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-minimize-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-minimize-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-minimize-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-minimize-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-pressed.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-pressed-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-pressed-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button-pressed-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: checkbox
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: checkbox-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: checkbox-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox-pressed-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox-pressed-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: checkbox-pressed-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/cursor.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/cursor.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: cursor
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/font-export.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/list.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: false
-			tint: null
-			tintName: null
-			name: font-export
-		}
-		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/list.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: true
 			tint: null
 			tintName: null
 			name: list
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-big.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-big.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-big
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-knob-big.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-knob-big.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-knob-big
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-knob-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-knob-horizontal.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-knob-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-knob-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-knob-vertical.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-knob-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-tiled.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-tiled.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-tiled
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: progressbar-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: radio
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: radio-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: radio-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio-pressed-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio-pressed-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: radio-pressed-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/resize.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/resize.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: resize
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: scrollpane-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-knob-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-knob-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: scrollpane-knob-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-knob-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-knob-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: scrollpane-knob-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: scrollpane-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: selectbox
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: selectbox-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox-pressed.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: selectbox-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox-pressed-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox-pressed-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: selectbox-pressed-over
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-bar-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-bar-horizontal.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-bar-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-bar-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-bar-vertical.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-bar-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-horizontal.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-knob-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-over-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-over-horizontal.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-knob-over-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-over-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-over-vertical.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-knob-over-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-horizontal.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-knob-pressed-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-vertical.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-knob-pressed-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-vertical.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-knob-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-tick.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-tick.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-tick
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: slider-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/splitpane-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/splitpane-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: splitpane-horizontal
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/splitpane-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/splitpane-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: splitpane-vertical
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/textfield.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/textfield.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: textfield
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/tooltip.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/tooltip.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: tooltip
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/touchpad.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/touchpad.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: touchpad
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/touchpad-knob.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/touchpad-knob.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: touchpad-knob
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/tree-minus.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/tree-minus.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: tree-minus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/tree-plus.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/tree-plus.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: tree-plus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/white.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/white.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: white
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/window.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/window.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: window
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/window-main.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/window-main.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: window-main
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-arcade.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-arcade.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-arcade-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-arcade-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-arcade-pressed.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-arcade-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-close.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-close.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-close-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-close-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-close-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-close-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-close-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-close-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-close-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-maximize.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-maximize.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-maximize-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-maximize-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-maximize-over.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-maximize-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-maximize-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-maximize-pressed.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-maximize-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-minimize.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-minimize.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-minimize-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-minimize-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-minimize-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-minimize-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-minimize-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-minimize-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-minimize-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-pressed.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/button-pressed-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/button-pressed-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: button-pressed-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: checkbox-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: checkbox-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: checkbox-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/checkbox-pressed-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/checkbox-pressed-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: checkbox-pressed-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/cursor.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/cursor.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: cursor-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/list.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/list.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: list-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-big.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-big.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: progressbar-big-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: progressbar-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-knob-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-knob-horizontal.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: progressbar-knob-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-knob-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-knob-vertical.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: progressbar-knob-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/progressbar-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/progressbar-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: progressbar-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: radio-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: radio-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio-pressed.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio-pressed.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: radio-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/radio-pressed-over.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/radio-pressed-over.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: radio-pressed-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: selectbox-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: selectbox-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox-pressed.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: selectbox-pressed-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/selectbox-pressed-over.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/selectbox-pressed-over.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: selectbox-pressed-over-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-horizontal.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-knob-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-over-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-over-horizontal.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-knob-over-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-over-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-over-vertical.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-knob-over-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-horizontal.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-horizontal.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-knob-pressed-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-pressed-vertical.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-knob-pressed-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-knob-vertical.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-knob-vertical.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-knob-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/splitpane-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/splitpane-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: splitpane-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/splitpane-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/splitpane-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: splitpane-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/textfield.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/textfield.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: textfield-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/tooltip.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/tooltip.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: tooltip-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/touchpad.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/touchpad.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: touchpad-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/touchpad-knob.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/touchpad-knob.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: touchpad-knob-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/tree-minus.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/tree-minus.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: tree-minus-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/tree-plus.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/tree-plus.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: tree-plus-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/window.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/window.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: window-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/window-main.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/window-main.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: window-main-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/white.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/white.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: color
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: scrollpane-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-knob-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-knob-horizontal.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: scrollpane-knob-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-knob-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-knob-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: scrollpane-knob-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/scrollpane-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/scrollpane-vertical.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: scrollpane-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-bar-horizontal.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-bar-horizontal.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-bar-horizontal-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/slider-bar-vertical.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/slider-bar-vertical.9.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: color
 			name: slider-bar-vertical-c
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/white.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/white.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: selection
 			name: selection
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/emulio-button.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/emulio-button.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: emulio-button
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/emulio-button-pressed.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/emulio-button-pressed.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: emulio-button-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/buttons/360_A.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/360_A.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: 360_A
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/buttons/360_B.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/360_B.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: 360_B
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio/core/assets/skin/emulio-text-huge1.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/emulio-naked-window.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-huge1
-		}
-		{
-			file: G:/workspace/emulio/core/assets/skin/emulio-text-huge2.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: false
-			tint: null
-			tintName: null
-			name: emulio-text-huge2
-		}
-		{
-			file: G:/workspace/emulio-skin/sources/emulio-naked-window.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			visible: true
 			tint: null
 			tintName: null
 			name: emulio-naked-window
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/emulio-window.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/emulio-window.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: emulio-window
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/emulio-main-menu.9.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/emulio-main-menu.9.png
 			bgColor: {
 				r: 1
 				g: 1
 				b: 1
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: emulio-main-menu
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/button_a_128_128.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/button_a_128_128.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button_a_128_128
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/button_a_40_40.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/button_a_40_40.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button_a_40_40
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 		{
-			file: G:/workspace/emulio-skin/sources/button_b_40_40.png
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/sources/button_b_40_40.png
 			bgColor: {
 				r: 0
 				g: 0
 				b: 0
 				a: 1
 			}
-			visible: true
 			tint: null
 			tintName: null
 			name: button_b_40_40
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-white.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-white
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-white-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-white-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-white-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-white-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-white-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-white-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue0.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue0
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue0-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue0-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue0-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue0-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue0-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue0-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue3.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue3
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue3-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue3-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue3-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue3-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-blue3-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-blue3-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-green0.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-green0
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-green0-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-green0-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-green0-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-green0-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-green0-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-green0-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-red2.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-red2
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-red2-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-red2-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-red2-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-red2-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-red2-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-red2-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-yellow-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-yellow-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-yellow-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-yellow-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-yellow-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-yellow-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-yellow.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-yellow
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-black0.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-black0
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-black0-focus.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-black0-focus
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-black0-hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-black0-hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/buttons/9patch/btn-black0-pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: btn-black0-pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+	]
+	fontDrawables: [
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-big.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-big
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-big-inverted.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-big-inverted
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/core/assets/skin/emulio-text-huge1.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-huge1
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/core/assets/skin/emulio-text-huge2.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-huge2
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-inverted.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-inverted
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-small.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-small
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-small-inverted.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-text-small-inverted
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-title
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title-big1.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-title-big1
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title-big2.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-title-big2
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title-small.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: emulio-title-small
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/font-export.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: font-export
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
 		}
 	]
 }
@@ -1998,59 +3072,60 @@ jsonData: {
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text
-			file: G:/workspace/emulio-skin/fonts/emulio-text.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text-big
-			file: G:/workspace/emulio-skin/fonts/emulio-text-big.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-big.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text-big-inverted
-			file: G:/workspace/emulio-skin/fonts/emulio-text-big-inverted.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-big-inverted.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text-huge
-			file: G:/workspace/emulio/core/assets/skin/emulio-text-huge.fnt
+			file: H:/Development/Workspaces/emulio/core/assets/skin/emulio-text-huge.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text-inverted
-			file: G:/workspace/emulio-skin/fonts/emulio-text-inverted.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-inverted.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text-small
-			file: G:/workspace/emulio-skin/fonts/emulio-text-small.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-small.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-text-small-inverted
-			file: G:/workspace/emulio-skin/fonts/emulio-text-small-inverted.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-text-small-inverted.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-title
-			file: G:/workspace/emulio-skin/fonts/emulio-title.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-title-big
-			file: G:/workspace/emulio-skin/fonts/emulio-title-big.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title-big.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: emulio-title-small
-			file: G:/workspace/emulio-skin/fonts/emulio-title-small.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/fonts/emulio-title-small.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: font
-			file: G:/workspace/emulio-skin/skin/emulio-skin_data/font-export.fnt
+			file: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin_data/font-export.fnt
 		}
 	]
+	freeTypeFonts: []
 	classStyleMap: {
 		com.badlogic.gdx.scenes.scene2d.ui.Button: [
 			{
@@ -2070,7 +3145,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: down
 						optional: true
-						value: null
+						value: emulio-button-pressed
 					}
 					over: {
 						class: com.ray3k.skincomposer.data.StyleProperty
@@ -2144,6 +3219,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -2236,6 +3312,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -2328,6 +3405,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -2420,6 +3498,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -2512,6 +3591,756 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonWhite
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-white
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-white-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-white-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-white-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: default
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonBlue0
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-blue0
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-blue0-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-blue0-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-blue0-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: default
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonBlue
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-blue3
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-blue3-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-blue3-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-blue3-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: default
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonGreen
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-green0
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-green0-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-green0-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-green0-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonRed
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-red2
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-red2-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-red2-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-red2-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonYellow
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-yellow
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-yellow-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-yellow-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-yellow-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ButtonBlack
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Button
+				properties: {
+					up: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: up
+						optional: true
+						value: btn-black0
+					}
+					down: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: down
+						optional: true
+						value: btn-black0-pressed
+					}
+					over: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: over
+						optional: true
+						value: btn-black0-hover
+					}
+					focused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: focused
+						optional: true
+						value: btn-black0-focus
+					}
+					checked: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checked
+						optional: true
+						value: null
+					}
+					checkedOver: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedOver
+						optional: true
+						value: null
+					}
+					checkedFocused: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: checkedFocused
+						optional: true
+						value: null
+					}
+					disabled: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabled
+						optional: true
+						value: null
+					}
+					pressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetX
+						optional: true
+						value: 0
+					}
+					pressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: pressedOffsetY
+						optional: true
+						value: 0
+					}
+					unpressedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetX
+						optional: true
+						value: 0
+					}
+					unpressedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: unpressedOffsetY
+						optional: true
+						value: 0
+					}
+					checkedOffsetX: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetX
+						optional: true
+						value: 0
+					}
+					checkedOffsetY: {
+						class: com.ray3k.skincomposer.data.StyleProperty
+						type: float
+						name: checkedOffsetY
+						optional: true
+						value: 0
+					}
+				}
+				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.CheckBox: [
@@ -2690,6 +4519,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -2866,6 +4696,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ImageButton: [
@@ -3002,6 +4833,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -3136,6 +4968,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton: [
@@ -3321,6 +5154,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -3504,6 +5338,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -3687,6 +5522,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -3870,6 +5706,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4053,6 +5890,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4236,6 +6074,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.Label: [
@@ -4267,6 +6106,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4296,6 +6136,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4325,6 +6166,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4354,6 +6196,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.List: [
@@ -4399,6 +6242,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4442,6 +6286,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ProgressBar: [
@@ -4508,6 +6353,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4572,6 +6418,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4636,6 +6483,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4700,6 +6548,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ScrollPane: [
@@ -4752,6 +6601,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.SelectBox: [
@@ -4825,6 +6675,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.Slider: [
@@ -4905,6 +6756,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -4983,6 +6835,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -5061,6 +6914,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.SplitPane: [
@@ -5078,6 +6932,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -5093,6 +6948,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.TextButton: [
@@ -5236,6 +7092,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -5377,6 +7234,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -5518,6 +7376,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.TextField: [
@@ -5605,6 +7464,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.TextTooltip: [
@@ -5636,6 +7496,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.Touchpad: [
@@ -5660,6 +7521,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.Tree: [
@@ -5705,6 +7567,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.Window: [
@@ -5743,6 +7606,7 @@ jsonData: {
 					}
 				}
 				deletable: false
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -5779,6 +7643,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 			{
 				class: com.ray3k.skincomposer.data.StyleData
@@ -5815,6 +7680,7 @@ jsonData: {
 					}
 				}
 				deletable: true
+				parent: null
 			}
 		]
 	}
@@ -5834,5 +7700,6 @@ preferences: {
 		value: false
 	}
 }
-saveFile: G:/workspace/emulio-skin/skin/emulio-skin.scmp
+saveFile: H:/Development/Workspaces/emulio/resources/skins/emulio-skin/skin/emulio-skin.scmp
+version: 34
 }

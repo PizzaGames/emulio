@@ -1,0 +1,55 @@
+<verticalGroup padding="5">
+    <horizontalGroup space="5">
+        <button style="ButtonBlue0">1</button>
+        <button style="ButtonBlue0">2</button>
+        <button style="ButtonBlue0">3</button>
+        <button style="ButtonBlue0">4</button>
+        <button style="ButtonBlue0">5</button>
+        <button style="ButtonBlue0">6</button>
+        <button style="ButtonBlue0">7</button>
+        <button style="ButtonBlue0">8</button>
+        <button style="ButtonBlue0">9</button>
+        <button style="ButtonBlue0">0</button>
+    </horizontalGroup>
+    <horizontalGroup space="1">
+        <button style="ButtonBlue0">Q</button>
+        <button style="ButtonBlue0">W</button>
+        <button style="ButtonBlue0">E</button>
+        <button style="ButtonBlue0">R</button>
+        <button style="ButtonBlue0">T</button>
+        <button style="ButtonBlue0">Y</button>
+        <button style="ButtonBlue0">U</button>
+        <button style="ButtonBlue0">I</button>
+        <button style="ButtonBlue0">O</button>
+        <button style="ButtonBlue0">P</button>
+    </horizontalGroup>
+    <horizontalGroup space="3">
+        <button style="ButtonBlue0">A</button>
+        <button style="ButtonBlue0">S</button>
+        <button style="ButtonBlue0">D</button>
+        <button style="ButtonBlue0">F</button>
+        <button style="ButtonBlue0">G</button>
+        <button style="ButtonBlue0">H</button>
+        <button style="ButtonBlue0">J</button>
+        <button style="ButtonBlue0">K</button>
+        <button style="ButtonBlue0">L</button>
+    </horizontalGroup>
+    <horizontalGroup space="5">
+        <button style="ButtonBlue0">Z</button>
+        <button style="ButtonBlue0">X</button>
+        <button style="ButtonBlue0">C</button>
+        <button style="ButtonBlue0">V</button>
+        <button style="ButtonBlue0">B</button>
+        <button style="ButtonBlue0">N</button>
+        <button style="ButtonBlue0">M</button>
+    </horizontalGroup>
+    <horizontalGroup space="5">
+        <button style="ButtonBlue0">@</button>
+        <button style="ButtonBlue0">Space</button>
+        <button style="ButtonBlue0">/</button>
+    </horizontalGroup>
+    <horizontalGroup space="5">
+        <button style="ButtonGreen">Confirm</button>
+        <button style="ButtonWhite">Cancel</button>
+    </horizontalGroup>
+</verticalGroup>
