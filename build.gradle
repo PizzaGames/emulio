@@ -73,7 +73,8 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        compile "com.github.czyzby:gdx-lml-vis:1.9.1.9.6"
+        compile "com.github.czyzby:gdx-lml:1.9.1.9.6"
+        compile "io.github.libktx:ktx-app:1.9.10-b2"
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile 'khttp:khttp:1.0.0'
     }

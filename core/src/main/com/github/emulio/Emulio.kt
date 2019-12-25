@@ -37,7 +37,7 @@ class Emulio(val options: EmulioOptions) : Game() {
 
 		screen = DevSplashScreen(this)
 
-        changeDefaultCursor()
+        //changeDefaultCursor()
 
     }
 

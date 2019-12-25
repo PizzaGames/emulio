@@ -30,21 +30,57 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	emulio-title-small: {
 		file: emulio-title-small.fnt
 	}
-	font: {
-		file: font-export.fnt
+	HammersmithOne-16: {
+		file: HammersmithOne-Regular.fnt
 	}
 }
 com.badlogic.gdx.graphics.Color: {
-	color: {
-		r: 1
-		g: 1
-		b: 1
+	black: {
+		r: 0
+		g: 0
+		b: 0
+		a: 1
+	}
+	blue-selection: {
+		r: 0.5825974
+		g: 0.5388888
+		b: 0.83333325
+		a: 1
+	}
+	dark-gray: {
+		r: 0.4
+		g: 0.4
+		b: 0.4
+		a: 1
+	}
+	dark-yellow: {
+		r: 0.5176471
+		g: 0.5176471
+		b: 0.24313726
+		a: 1
+	}
+	darkest-gray: {
+		r: 0.18666667
+		g: 0.18666667
+		b: 0.18666667
+		a: 1
+	}
+	gray: {
+		r: 0.63666666
+		g: 0.63666666
+		b: 0.63666666
 		a: 1
 	}
 	LIGHT_GRAY: {
 		r: 0.91
 		g: 0.91
 		b: 0.91
+		a: 1
+	}
+	red: {
+		r: 0.81333333
+		g: 0.15182221
+		b: 0.15182221
 		a: 1
 	}
 	RGBA_55_66_74_255: {
@@ -65,243 +101,255 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 0
 	}
+	transparent-light-gray: {
+		r: 0.9033333
+		g: 0.9033333
+		b: 0.9033333
+		a: 0.5019608
+	}
+	white: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	button-c: {
 		name: button
-		color: color
+		color: white
 	}
 	button-arcade-c: {
 		name: button-arcade
-		color: color
+		color: white
 	}
 	button-arcade-pressed-c: {
 		name: button-arcade-pressed
-		color: color
+		color: white
 	}
 	button-close-c: {
 		name: button-close
-		color: color
+		color: white
 	}
 	button-close-over-c: {
 		name: button-close-over
-		color: color
+		color: white
 	}
 	button-close-pressed-c: {
 		name: button-close-pressed
-		color: color
+		color: white
 	}
 	button-maximize-c: {
 		name: button-maximize
-		color: color
+		color: white
 	}
 	button-maximize-over-c: {
 		name: button-maximize-over
-		color: color
+		color: white
 	}
 	button-maximize-pressed-c: {
 		name: button-maximize-pressed
-		color: color
+		color: white
 	}
 	button-minimize-c: {
 		name: button-minimize
-		color: color
+		color: white
 	}
 	button-minimize-over-c: {
 		name: button-minimize-over
-		color: color
+		color: white
 	}
 	button-minimize-pressed-c: {
 		name: button-minimize-pressed
-		color: color
+		color: white
 	}
 	button-over-c: {
 		name: button-over
-		color: color
+		color: white
 	}
 	button-pressed-c: {
 		name: button-pressed
-		color: color
+		color: white
 	}
 	button-pressed-over-c: {
 		name: button-pressed-over
-		color: color
+		color: white
 	}
 	checkbox-c: {
 		name: checkbox
-		color: color
+		color: white
 	}
 	checkbox-over-c: {
 		name: checkbox-over
-		color: color
+		color: white
 	}
 	checkbox-pressed-c: {
 		name: checkbox-pressed
-		color: color
+		color: white
 	}
 	checkbox-pressed-over-c: {
 		name: checkbox-pressed-over
-		color: color
+		color: white
 	}
 	cursor-c: {
 		name: cursor
-		color: color
+		color: white
 	}
 	list-c: {
 		name: list
-		color: color
+		color: white
 	}
 	progressbar-big-c: {
 		name: progressbar-big
-		color: color
+		color: white
 	}
 	progressbar-horizontal-c: {
 		name: progressbar-horizontal
-		color: color
+		color: white
 	}
 	progressbar-knob-horizontal-c: {
 		name: progressbar-knob-horizontal
-		color: color
+		color: white
 	}
 	progressbar-knob-vertical-c: {
 		name: progressbar-knob-vertical
-		color: color
+		color: white
 	}
 	progressbar-vertical-c: {
 		name: progressbar-vertical
-		color: color
+		color: white
 	}
 	radio-c: {
 		name: radio
-		color: color
+		color: white
 	}
 	radio-over-c: {
 		name: radio-over
-		color: color
+		color: white
 	}
 	radio-pressed-c: {
 		name: radio-pressed
-		color: color
+		color: white
 	}
 	radio-pressed-over-c: {
 		name: radio-pressed-over
-		color: color
+		color: white
 	}
 	selectbox-c: {
 		name: selectbox
-		color: color
+		color: white
 	}
 	selectbox-over-c: {
 		name: selectbox-over
-		color: color
+		color: white
 	}
 	selectbox-pressed-c: {
 		name: selectbox-pressed
-		color: color
+		color: white
 	}
 	selectbox-pressed-over-c: {
 		name: selectbox-pressed-over
-		color: color
+		color: white
 	}
 	slider-horizontal-c: {
 		name: slider-horizontal
-		color: color
+		color: white
 	}
 	slider-knob-horizontal-c: {
 		name: slider-knob-horizontal
-		color: color
+		color: white
 	}
 	slider-knob-over-horizontal-c: {
 		name: slider-knob-over-horizontal
-		color: color
+		color: white
 	}
 	slider-knob-over-vertical-c: {
 		name: slider-knob-over-vertical
-		color: color
+		color: white
 	}
 	slider-knob-pressed-horizontal-c: {
 		name: slider-knob-pressed-horizontal
-		color: color
+		color: white
 	}
 	slider-knob-pressed-vertical-c: {
 		name: slider-knob-pressed-vertical
-		color: color
+		color: white
 	}
 	slider-knob-vertical-c: {
 		name: slider-knob-vertical
-		color: color
+		color: white
 	}
 	slider-vertical-c: {
 		name: slider-vertical
-		color: color
+		color: white
 	}
 	splitpane-horizontal-c: {
 		name: splitpane-horizontal
-		color: color
+		color: white
 	}
 	splitpane-vertical-c: {
 		name: splitpane-vertical
-		color: color
+		color: white
 	}
 	textfield-c: {
 		name: textfield
-		color: color
+		color: white
 	}
 	tooltip-c: {
 		name: tooltip
-		color: color
+		color: white
 	}
 	touchpad-c: {
 		name: touchpad
-		color: color
+		color: white
 	}
 	touchpad-knob-c: {
 		name: touchpad-knob
-		color: color
+		color: white
 	}
 	tree-minus-c: {
 		name: tree-minus
-		color: color
+		color: white
 	}
 	tree-plus-c: {
 		name: tree-plus
-		color: color
+		color: white
 	}
 	window-c: {
 		name: window
-		color: color
+		color: white
 	}
 	window-main-c: {
 		name: window-main
-		color: color
+		color: white
 	}
 	color: {
 		name: white
-		color: color
+		color: white
 	}
 	scrollpane-horizontal-c: {
 		name: scrollpane-horizontal
-		color: color
+		color: white
 	}
 	scrollpane-knob-horizontal-c: {
 		name: scrollpane-knob-horizontal
-		color: color
+		color: white
 	}
 	scrollpane-knob-vertical-c: {
 		name: scrollpane-knob-vertical
-		color: color
+		color: white
 	}
 	scrollpane-vertical-c: {
 		name: scrollpane-vertical
-		color: color
+		color: white
 	}
 	slider-bar-horizontal-c: {
 		name: slider-bar-horizontal
-		color: color
+		color: white
 	}
 	slider-bar-vertical-c: {
 		name: slider-bar-vertical
-		color: color
+		color: white
 	}
 	selection: {
 		name: white
@@ -386,28 +434,28 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 		checkboxOn: checkbox-pressed-c
 		checkboxOff: checkbox-c
 		checkboxOver: checkbox-over-c
-		font: font
-		fontColor: color
+		font: emulio-text
+		fontColor: white
 	}
 	radio: {
 		checkboxOn: radio-pressed-c
 		checkboxOff: radio-c
 		checkboxOver: radio-over-c
-		font: font
-		fontColor: color
+		font: emulio-text
+		fontColor: white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
-		up: emulio-button
-		over: emulio-button
+		up: btn-blue0
+		down: btn-blue0-pressed
+		over: btn-blue0-hover
 	}
-	toggle: {
-		up: button-c
-		down: button-pressed-c
-		over: button-over-c
-		checked: button-pressed-c
-		checkedOver: button-pressed-over-c
+	ImageButtonBlue: {
+		up: btn-blue0
+		down: btn-blue0-pressed
+		over: btn-blue0-hover
+		focused: btn-blue0-focus
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
@@ -418,7 +466,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		over: emulio-button
 	}
 	toggle: {
-		font: font
+		font: HammersmithOne-16
 		up: button-c
 		down: button-pressed-c
 		over: button-over-c
@@ -431,7 +479,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		imageOver: radio-over-c
 		imageChecked: radio-pressed-c
 		imageCheckedOver: radio-pressed-over-c
-		font: font
+		font: HammersmithOne-16
+		fontColor: black
 	}
 	checkbox: {
 		imageUp: checkbox-c
@@ -439,7 +488,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		imageOver: checkbox-over-c
 		imageChecked: checkbox-pressed-c
 		imageCheckedOver: checkbox-pressed-over-c
-		font: font
+		font: HammersmithOne-16
+		fontColor: black
 	}
 	confirm: {
 		imageUp: button_a_40_40
@@ -455,32 +505,85 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		down: emulio-button-pressed
 		over: emulio-button
 	}
+	ImageTextButtonWhite: {
+		font: emulio-title-small
+		up: btn-white
+		down: btn-white-pressed
+		over: btn-white-hover
+		focused: btn-white-focus
+	}
+	ImageTextButtonBlue0: {
+		font: emulio-title-small
+		up: btn-blue0
+		down: btn-blue0-pressed
+		over: btn-blue0-hover
+		focused: btn-blue0-focus
+	}
+	ImageTextButtonBlue: {
+		font: emulio-title-small
+		up: btn-blue3
+		down: btn-blue3-pressed
+		over: btn-blue3-hover
+		focused: btn-blue3-focus
+	}
+	ImageTextButtonGreen: {
+		font: emulio-title-small
+		up: btn-green0
+		down: btn-green0-pressed
+		over: btn-green0-hover
+		focused: btn-green0-focus
+	}
+	ImageTextButtonRed: {
+		font: emulio-title-small
+		up: btn-red2
+		down: btn-red2-pressed
+		over: btn-red2-hover
+		focused: btn-red2-focus
+	}
+	ImageTextButtonYellow: {
+		font: emulio-title-small
+		up: btn-yellow
+		down: btn-yellow-pressed
+		over: btn-yellow-hover
+		focused: btn-yellow-focus
+	}
+	ImageTextButtonBlack: {
+		font: emulio-title-small
+		up: btn-black0
+		down: btn-black0-pressed
+		over: btn-black0-hover
+		focused: btn-black0-focus
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: emulio-text
-		fontColor: color
+		font: HammersmithOne-16
+		fontColor: dark-gray
 	}
 	huge: {
 		font: emulio-text-huge
-		fontColor: color
+		fontColor: white
 	}
 	title: {
 		font: emulio-title
-		fontColor: color
+		fontColor: white
 	}
 	title-small: {
 		font: emulio-title-small
-		fontColor: color
+		fontColor: white
+	}
+	tooltip: {
+		font: HammersmithOne-16
+		fontColor: gray
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
-		font: font
-		fontColorSelected: color
-		fontColorUnselected: color
-		selection: color
-		background: list-c
+		font: HammersmithOne-16
+		fontColorSelected: dark-gray
+		fontColorUnselected: dark-gray
+		selection: btn-blue0
+		background: text-field
 	}
 	naked: {
 		font: emulio-text-big
@@ -517,8 +620,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: font
-		fontColor: color
+		font: HammersmithOne-16
+		fontColor: dark-gray
 		background: selectbox-c
 		scrollStyle: default
 		listStyle: default
@@ -559,39 +662,72 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
 		font: emulio-title-small
-		fontColor: color
+		fontColor: white
 		up: emulio-button
 		down: emulio-button-pressed
 		over: emulio-button
 	}
-	toggle: {
-		font: font
-		fontColor: color
-		up: button-c
-		down: button-pressed-c
-		over: button-over-c
-		checked: button-pressed-c
-		checkedOver: button-pressed-over-c
+	TextButtonBlue: {
+		font: emulio-title-small
+		disabledFontColor: transparent-light-gray
+		up: btn-blue3
+		down: btn-blue3-pressed
+		over: btn-blue3-hover
+		focused: btn-blue3-focus
 	}
-	arcade: {
-		font: font
-		up: button-arcade-c
-		down: button-arcade-pressed-c
+	TextButtonWhite: {
+		font: emulio-title-small
+		up: btn-white
+		down: btn-white-pressed
+		over: btn-white-hover
+		focused: btn-white-focus
+	}
+	TextButtonGreen: {
+		font: emulio-title-small
+		up: btn-green0
+		down: btn-green0-pressed
+		over: btn-green0-hover
+		focused: btn-green0-focus
+	}
+	TextButtonRed: {
+		font: emulio-title-small
+		up: btn-red2
+		down: btn-red2-pressed
+		over: btn-red2-hover
+		focused: btn-red2-focus
+	}
+	TextButtonYellow: {
+		font: emulio-title-small
+		up: btn-yellow
+		down: btn-yellow-pressed
+		over: btn-yellow-hover
+		focused: btn-yellow-focus
+	}
+	TextButtonBlack: {
+		font: emulio-title-small
+		up: btn-black0
+		down: btn-black0-pressed
+		over: btn-black0-hover
+		focused: btn-black0-focus
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: font
-		fontColor: color
-		background: textfield-c
+		font: HammersmithOne-16
+		fontColor: darkest-gray
+		background: text-field
 		cursor: cursor-c
 		selection: selection
+	}
+	TextFieldLarge: {
+		parent: default
+		font: emulio-text-big
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 	default: {
-		label: default
-		background: tooltip-c
+		label: tooltip
+		background: tooltip
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
@@ -610,17 +746,17 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: emulio-window
 		titleFont: emulio-title
-		titleFontColor: color
+		titleFontColor: white
 	}
 	naked: {
 		background: emulio-naked-window
 		titleFont: emulio-title
-		titleFontColor: color
+		titleFontColor: white
 	}
 	main-menu: {
 		background: emulio-main-menu
 		titleFont: emulio-title
-		titleFontColor: color
+		titleFontColor: white
 	}
 }
 }

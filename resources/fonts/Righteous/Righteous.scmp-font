@@ -1,0 +1,11 @@
+{
+"characters": "",
+"size": 16,
+"hinting": "AutoMedium",
+"gamma": 1.8,
+"renderCount": 2,
+"borderGamma": 1.8,
+"kerning": true,
+"minFilter": "Nearest",
+"magFilter": "Nearest"
+}

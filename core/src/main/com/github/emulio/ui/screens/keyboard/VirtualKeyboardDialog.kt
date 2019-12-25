@@ -1,26 +1,12 @@
 package com.github.emulio.ui.screens.keyboard
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.*
-import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.Scaling
-import com.github.czyzby.lml.annotation.LmlActor
 import com.github.czyzby.lml.parser.impl.AbstractLmlView
-import com.github.czyzby.lml.vis.util.VisLml
+import com.github.czyzby.lml.util.Lml
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
 import com.github.emulio.model.InputConfig
-import com.github.emulio.model.theme.Theme
-import com.github.emulio.ui.input.ScraperView
 import com.github.emulio.ui.screens.EmulioDialog
-import com.github.emulio.ui.screens.addClickListener
-import com.github.emulio.ui.screens.getButtonImagePath
-import com.github.emulio.utils.translate
-import com.kotcrab.vis.ui.VisUI
-import java.util.*
 
 class VirtualKeyboardDialog(title: String,
                             private val dialogMessage: String,
@@ -32,8 +18,8 @@ class VirtualKeyboardDialog(title: String,
     val view: VirtualKeyboardView
 
     init {
-        if (!VisUI.isLoaded()) VisUI.load()
-        val parser = VisLml.parser().skin(skin).build()
+        //if (!VisUI.isLoaded()) VisUI.load()
+        val parser = Lml.parser().skin(skin).build()
 
         val template = Gdx.files.internal("templates/VirtualKeyboard.lml")
         view = VirtualKeyboardView(stage)
@@ -41,8 +27,6 @@ class VirtualKeyboardDialog(title: String,
         parser.createView(view, template).forEach { actor ->
             contentTable.add(actor).expand().fill()
         }
-
-
 
         /*
         contentTable.add(Table().apply {
