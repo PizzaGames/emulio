@@ -5,22 +5,21 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Align
 import com.github.emulio.Emulio
 import com.github.emulio.model.InputConfig
-import com.github.emulio.ui.screens.*
-import com.github.emulio.ui.screens.wizard.PlatformWizardScreen
+import com.github.emulio.ui.screens.EmulioDialog
+import com.github.emulio.ui.screens.createColorTexture
 import com.github.emulio.utils.translate
-import mu.KotlinLogging
 
-val logger = KotlinLogging.logger { }
-
-class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScreen, screen: EmulioScreen, private val stg: Stage = screen.stage) : EmulioDialog("Main Menu".translate(), emulio, "main-menu") {
+class JumpToLetterMenuDialog(
+        emulio: Emulio,
+        private val backCallback: (letter: Char) -> Unit) : EmulioDialog("Letter".translate(), emulio, "main-menu") {
 
     // we need to cache this font!
     private val mainFont = FreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf")).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
@@ -32,42 +31,33 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
     private val listScrollPane: ScrollPane
 
     private val menuItems = mapOf(
-            "Scraper".translate() to {
-                closeDialog(true)
-
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
-            },
-            "General Settings".translate() to {
-                closeDialog(true)
-                InfoDialog("Not yet implemented", "Not yet implemented", emulio).show(stg)
-
-            },
-            "Input settings".translate() to {
-                closeDialog(true)
-                screen.switchScreen(InputConfigScreen(emulio, backCallback))
-            },
-            "Platform Config".translate() to {
-                closeDialog(true)
-
-                YesNoDialog("Platform Config".translate(), """
-                        The platforms can be edited/configured using a Wizard or editing manually.  
-                    """.trimIndent().translate(), emulio,
-                    "Proceed to Wizard".translate(),
-                    "Edit Manually".translate(),
-                    cancelCallback = {
-                        screen.launchPlatformConfigEditor()
-                        screen.showReloadConfirmation()
-                    },
-                    confirmCallback = {
-                        screen.switchScreen(PlatformWizardScreen(emulio, backCallback))
-                    }).show(stg)
-            },
-            "Restart Emulio".translate() to {
-                screen.showReloadConfirmation()
-            },
-            "Quit Emulio".translate() to {
-                showExitConfirmation(emulio, stg)
-            }
+        "A" to { closeDialog(true); backCallback('A') },
+        "B" to { closeDialog(true); backCallback('B') },
+        "C" to { closeDialog(true); backCallback('C') },
+        "D" to { closeDialog(true); backCallback('D') },
+        "E" to { closeDialog(true); backCallback('E') },
+        "F" to { closeDialog(true); backCallback('F') },
+        "G" to { closeDialog(true); backCallback('G') },
+        "H" to { closeDialog(true); backCallback('H') },
+        "I" to { closeDialog(true); backCallback('I') },
+        "J" to { closeDialog(true); backCallback('J') },
+        "K" to { closeDialog(true); backCallback('K') },
+        "L" to { closeDialog(true); backCallback('L') },
+        "M" to { closeDialog(true); backCallback('M') },
+        "N" to { closeDialog(true); backCallback('N') },
+        "O" to { closeDialog(true); backCallback('O') },
+        "P" to { closeDialog(true); backCallback('P') },
+        "Q" to { closeDialog(true); backCallback('Q') },
+        "R" to { closeDialog(true); backCallback('R') },
+        "S" to { closeDialog(true); backCallback('S') },
+        "T" to { closeDialog(true); backCallback('T') },
+        "U" to { closeDialog(true); backCallback('U') },
+        "V" to { closeDialog(true); backCallback('V') },
+        "W" to { closeDialog(true); backCallback('W') },
+        "X" to { closeDialog(true); backCallback('X') },
+        "Y" to { closeDialog(true); backCallback('Y') },
+        "Z" to { closeDialog(true); backCallback('Z') },
+        "#" to { closeDialog(true); backCallback('#') }
     )
 
     init {
@@ -86,10 +76,16 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
             val selectorTexture = createColorTexture(0x878787FF.toInt())
             selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
-        }).apply {
-            menuItems.keys.forEach { items.add(it) }
 
-            width = screenWidth / 2
+        }).apply {
+
+            setAlignment(Align.center)
+
+            menuItems.keys.forEach {
+                items.add(it)
+            }
+
+            width = 50f
             height = 100f
 
             addListener(object : ClickListener() {
@@ -112,9 +108,9 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
 
             isTransform = true
 
-            setSize(screenWidth / 2, screenHeight / 2)
+            setSize(50f, screenHeight / 2)
         }
-        contentTable.add(listScrollPane).fillX().expandX().maxHeight(screenHeight / 2).minWidth(screenWidth / 2)
+        contentTable.add(listScrollPane).fillX().expandX().maxHeight(screenHeight / 2).minWidth(50f)
 
 
     }
@@ -131,7 +127,7 @@ class MainMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScree
 
     private fun performSelectItem() {
         closeDialog()
-        menuItems[listView.selected]!!.invoke()
+        (menuItems[listView.selected] ?: error("")).invoke()
     }
 
     private fun selectNext(amount: Int = 1) {

@@ -31,20 +31,24 @@ import com.github.emulio.process.ProcessException
 import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
+import com.github.emulio.ui.screens.dialogs.InfoDialog
+import com.github.emulio.ui.screens.keyboard.VirtualKeyboardDialog
 import com.github.emulio.utils.DateHelper
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.io.File
 
 
-class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emulio), InputListener {
+class GameListScreen(
+        emulio: Emulio,
+        val platform: Platform) : EmulioScreen(emulio), InputListener {
 
     val logger = KotlinLogging.logger { }
 
 	private val inputController: InputManager = InputManager(this, emulio, stage)
 	private val interpolation = Interpolation.fade
 
-    private var games: kotlin.collections.List<Game>
+    private lateinit var games: kotlin.collections.List<Game>
     private lateinit var filteredGames: kotlin.collections.List<Game>
 
     private var selectedGame: Game? = null
@@ -65,7 +69,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     private lateinit var root: Group
     private lateinit var logo: Image
     private lateinit var imageView: ViewImage
-    private lateinit var ratingImages: GameListScreen.RatingImages
+    private lateinit var ratingImages: RatingImages
 
     private var lastTimer: Timer.Task? = null
     private var lastSequenceAction: SequenceAction? = null
@@ -74,10 +78,17 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
     init {
 		Gdx.input.inputProcessor = inputController
 
-		val gamesFound = emulio.games!![platform]?.toList() ?: emptyList()
+        prepareGamesList(emulio)
+        initGUI()
+    }
+
+
+    private fun prepareGamesList(emulio: Emulio,
+                                 gamesFound: kotlin.collections.List<Game> = filterGames(emulio)) {
 
         val supportedExtensions = platform.romsExtensions
         val gamesMap = mutableMapOf<String, Game>()
+
         gamesFound.forEach { game ->
 
             val nameWithoutExtension = game.path.nameWithoutExtension
@@ -111,16 +122,15 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         games = gamesMap.values.sortedBy {
             it.displayName!!.toLowerCase()
         }
+    }
 
-        //TODO: remove the lines below
-        /*
-        needSelectionView = games.size > emulio.config.maxGamesList &&
-                emulio.config.maxGamesList != -1
-
-         */
-
-		initGUI()
-	}
+    private fun filterGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): kotlin.collections.List<Game> {
+        return if (customFilter == null) {
+            emulio.games!![platform]?.toList() ?: emptyList()
+        } else {
+            (emulio.games!![platform]?.toList() ?: emptyList()).filter(customFilter)
+        }
+    }
 
     private fun isBasicViewOnly(): Boolean {
         return games.none { it.id != null || it.description != null || it.image != null }
@@ -477,12 +487,12 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
             font = getFont(getFontPath(textView), getFontSize(textView.fontSize), color)
             fontColor = color
         }).apply {
-			setAlignment(when(textView.alignment) {
-				TextAlignment.LEFT -> Align.left
-				TextAlignment.RIGHT -> Align.right
-				TextAlignment.CENTER -> Align.center
-				TextAlignment.JUSTIFY -> Align.left //TODO
-			})
+			alignment = when(textView.alignment) {
+                TextAlignment.LEFT -> Align.left
+                TextAlignment.RIGHT -> Align.right
+                TextAlignment.CENTER -> Align.center
+                TextAlignment.JUSTIFY -> Align.left //TODO
+            }
 			setSize(textView)
 			setPosition(textView)
 		}
@@ -1010,6 +1020,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
     override fun onConfirmButton(input: InputConfig) {
         updateHelp()
+        if (!guiReady) return
         if (isSelectionListView) {
             filteredGames = when(listView.selectedIndex) {
                 0 -> games.filter { it.displayName!![0].isDigit() }
@@ -1044,7 +1055,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 
             listView.remove()
             listScrollPane.remove()
-            buildListScrollPane({ buildGameListView(gamelistView, filteredGames) })
+            buildListScrollPane { buildGameListView(gamelistView, filteredGames) }
             listView.selectedIndex = 0
             selectedGame = filteredGames[0]
             updateGameSelected()
@@ -1061,7 +1072,7 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         if (needSelectionView && !isSelectionListView) {
             listView.remove()
             listScrollPane.remove()
-            buildListScrollPane({ buildSelectionListView()})
+            buildListScrollPane { buildSelectionListView() }
             listView.selectedIndex = 0
             selectedGame = null
             updateGameSelected()
@@ -1123,14 +1134,22 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
 	override fun onFindButton(input: InputConfig) {
         updateHelp()
         logger.debug { "onFindButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
-
         if (!guiReady) return
+
+        VirtualKeyboardDialog("Search", "Message", emulio, stage) { text ->
+            handleSearch(filterByText(text))
+        }.show(stage)
+
+
 	}
     
 	override fun onOptionsButton(input: InputConfig) {
         updateHelp()
-        showMainMenu{
-            GameListScreen(emulio, platform)
+
+        Gdx.app.postRunnable {
+            showMainMenu {
+                GameListScreen(emulio, platform)
+            }
         }
 	}
 
@@ -1139,12 +1158,64 @@ class GameListScreen(emulio: Emulio, val platform: Platform) : EmulioScreen(emul
         logger.debug { "onSelectButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
         if (!guiReady) return
 
-        showOptionsMenu {
-            GameListScreen(emulio, platform) // TODO give the selected game here
+        Gdx.app.postRunnable {
+            showOptionsMenu { response ->
+                val searchDialogText = response.searchDialogText
+                val jumpToLetter = response.jumpToLetter
+
+                if (searchDialogText != null) {
+                    handleSearch(filterByText(searchDialogText))
+                } else if (jumpToLetter != null) {
+                    handleSearch(filterByLetter(jumpToLetter))
+                }
+            }
         }
 	}
 
-	override fun onPageUpButton(input: InputConfig) {
+    private fun filterByLetter(jumpToLetter: Char): (Game) -> Boolean {
+        return { game ->
+            val displayName = game.displayName
+            val name = game.name
+
+            val containsName = name?.toLowerCase()?.startsWith(jumpToLetter.toLowerCase()) ?: false
+            val containsDisplayName = displayName?.toLowerCase()?.startsWith(jumpToLetter.toLowerCase()) ?: false
+
+            containsName || containsDisplayName
+        }
+    }
+
+    private fun filterByText(searchDialogText: String): (Game) -> Boolean {
+        return { game ->
+            val displayName = game.displayName
+            val name = game.name
+
+            val containsName = name?.toLowerCase()?.contains(searchDialogText) ?: false
+            val containsDisplayName = displayName?.toLowerCase()?.contains(searchDialogText) ?: false
+
+            containsName || containsDisplayName
+        }
+    }
+
+    private fun handleSearch(customFilter: ((Game) -> Boolean)?) {
+
+        val gamesFound = filterGames(emulio, customFilter)
+
+        if (gamesFound.isNotEmpty()) {
+            stage.actors.clear()
+            prepareGamesList(emulio, gamesFound)
+            initGUI()
+            selectNext(1)
+        } else {
+            Gdx.app.postRunnable {
+                InfoDialog(
+                        "No games found".translate(),
+                        "No games found, please change your criteria.".translate(),
+                        emulio).show(stage)
+            }
+        }
+    }
+
+    override fun onPageUpButton(input: InputConfig) {
         updateHelp()
         logger.debug { "onPageUpButton ${System.identityHashCode(this)} ${platform.platformName} $guiReady" }
         if (!guiReady) return

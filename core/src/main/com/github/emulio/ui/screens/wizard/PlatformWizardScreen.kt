@@ -214,16 +214,18 @@ class PlatformWizardScreen(emulio: Emulio, private val backCallback: () -> Emuli
         val selectorTexture = createColorTexture(0x878787FF.toInt())
         val lightTexture = createColorTexture(0xADADADFF.toInt())
 
+        /*
         scraperWindow = ScraperWindow(stage,emulio.skin)
         scraperWindow.actors.forEach { actor ->
             root.add(actor)
         }
-        updateScraperWindow()
+        */
+        //updateScraperWindow()
     }
 
     private fun updateScraperWindow() {
-        val platform = emulio.platforms[platformsScrollList.selectedIndex]
-        scraperWindow.view.updatePlatformTheme(emulio.theme[platform]!!)
+//        val platform = emulio.platforms[platformsScrollList.selectedIndex]
+//        scraperWindow.view.updatePlatformTheme(emulio.theme[platform]!!)
     }
 
     private fun obtainNextIndex(currentIndex: Int): Int {

@@ -14,9 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
 import com.github.emulio.model.InputConfig
 import com.github.emulio.ui.screens.*
+import com.github.emulio.ui.screens.keyboard.VirtualKeyboardDialog
 import com.github.emulio.utils.translate
 
-class OptionsMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioScreen, screen: EmulioScreen, private val stg: Stage = screen.stage) : EmulioDialog("Main Menu".translate(), emulio, "main-menu") {
+class OptionsMenuDialog(
+        emulio: Emulio,
+        private val backCallback: (response: OptionsMenuResponse) -> Unit,
+        screen: EmulioScreen,
+        private val stg: Stage = screen.stage) : EmulioDialog("Main Menu".translate(), emulio, "main-menu") {
 
     // we need to cache this font!
     private val mainFont = FreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf")).generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
@@ -30,11 +35,17 @@ class OptionsMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioSc
     private val menuItems = mapOf(
             "Search Game" to {
                 closeDialog(true)
-                //screen.switchScreen(ScraperScreen(emulio, backCallback))
+
+                VirtualKeyboardDialog("Search", "Message", emulio, stg) { text ->
+                    backCallback(OptionsMenuResponse(searchDialogText = text))
+                }.show(stg)
             },
             "Jump to Letter" to {
                 closeDialog(true)
-                //screen.switchScreen(ScraperScreen(emulio, backCallback))
+
+                JumpToLetterMenuDialog(emulio) {
+                    backCallback(OptionsMenuResponse(jumpToLetter = it))
+                }.show(stg)
             },
             "Sort games" to {
                 closeDialog(true)
@@ -199,3 +210,8 @@ class OptionsMenuDialog(emulio: Emulio, private val backCallback: () -> EmulioSc
     }
 
 }
+
+data class OptionsMenuResponse(
+        val searchDialogText: String? = null,
+        val jumpToLetter: Char? = null
+)

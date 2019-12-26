@@ -25,11 +25,10 @@ class VirtualKeyboardDialog(title: String,
                             private val dialogMessage: String,
                             emulio: Emulio,
                             stage: Stage,
-                            private val confirmCallback: () -> Unit = {}) : EmulioDialog(title, emulio) {
+                            private val confirmCallback: (text: String) -> Unit = {}) : EmulioDialog(title, emulio) {
 
 
-    //val actors: com.badlogic.gdx.utils.Array<Actor>
-    private val view: VirtualKeyboardView
+        private val view: VirtualKeyboardView
 
     private val btCancel: Button
     private val btConfirm: Button
@@ -45,15 +44,19 @@ class VirtualKeyboardDialog(title: String,
     var text: String? = null
 
     init {
+        logger.debug { "initializing virtual keyboard" }
         val parser = Lml.parser().skin(skin).build()
 
+        logger.debug { "reading keyboard lml file" }
         val template = Gdx.files.internal("templates/VirtualKeyboard.lml")
         view = VirtualKeyboardView(stage)
 
+        logger.debug { "filling dialog with template read from lml file" }
         parser.createView(view, template).forEach { actor ->
             contentTable.add(actor).expand().fill()
         }
 
+        logger.debug { "mapping buttons and keys" }
         btCancel = contentTable.findActor("cancel")
         btConfirm = contentTable.findActor("confirm")
         btSpace = contentTable.findActor("space")
@@ -61,10 +64,6 @@ class VirtualKeyboardDialog(title: String,
         btBackspace = contentTable.findActor("backspace")
 
         textArea = contentTable.findActor("text")
-
-
-
-
 
         buttons = contentTable.findByType(Button::class)
 
@@ -74,6 +73,7 @@ class VirtualKeyboardDialog(title: String,
             return buttonsMap[letter] ?: error("Key not found")
         }
 
+        logger.debug { "creating traverse keys map" }
         mapTraverseButtons = buttons.map { button ->
             button to if (button is TextButton) {
                 when (button.text.toString().toUpperCase()) {
@@ -131,7 +131,8 @@ class VirtualKeyboardDialog(title: String,
             }
         }.toMap()
 
-        for (button in buttons.filterIsInstance(TextButton::class.java).filter { name == null && btSpace != it }) {
+        logger.debug { "adding listeners" }
+        for (button in buttons.filterIsInstance(TextButton::class.java).filter { it.name == null }) {
             button.addClickListener {
                 val char = button.text[0].let {
                     if (btShift.isChecked) {
@@ -167,13 +168,16 @@ class VirtualKeyboardDialog(title: String,
     }
 
     private fun cancelAction() {
+        logger.debug { "cancelAction" }
         this.text = null
         closeDialog()
     }
 
     private fun confirmAction() {
         this.text = textArea.text
-        this.confirmCallback()
+
+        logger.info { "VirtualKeyboard confirmed (text: $text)" }
+        this.confirmCallback(this.text ?: "")
         closeDialog()
     }
 
@@ -192,6 +196,7 @@ class VirtualKeyboardDialog(title: String,
             val keyDown: Actor)
 
     private fun traverseButtons(direction: Traverse) {
+        logger.debug { "traverse buttons: $direction" }
         val focused = stage.keyboardFocus
 
         if (focused !is Button) {
@@ -280,6 +285,9 @@ class VirtualKeyboardDialog(title: String,
         stage.keyboardFocus = textArea
     }
 
+    override fun onExitButton(input: InputConfig) {
+        cancelAction()
+    }
 }
 
 

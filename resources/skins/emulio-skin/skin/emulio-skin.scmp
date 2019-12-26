@@ -2876,23 +2876,6 @@ atlasData: {
 			tenPatchData: null
 		}
 		{
-			file: H:/Development/Workspaces/emulio/resources/images/backspace.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: backspace
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-		}
-		{
 			file: H:/Development/Workspaces/emulio/resources/images/cursor-key.9.png
 			bgColor: {
 				r: 1
@@ -2903,6 +2886,23 @@ atlasData: {
 			tint: null
 			tintName: null
 			name: cursor-key
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+		}
+		{
+			file: H:/Development/Workspaces/emulio/resources/images/backspace.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: backspace
 			tiled: false
 			minWidth: -1
 			minHeight: -1

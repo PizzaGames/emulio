@@ -26,10 +26,7 @@ import com.github.emulio.model.Playstation
 import com.github.emulio.model.Xbox
 import com.github.emulio.process.ProcessException
 import com.github.emulio.process.ProcessLauncher
-import com.github.emulio.ui.screens.dialogs.InfoDialog
-import com.github.emulio.ui.screens.dialogs.MainMenuDialog
-import com.github.emulio.ui.screens.dialogs.OptionsMenuDialog
-import com.github.emulio.ui.screens.dialogs.YesNoDialog
+import com.github.emulio.ui.screens.dialogs.*
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.io.File
@@ -174,7 +171,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         MainMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
     }
 
-    fun showOptionsMenu(screenCreatorOnBack: () -> EmulioScreen) {
+    fun showOptionsMenu(screenCreatorOnBack: (response: OptionsMenuResponse) -> Unit) {
         OptionsMenuDialog(emulio, screenCreatorOnBack, this).show(stage)
     }
 

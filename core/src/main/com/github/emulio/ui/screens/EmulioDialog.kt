@@ -41,7 +41,9 @@ abstract class EmulioDialog(title: String, open val emulio: Emulio, styleName: S
     fun closeDialog(skipAnimation: Boolean = false) {
         hide()
         remove()
-        overlay.actions.forEach { reset() }
+        overlay.actions.forEach { _ ->
+            reset()
+        }
         overlay.actions.clear()
 
         if (skipAnimation) {

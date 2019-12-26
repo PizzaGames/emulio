@@ -1,6 +1,0 @@
-<:importStyleSheet>templates/ScrapperWindow.lss</:importStyleSheet>
-<window id="scrapperWindow">
-    <container>
-        <image id="scraperPlatformImage"/>
-    </container>
-</window>
