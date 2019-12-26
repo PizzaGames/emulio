@@ -1,19 +1,19 @@
-<verticalGroup padding="5">
-    <container width="800" height="100"><textArea style="TextFieldLarge" /></container>
+<verticalGroup padding="10">
+    <container width="800" height="100"><textArea id="text" /></container>
 
     <verticalGroup padding="5">
         <horizontalGroup space="5">
-        <container size="64"><textButton style="TextButtonBlue">1</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">2</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">3</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">4</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">5</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">6</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">7</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">8</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">9</textButton></container>
-        <container size="64"><textButton style="TextButtonBlue">0</textButton></container>
-    </horizontalGroup>
+            <container size="64"><textButton style="TextButtonBlue">1</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">2</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">3</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">4</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">5</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">6</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">7</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">8</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">9</textButton></container>
+            <container size="64"><textButton style="TextButtonBlue">0</textButton></container>
+        </horizontalGroup>
         <horizontalGroup space="1">
             <container size="64"><textButton style="TextButtonBlue">Q</textButton></container>
             <container size="64"><textButton style="TextButtonBlue">W</textButton></container>
@@ -47,14 +47,16 @@
             <container size="64"><textButton style="TextButtonBlue">M</textButton></container>
         </horizontalGroup>
         <horizontalGroup space="5">
+            <container height="64" width="80"><imageButton id="shift" style="ButtonKeyShift"/></container>
             <container size="64"><textButton style="TextButtonBlue">@</textButton></container>
-            <container height="64" width="250"><textButton style="TextButtonBlue">Space</textButton></container>
+            <container height="64" width="250"><textButton id="space" style="TextButtonBlue">Space</textButton></container>
             <container size="64"><textButton style="TextButtonBlue">/</textButton></container>
+            <container height="64" width="80"><imageButton id="backspace" style="ButtonKeyBackspace"/></container>
         </horizontalGroup>
     </verticalGroup>
 
-    <horizontalGroup space="5">
-        <container ><textButton style="TextButtonGreen">Confirm</textButton></container>
-        <container ><textButton style="TextButtonWhite">Cancel</textButton></container>
+    <horizontalGroup space="5" align="right">
+        <container height="64" width="120"><textButton  id="confirm" style="TextButtonGreen">Confirm</textButton></container>
+        <container height="64" width="120"><textButton id="cancel" style="TextButtonRed">Cancel</textButton></container>
     </horizontalGroup>
 </verticalGroup>

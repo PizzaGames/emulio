@@ -30,7 +30,7 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	emulio-title-small: {
 		file: emulio-title-small.fnt
 	}
-	HammersmithOne-16: {
+	HammersmithOne-Regular: {
 		file: HammersmithOne-Regular.fnt
 	}
 }
@@ -457,49 +457,18 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		over: btn-blue0-hover
 		focused: btn-blue0-focus
 	}
+	ButtonKeyShift: {
+		parent: ButtonGreen
+		imageUp: shift-light
+		checked: btn-green0-pressed
+	}
+	ButtonKeyBackspace: {
+		parent: ButtonGreen
+		imageUp: backspace
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
-		font: emulio-title-small
-		up: emulio-button
-		down: emulio-button-pressed
-		over: emulio-button
-	}
-	toggle: {
-		font: HammersmithOne-16
-		up: button-c
-		down: button-pressed-c
-		over: button-over-c
-		checked: button-pressed-c
-		checkedOver: button-pressed-over-c
-	}
-	radio: {
-		imageUp: radio-c
-		imageDown: radio-pressed-c
-		imageOver: radio-over-c
-		imageChecked: radio-pressed-c
-		imageCheckedOver: radio-pressed-over-c
-		font: HammersmithOne-16
-		fontColor: black
-	}
-	checkbox: {
-		imageUp: checkbox-c
-		imageDown: checkbox-pressed-c
-		imageOver: checkbox-over-c
-		imageChecked: checkbox-pressed-c
-		imageCheckedOver: checkbox-pressed-over-c
-		font: HammersmithOne-16
-		fontColor: black
-	}
-	confirm: {
-		imageUp: button_a_40_40
-		font: emulio-title-small
-		up: emulio-button
-		down: emulio-button-pressed
-		over: emulio-button
-	}
-	cancel: {
-		imageUp: button_b_40_40
 		font: emulio-title-small
 		up: emulio-button
 		down: emulio-button-pressed
@@ -557,7 +526,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: HammersmithOne-16
+		font: emulio-text
 		fontColor: dark-gray
 	}
 	huge: {
@@ -573,13 +542,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		fontColor: white
 	}
 	tooltip: {
-		font: HammersmithOne-16
+		font: emulio-text
 		fontColor: gray
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
-		font: HammersmithOne-16
+		font: HammersmithOne-Regular
 		fontColorSelected: dark-gray
 		fontColorUnselected: dark-gray
 		selection: btn-blue0
@@ -620,7 +589,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: HammersmithOne-16
+		font: HammersmithOne-Regular
 		fontColor: dark-gray
 		background: selectbox-c
 		scrollStyle: default
@@ -713,15 +682,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: HammersmithOne-16
-		fontColor: darkest-gray
+		font: HammersmithOne-Regular
+		fontColor: dark-gray
 		background: text-field
-		cursor: cursor-c
+		cursor: cursor-key
 		selection: selection
-	}
-	TextFieldLarge: {
-		parent: default
-		font: emulio-text-big
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
