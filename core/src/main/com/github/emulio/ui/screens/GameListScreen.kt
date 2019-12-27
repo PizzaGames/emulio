@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
 import com.badlogic.gdx.scenes.scene2d.ui.*
-import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
@@ -48,12 +47,11 @@ class GameListScreen(
 	private val inputController: InputManager = InputManager(this, emulio, stage)
 	private val interpolation = Interpolation.fade
 
-    private lateinit var games: kotlin.collections.List<Game>
-    private lateinit var filteredGames: kotlin.collections.List<Game>
+    private lateinit var games: List<Game>
 
     private var selectedGame: Game? = null
 
-    private lateinit var listView: List<String>
+    private lateinit var listView: com.badlogic.gdx.scenes.scene2d.ui.List<String>
     private lateinit var listScrollPane: ScrollPane
 
     private lateinit var descriptionScrollPane: ScrollPane
@@ -73,7 +71,6 @@ class GameListScreen(
 
     private var lastTimer: Timer.Task? = null
     private var lastSequenceAction: SequenceAction? = null
-    private var needSelectionView: Boolean = false
 
     init {
 		Gdx.input.inputProcessor = inputController
@@ -83,8 +80,7 @@ class GameListScreen(
     }
 
 
-    private fun prepareGamesList(emulio: Emulio,
-                                 gamesFound: kotlin.collections.List<Game> = filterGames(emulio)) {
+    private fun prepareGamesList(emulio: Emulio, gamesFound: List<Game> = filterGames(emulio)) {
 
         val supportedExtensions = platform.romsExtensions
         val gamesMap = mutableMapOf<String, Game>()
@@ -124,7 +120,7 @@ class GameListScreen(
         }
     }
 
-    private fun filterGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): kotlin.collections.List<Game> {
+    private fun filterGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): List<Game> {
         return if (customFilter == null) {
             emulio.games!![platform]?.toList() ?: emptyList()
         } else {
@@ -159,23 +155,19 @@ class GameListScreen(
 
         if (games.size > 1) {
             listView.selectedIndex = 0
-            if (!needSelectionView) {
-                selectedGame = games[0]
-                updateGameSelected()
-            }
+            selectedGame = games[0]
+            updateGameSelected()
         }
     }
 
     private fun buildBasicView(basicView: View) {
-
 		gamelistView = basicView.findViewItem("gamelist") as TextList
         buildListScrollPane { buildListView() }
-
 	}
 
     private var lastSelectedIndex: Int = -1
 
-    private fun buildListScrollPane(builder: () -> List<String>) {
+    private fun buildListScrollPane(builder: () -> com.badlogic.gdx.scenes.scene2d.ui.List<String>) {
         listView = builder()
 
         listView.addListener(object : ClickListener() {
@@ -187,15 +179,8 @@ class GameListScreen(
                     return
                 }
 
-                if (!isSelectionListView) {
-                    selectedGame = if (needSelectionView) {
-                        filteredGames[newIndex]
-                    } else {
-                        games[newIndex]
-                    }
-                    updateGameSelected()
-                }
-                
+                selectedGame = games[newIndex]
+                updateGameSelected()
                 lastSelectedIndex = listView.selectedIndex
             }
         })
@@ -516,69 +501,13 @@ class GameListScreen(
         }
     }
 
-	private fun buildListView(): List<String> {
-        return if (needSelectionView) {
-            buildSelectionListView()
-        } else {
-            buildGameListView(gamelistView, games)
-        }
+	private fun buildListView(): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
+        return buildGameListView(gamelistView, games)
 	}
 
-    private fun buildSelectionListView(): List<String> {
-        isSelectionListView = true
+    private fun buildGameListView(gamelistView: TextList, selectedGames: List<Game>): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
 
-        return List<String>(List.ListStyle().apply {
-            fontColorUnselected = getColor(gamelistView.primaryColor)
-            fontColorSelected = getColor(gamelistView.selectedColor)
-            font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
-
-            val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
-            selection = TextureRegionDrawable(TextureRegion(selectorTexture))
-
-        }).apply {
-
-            setSize(gamelistView)
-
-            listOf(
-                    "Games starting with Numbers...",
-                    "Games starting with A...",
-                    "Games starting with B...",
-                    "Games starting with C...",
-                    "Games starting with D...",
-                    "Games starting with E...",
-                    "Games starting with F...",
-                    "Games starting with G...",
-                    "Games starting with H...",
-                    "Games starting with I...",
-                    "Games starting with J...",
-                    "Games starting with K...",
-                    "Games starting with L...",
-                    "Games starting with M...",
-                    "Games starting with N...",
-                    "Games starting with O...",
-                    "Games starting with P...",
-                    "Games starting with Q...",
-                    "Games starting with R...",
-                    "Games starting with S...",
-                    "Games starting with T...",
-                    "Games starting with U...",
-                    "Games starting with V...",
-                    "Games starting with W...",
-                    "Games starting with X...",
-                    "Games starting with Y...",
-                    "Games starting with Z..."
-            ).forEach { items.add(it) }
-
-
-        }
-    }
-
-    private var isSelectionListView: Boolean = false
-
-    private fun buildGameListView(gamelistView: TextList, selectedGames: kotlin.collections.List<Game>): List<String> {
-        isSelectionListView = false
-
-        return List<String>(List.ListStyle().apply {
+        return List<String>(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
             fontColorUnselected = getColor(gamelistView.primaryColor)
             fontColorSelected = getColor(gamelistView.selectedColor)
             font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
@@ -633,10 +562,10 @@ class GameListScreen(
         }
 
         if (viewItem.maxSizeX != null) {
-            width = Math.max(width, screenWidth * viewItem.maxSizeX!!)
+            width = width.coerceAtLeast(screenWidth * viewItem.maxSizeX!!)
         }
         if (viewItem.maxSizeY != null) {
-            height = Math.max(height, screenHeight * viewItem.maxSizeY!!)
+            height = height.coerceAtLeast(screenHeight * viewItem.maxSizeY!!)
         }
         return Pair(width, height)
     }
@@ -655,10 +584,10 @@ class GameListScreen(
 		}
 
 		if (viewItem.maxSizeX != null) {
-			width = Math.min(width, screenWidth * viewItem.maxSizeX!!)
+			width = width.coerceAtMost(screenWidth * viewItem.maxSizeX!!)
 		}
 		if (viewItem.maxSizeY != null) {
-			height = Math.min(height, screenHeight * viewItem.maxSizeY!!)
+			height = height.coerceAtMost(screenHeight * viewItem.maxSizeY!!)
 		}
 		setSize(width, height)
 	}
@@ -716,7 +645,7 @@ class GameListScreen(
 
 	override fun render(delta: Float) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
+		stage.act(Gdx.graphics.deltaTime.coerceAtMost(1 / 30f))
 		stage.draw()
 		inputController.update(delta)
 	}
@@ -787,16 +716,9 @@ class GameListScreen(
             }
         }
 
-        if (!isSelectionListView) {
-            val list = if (needSelectionView) {
-                filteredGames
-            } else {
-                games
-            }
-
-            selectedGame = list[listView.selectedIndex]
-            updateGameSelected()
-        }
+        val list = games
+        selectedGame = list[listView.selectedIndex]
+        updateGameSelected()
 
         checkVisible(nextIndex)
     }
@@ -966,22 +888,10 @@ class GameListScreen(
 
         val itemsPerView = listScrollPane.height / itemHeight
 
-        if (isSelectionListView) {
-            if (listView.selectedIndex > (27 - itemsPerView)) {
-                listScrollPane.scrollY = listView.height - listScrollPane.height
-                return
-            }
-        } else {
-            val gamesList = if (needSelectionView) {
-                filteredGames
-            } else {
-                games
-            }
-
-            if (listView.selectedIndex > (gamesList.size - itemsPerView)) {
-                listScrollPane.scrollY = listView.height - listScrollPane.height
-                return
-            }
+        val gamesList = games
+        if (listView.selectedIndex > (gamesList.size - itemsPerView)) {
+            listScrollPane.scrollY = listView.height - listScrollPane.height
+            return
         }
 
         if (listView.selectedIndex == 0) {
@@ -993,7 +903,7 @@ class GameListScreen(
             listScrollPane.scrollY = (selectionY2 - listScrollPane.height) + minItemsVisible
         }
 
-        val minScrollY = Math.max(selectionY - minItemsVisible, 0f)
+        val minScrollY = (selectionY - minItemsVisible).coerceAtLeast(0f)
 
         if (minScrollY < listScrollPane.scrollY) {
             listScrollPane.scrollY = minScrollY
@@ -1021,47 +931,8 @@ class GameListScreen(
     override fun onConfirmButton(input: InputConfig) {
         updateHelp()
         if (!guiReady) return
-        if (isSelectionListView) {
-            filteredGames = when(listView.selectedIndex) {
-                0 -> games.filter { it.displayName!![0].isDigit() }
-                1 -> games.filter { it.displayName!!.toUpperCase().startsWith("A") }
-                2 -> games.filter { it.displayName!!.toUpperCase().startsWith("B") }
-                3 -> games.filter { it.displayName!!.toUpperCase().startsWith("C") }
-                4 -> games.filter { it.displayName!!.toUpperCase().startsWith("D") }
-                5 -> games.filter { it.displayName!!.toUpperCase().startsWith("E") }
-                6 -> games.filter { it.displayName!!.toUpperCase().startsWith("F") }
-                7 -> games.filter { it.displayName!!.toUpperCase().startsWith("G") }
-                8 -> games.filter { it.displayName!!.toUpperCase().startsWith("H") }
-                9 -> games.filter { it.displayName!!.toUpperCase().startsWith("I") }
-                10 -> games.filter { it.displayName!!.toUpperCase().startsWith("J") }
-                11 -> games.filter { it.displayName!!.toUpperCase().startsWith("K") }
-                12 -> games.filter { it.displayName!!.toUpperCase().startsWith("L") }
-                13 -> games.filter { it.displayName!!.toUpperCase().startsWith("M") }
-                14 -> games.filter { it.displayName!!.toUpperCase().startsWith("N") }
-                15 -> games.filter { it.displayName!!.toUpperCase().startsWith("O") }
-                16 -> games.filter { it.displayName!!.toUpperCase().startsWith("P") }
-                17 -> games.filter { it.displayName!!.toUpperCase().startsWith("Q") }
-                18 -> games.filter { it.displayName!!.toUpperCase().startsWith("R") }
-                19 -> games.filter { it.displayName!!.toUpperCase().startsWith("S") }
-                20 -> games.filter { it.displayName!!.toUpperCase().startsWith("T") }
-                21 -> games.filter { it.displayName!!.toUpperCase().startsWith("U") }
-                22 -> games.filter { it.displayName!!.toUpperCase().startsWith("V") }
-                23 -> games.filter { it.displayName!!.toUpperCase().startsWith("W") }
-                24 -> games.filter { it.displayName!!.toUpperCase().startsWith("X") }
-                25 -> games.filter { it.displayName!!.toUpperCase().startsWith("Y") }
-                26 -> games.filter { it.displayName!!.toUpperCase().startsWith("Z") }
-                else -> games
-            }
 
-            listView.remove()
-            listScrollPane.remove()
-            buildListScrollPane { buildGameListView(gamelistView, filteredGames) }
-            listView.selectedIndex = 0
-            selectedGame = filteredGames[0]
-            updateGameSelected()
-        } else {
-            launchGame()
-        }
+        launchGame()
     }
 
 
@@ -1069,17 +940,7 @@ class GameListScreen(
         updateHelp()
         if (!guiReady) return
 
-        if (needSelectionView && !isSelectionListView) {
-            listView.remove()
-            listScrollPane.remove()
-            buildListScrollPane { buildSelectionListView() }
-            listView.selectedIndex = 0
-            selectedGame = null
-            updateGameSelected()
-        } else {
-            switchScreen(PlatformsScreen(emulio, platform))
-        }
-
+        switchScreen(PlatformsScreen(emulio, platform))
     }
 
     override fun onUpButton(input: InputConfig) {
