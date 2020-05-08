@@ -66,7 +66,7 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 
 private val Path.extension: String
 	get() {
-		val name = fileName.toString()
+		val name = fileName?.toString() ?: return ""
 		val idx = name.lastIndexOf(".")
 		if (idx == -1) {
 			return ""

@@ -36,20 +36,21 @@ import com.github.emulio.utils.DateHelper
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.io.File
-
+import java.util.Stack
 
 class GameListScreen(
         emulio: Emulio,
         val platform: Platform) : EmulioScreen(emulio), InputListener {
+
 
     val logger = KotlinLogging.logger { }
 
 	private val inputController: InputManager = InputManager(this, emulio, stage)
 	private val interpolation = Interpolation.fade
 
-    private lateinit var games: List<Game>
+    private lateinit var listItems: List<ListItem>
 
-    private var selectedGame: Game? = null
+    private var selectedListItem: ListItem? = null
 
     private lateinit var listView: com.badlogic.gdx.scenes.scene2d.ui.List<String>
     private lateinit var listScrollPane: ScrollPane
@@ -68,24 +69,48 @@ class GameListScreen(
     private lateinit var logo: Image
     private lateinit var imageView: ViewImage
     private lateinit var ratingImages: RatingImages
+    private lateinit var lastOpenedFolder: File
 
     private var lastTimer: Timer.Task? = null
     private var lastSequenceAction: SequenceAction? = null
 
+    private val folderStack = Stack<File>()
+
     init {
 		Gdx.input.inputProcessor = inputController
 
-        prepareGamesList(emulio)
+        prepareGamesList(emulio, findGames(emulio), true)
         initGUI()
     }
 
 
-    private fun prepareGamesList(emulio: Emulio, gamesFound: List<Game> = filterGames(emulio)) {
+    private fun prepareGamesList(emulio: Emulio, games: List<Game>, rootFolder: Boolean = false, overrideFolder: File? = null) {
+
+        val absolutePaths = games.map { it.path.parentFile.absoluteFile }
+                .toSortedSet(Comparator { file1, file2 -> file1.absolutePath.compareTo(file2.absolutePath) })
+
+        val filteredGames: List<Game>
+
+        if ((rootFolder && absolutePaths.size > 1) || overrideFolder != null) { // roms are coming from more than one main directory (subfolders)
+            val rootPath = overrideFolder ?: platform.romsPath
+            lastOpenedFolder = rootPath
+
+            val folders = rootPath.listFiles()?.filter { it.isDirectory && !it.isHidden } ?: emptyList()
+            listItems = folders.map { ListItem(null, it.name, it) }.sortedBy { it.displayName }
+
+            filteredGames = games.filter { game ->
+                game.path.parentFile.absolutePath == rootPath.absolutePath
+            }
+        } else {
+            listItems = emptyList()
+            filteredGames = games
+        }
 
         val supportedExtensions = platform.romsExtensions
         val gamesMap = mutableMapOf<String, Game>()
 
-        gamesFound.forEach { game ->
+
+        filteredGames.forEach { game ->
 
             val nameWithoutExtension = game.path.nameWithoutExtension
 
@@ -111,16 +136,19 @@ class GameListScreen(
                 val key = game.name ?: game.path.name
                 game.displayName = key
                 gamesMap[key] = game
-
             }
         }
 
-        games = gamesMap.values.sortedBy {
+
+
+        listItems = listItems + gamesMap.values.sortedBy {
             it.displayName!!.toLowerCase()
+        }.map {
+            ListItem(it, it.displayName!!)
         }
     }
 
-    private fun filterGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): List<Game> {
+    private fun findGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): List<Game> {
         return if (customFilter == null) {
             emulio.games!![platform]?.toList() ?: emptyList()
         } else {
@@ -129,7 +157,7 @@ class GameListScreen(
     }
 
     private fun isBasicViewOnly(): Boolean {
-        return games.none { it.id != null || it.description != null || it.image != null }
+        return listItems.filter { it.isGame() }.map { it.game!! }.none { it.id != null || it.description != null || it.image != null }
     }
 
     private var guiReady: Boolean = false
@@ -153,9 +181,9 @@ class GameListScreen(
         logger.debug { "onScreenLoad" }
         guiReady = true
 
-        if (games.size > 1) {
+        if (listItems.size > 1) {
             listView.selectedIndex = 0
-            selectedGame = games[0]
+            selectedListItem = listItems[0]
             updateGameSelected()
         }
     }
@@ -179,7 +207,7 @@ class GameListScreen(
                     return
                 }
 
-                selectedGame = games[newIndex]
+                selectedListItem = listItems[newIndex]
                 updateGameSelected()
                 lastSelectedIndex = listView.selectedIndex
             }
@@ -502,10 +530,10 @@ class GameListScreen(
     }
 
 	private fun buildListView(): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
-        return buildGameListView(gamelistView, games)
+        return buildGameListView(gamelistView, listItems)
 	}
 
-    private fun buildGameListView(gamelistView: TextList, selectedGames: List<Game>): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
+    private fun buildGameListView(gamelistView: TextList, selectedListItems: List<ListItem>): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
 
         return List<String>(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
             fontColorUnselected = getColor(gamelistView.primaryColor)
@@ -518,7 +546,7 @@ class GameListScreen(
         }).apply {
             setSize(gamelistView)
 
-            selectedGames.forEach { game ->
+            selectedListItems.forEach { game ->
                 items.add(game.displayName)
             }
         }
@@ -670,18 +698,24 @@ class GameListScreen(
         }
 
 
-        val game = selectedGame!!
+        val selectedListItem = selectedListItem!!
 
-        logger.info { "launchGame: ${game.path.name}" }
+        if (selectedListItem.isFolder()) {
+            return
+        }
+
+        val path = selectedListItem.game!!.path
+
+        logger.info { "launchGame: ${path.name}" }
 
         val command = platform.runCommand.map {
             when {
                 it.contains("%ROM_RAW%") ->
-                    it.replace("%ROM_RAW%", game.path.absolutePath)
+                    it.replace("%ROM_RAW%", path.absolutePath)
                 it.contains("%ROM%") ->
-                    it.replace("%ROM%", game.path.absolutePath) //TODO check emulationstation documentation
+                    it.replace("%ROM%", path.absolutePath) //TODO check emulationstation documentation
                 it.contains("%BASENAME%") ->
-                    it.replace("%BASENAME%", game.path.nameWithoutExtension)
+                    it.replace("%BASENAME%", path.nameWithoutExtension)
                 else -> it
             }
         }
@@ -716,8 +750,8 @@ class GameListScreen(
             }
         }
 
-        val list = games
-        selectedGame = list[listView.selectedIndex]
+        val list = listItems
+        selectedListItem = list[listView.selectedIndex]
         updateGameSelected()
 
         checkVisible(nextIndex)
@@ -727,19 +761,20 @@ class GameListScreen(
         lastTimer?.cancel()
         lastSequenceAction?.reset()
 
-        logger.debug { if (selectedGame != null) { "updateGameSelected [${selectedGame!!.name}] [${selectedGame!!.path.name}]" } else { "no game" } }
+        val selectedListItem = selectedListItem
+
+        logger.debug { if (selectedListItem != null) { "updateGameSelected [${selectedListItem.displayName}] [${selectedListItem.getPath().name}]" } else { "no game" } }
 
         if (isBasicViewOnly()) {
             return
         }
 
-        if (selectedGame == null) {
+        if (selectedListItem == null) {
             clearDetailedView()
             return
         }
 
-
-        val game = selectedGame!!
+        val game = selectedListItem.game ?: return
 
         val hasImage = game.image != null && game.image.isFile
         val texture = if (hasImage) {
@@ -888,7 +923,7 @@ class GameListScreen(
 
         val itemsPerView = listScrollPane.height / itemHeight
 
-        val gamesList = games
+        val gamesList = listItems
         if (listView.selectedIndex > (gamesList.size - itemsPerView)) {
             listScrollPane.scrollY = listView.height - listScrollPane.height
             return
@@ -932,7 +967,22 @@ class GameListScreen(
         updateHelp()
         if (!guiReady) return
 
-        launchGame()
+        val selectedListItem = selectedListItem ?: return
+
+        if (selectedListItem.isFolder()) {
+            val selectedFolder = selectedListItem.getPath()
+            folderStack.push(selectedFolder.parentFile)
+            reloadGameListOnFolder(selectedFolder)
+            listView.selectedIndex = 0
+            this.selectedListItem = listItems[0]
+        } else {
+            launchGame()
+        }
+    }
+
+    private fun reloadGameListOnFolder(folder: File) {
+        prepareGamesList(emulio, findGames(emulio), false, folder)
+        initGUI()
     }
 
 
@@ -940,7 +990,19 @@ class GameListScreen(
         updateHelp()
         if (!guiReady) return
 
-        switchScreen(PlatformsScreen(emulio, platform))
+        if (folderStack.isEmpty()) {
+            switchScreen(PlatformsScreen(emulio, platform))
+        } else {
+            val lastOpenedFolder = lastOpenedFolder
+            reloadGameListOnFolder(folderStack.pop())
+
+            val index = listItems.indexOf(
+                    listItems.filter { it.isFolder() }
+                            .find { it.getPath().absolutePath == lastOpenedFolder.absolutePath})
+
+            listView.selectedIndex = index
+            selectedListItem = listItems[index]
+        }
     }
 
     override fun onUpButton(input: InputConfig) {
@@ -1059,7 +1121,7 @@ class GameListScreen(
 
     private fun handleSearch(customFilter: ((Game) -> Boolean)?) {
 
-        val gamesFound = filterGames(emulio, customFilter)
+        val gamesFound = findGames(emulio, customFilter)
 
         if (gamesFound.isNotEmpty()) {
             stage.actors.clear()
@@ -1117,5 +1179,22 @@ class ScrollByAction(private val endScrollX: Float, private val endScrollY: Floa
     override fun update(percent: Float) {
         scrollPane.scrollX = startScrollX + (endScrollX - startScrollX) * percent
         scrollPane.scrollY = startScrollY + (endScrollY - startScrollY) * percent
+    }
+}
+
+data class ListItem(
+        val game: Game?,
+        val displayName: String,
+        val folder: File? = null
+) {
+    fun isFolder() = folder != null && game == null
+    fun isGame() = game != null && folder == null
+
+    fun getPath(): File {
+        return if (isFolder()) {
+            folder!!.absoluteFile
+        } else {
+            game!!.path
+        }
     }
 }
