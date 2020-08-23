@@ -18,7 +18,7 @@
 
 	<logger name="ch.qos.logback" level="DEBUG" additivity="true"/>
 
-	<logger name="com.github.emulio" level="DEBUG"/>
+	<logger name="com.github.emulio" level="TRACE"/>
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

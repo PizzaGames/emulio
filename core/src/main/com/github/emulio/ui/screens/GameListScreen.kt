@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -52,7 +55,7 @@ class GameListScreen(
 
     private var selectedListItem: ListItem? = null
 
-    private lateinit var listView: com.badlogic.gdx.scenes.scene2d.ui.List<String>
+    private lateinit var listView: GameList
     private lateinit var listScrollPane: ScrollPane
 
     private lateinit var descriptionScrollPane: ScrollPane
@@ -80,72 +83,99 @@ class GameListScreen(
 		Gdx.input.inputProcessor = inputController
 
         prepareGamesList(emulio, findGames(emulio), true)
-        initGUI()
     }
 
 
-    private fun prepareGamesList(emulio: Emulio, games: List<Game>, rootFolder: Boolean = false, overrideFolder: File? = null) {
+    private fun prepareGamesList(emulio: Emulio,
+                                 games: List<Game>,
+                                 rootFolder: Boolean = false,
+                                 overrideFolder: File? = null) {
 
+        logger.info { "Preparing game list. (emulio instance: $emulio, games size: ${games.size}, folder: $rootFolder, override: $overrideFolder)" }
+
+        logger.debug { "getting all absolute paths" }
         val absolutePaths = games.map { it.path.parentFile.absoluteFile }
                 .toSortedSet(Comparator { file1, file2 -> file1.absolutePath.compareTo(file2.absolutePath) })
 
-        val filteredGames: List<Game>
-
-        if ((rootFolder && absolutePaths.size > 1) || overrideFolder != null) { // roms are coming from more than one main directory (subfolders)
+        logger.debug { "filtering games" }
+        val filteredGames = if ((rootFolder && absolutePaths.size > 1) || overrideFolder != null) { // roms are coming from more than one main directory (subfolders)
             val rootPath = overrideFolder ?: platform.romsPath
             lastOpenedFolder = rootPath
 
-            val folders = rootPath.listFiles()?.filter { it.isDirectory && !it.isHidden } ?: emptyList()
-            listItems = folders.map { ListItem(null, it.name, it) }.sortedBy { it.displayName }
+            val mergedGames = mutableListOf<Game>()
 
-            filteredGames = games.filter { game ->
-                game.path.parentFile.absolutePath == rootPath.absolutePath
+            val folders = rootPath.listFiles()?.filter { it.isDirectory && !it.isHidden } ?: emptyList()
+            listItems = folders.map {
+                ListItem(null, it.name, it)
+            }.sortedBy {
+                it.displayName
+            }.filter { listItem ->
+                val folder = listItem.folder!!
+
+                val found = games.find { game ->
+                    val path = game.path
+                    path.nameWithoutExtension == folder.nameWithoutExtension &&
+                            path.parentFile.absolutePath == folder.absolutePath
+                }
+
+                if (found != null) {
+                    mergedGames.add(found)
+                    false
+                } else {
+                    true
+                }
             }
+
+            games.filter { game ->
+                game.path.parentFile.absolutePath == rootPath.absolutePath
+            } + mergedGames
         } else {
             listItems = emptyList()
-            filteredGames = games
+            games
         }
 
         val supportedExtensions = platform.romsExtensions
         val gamesMap = mutableMapOf<String, Game>()
 
-
         filteredGames.forEach { game ->
-
             val nameWithoutExtension = game.path.nameWithoutExtension
 
             val gameFound: Game? = gamesMap[nameWithoutExtension]
             if (gameFound != null) {
                 if (gameFound.path.name != nameWithoutExtension) {
-                    gamesMap[nameWithoutExtension] = game
-                    game.displayName = nameWithoutExtension
-
+                    if (!gamesMap.containsKey(nameWithoutExtension)) {
+                        gamesMap[nameWithoutExtension] = game
+                        game.displayName = nameWithoutExtension
+                    }
                 } else if (gameFound.path.name == nameWithoutExtension) {
-
                     val idxFound = supportedExtensions.indexOf(gameFound.path.extension)
                     val idxGame = supportedExtensions.indexOf(game.path.extension)
 
                     if (idxGame < idxFound) {
                         val key = game.name!!
-
-                        gamesMap[key] = game
+                        gamesMap[nameWithoutExtension] = game
                         game.displayName = key
                     }
                 }
             } else {
                 val key = game.name ?: game.path.name
                 game.displayName = key
-                gamesMap[key] = game
+                if (!gamesMap.containsKey(nameWithoutExtension)) {
+                    gamesMap[nameWithoutExtension] = game
+                }
             }
         }
-
-
 
         listItems = listItems + gamesMap.values.sortedBy {
             it.displayName!!.toLowerCase()
         }.map {
             ListItem(it, it.displayName!!)
         }
+
+        initGUI()
+
+        selectedListItem = listItems.first()
+        updateGameSelected()
     }
 
     private fun findGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): List<Game> {
@@ -189,13 +219,13 @@ class GameListScreen(
     }
 
     private fun buildBasicView(basicView: View) {
-		gamelistView = basicView.findViewItem("gamelist") as TextList
+		gameListView = basicView.findViewItem("gamelist") as TextList
         buildListScrollPane { buildListView() }
 	}
 
     private var lastSelectedIndex: Int = -1
 
-    private fun buildListScrollPane(builder: () -> com.badlogic.gdx.scenes.scene2d.ui.List<String>) {
+    private fun buildListScrollPane(builder: () -> GameList) {
         listView = builder()
 
         listView.addListener(object : ClickListener() {
@@ -222,8 +252,8 @@ class GameListScreen(
 
             isTransform = true
 
-            setSize(gamelistView)
-            setPosition(gamelistView)
+            setSize(gameListView)
+            setPosition(gameListView)
         }
 
         stage.addActor(listScrollPane)
@@ -233,15 +263,15 @@ class GameListScreen(
 		val backgroundView = view.findViewItem("background") as ViewImage?
 		if (backgroundView != null) {
 			stage.addActor(buildImage(backgroundView).apply {
-				setScaling(Scaling.stretch)
-				setPosition(0f, 0f)
-				setSize(screenWidth, screenHeight)
-			})
+                setScaling(Scaling.stretch)
+                setPosition(0f, 0f)
+                setSize(screenWidth, screenHeight)
+            })
 		} else {
 			val lightGrayTexture = createColorTexture(0xc5c6c7FF.toInt())
 			stage.addActor(Image(lightGrayTexture).apply {
-				setFillParent(true)
-			})
+                setFillParent(true)
+            })
 		}
 
 		val footer = view.findViewItem("footer") as ViewImage?
@@ -290,19 +320,19 @@ class GameListScreen(
         }
 
         initHelpHuds(footerY, footerHeight, HelpItems(
-            txtSelect = "Options".translate().toUpperCase(),
-            txtOptions = "Menu".translate().toUpperCase(),
-            txtCancel = "Back".translate().toUpperCase(),
-            txtConfirm = "Launch".translate().toUpperCase(),
-            txtLeftRight = "System".translate().toUpperCase(),
-            txtUpDown = "Choose".translate().toUpperCase(),
+                txtSelect = "Options".translate().toUpperCase(),
+                txtOptions = "Menu".translate().toUpperCase(),
+                txtCancel = "Back".translate().toUpperCase(),
+                txtConfirm = "Launch".translate().toUpperCase(),
+                txtLeftRight = "System".translate().toUpperCase(),
+                txtUpDown = "Choose".translate().toUpperCase(),
 
-            alpha = 0.9f,
-            txtColor = Color(0x666666FF)
+                alpha = 0.9f,
+                txtColor = Color(0x666666FF)
         ))
 	}
 
-    private lateinit var gamelistView: TextList
+    private lateinit var gameListView: TextList
 
     private fun buildDetailedView(detailedView: View) {
 
@@ -328,7 +358,7 @@ class GameListScreen(
             stage.addActor(descriptionScrollPane)
         }
 
-        gamelistView = detailedView.findViewItem("gamelist") as TextList
+        gameListView = detailedView.findViewItem("gamelist") as TextList
         buildListScrollPane { buildListView() }
 
         val imageView = detailedView.findViewItem("md_image") as ViewImage?
@@ -398,14 +428,14 @@ class GameListScreen(
 	}
 
     data class RatingImages(
-        val ratingImg1: Image,
-        val ratingImg2: Image,
-        val ratingImg3: Image,
-        val ratingImg4: Image,
-        val ratingImg5: Image,
-        val ratingUnFilledTexture: Texture,
-        val ratingFilledTexture: Texture,
-        val ratingColor: Color
+            val ratingImg1: Image,
+            val ratingImg2: Image,
+            val ratingImg3: Image,
+            val ratingImg4: Image,
+            val ratingImg5: Image,
+            val ratingUnFilledTexture: Texture,
+            val ratingFilledTexture: Texture,
+            val ratingColor: Color
     )
 
 
@@ -439,14 +469,14 @@ class GameListScreen(
         val color = getColor(ratingView.color)
 
         ratingImages = RatingImages(
-            ratingImg1,
-            ratingImg2,
-            ratingImg3,
-            ratingImg4,
-            ratingImg5,
-            ratingTexture,
-            ratingFilledTexture,
-            color
+                ratingImg1,
+                ratingImg2,
+                ratingImg3,
+                ratingImg4,
+                ratingImg5,
+                ratingTexture,
+                ratingFilledTexture,
+                color
         )
     }
 
@@ -529,25 +559,64 @@ class GameListScreen(
         }
     }
 
-	private fun buildListView(): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
-        return buildGameListView(gamelistView, listItems)
+	private fun buildListView(): GameList {
+        return buildGameListView(gameListView, listItems)
 	}
 
-    private fun buildGameListView(gamelistView: TextList, selectedListItems: List<ListItem>): com.badlogic.gdx.scenes.scene2d.ui.List<String> {
+    class GameList(style: ListStyle?) : com.badlogic.gdx.scenes.scene2d.ui.List<ListItem>(style) {
 
-        return List<String>(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
-            fontColorUnselected = getColor(gamelistView.primaryColor)
-            fontColorSelected = getColor(gamelistView.selectedColor)
-            font = getFont(getFontPath(gamelistView), getFontSize(gamelistView.fontSize))
+        override fun drawItem(batch: Batch, font: BitmapFont, index: Int, item: ListItem, x1: Float, y: Float, width: Float): GlyphLayout {
+            val text = textOf(item)
+            val image = iconOf(item)
 
-            val selectorTexture = createColorTexture(Integer.parseInt(gamelistView.selectorColor + "FF", 16))
+            val x = x1 + 5
+
+            val lineHeight = font.lineHeight
+            val imgWidth = lineHeight - (lineHeight / 15)
+            val imgHeight = lineHeight - (lineHeight / 15)
+
+            batch.draw(image, x, y - imgHeight + 5, imgWidth, imgHeight)
+            return font.draw(batch, text, x + imgWidth + 5, y, 0, text.length, width, Align.left, false, "...")
+        }
+
+        private fun iconOf(item: ListItem): Texture {
+            return if (item.isFolder()) {
+                Texture("images/icons/folder.png")
+            } else {
+                val ext = item.game!!.path.extension
+
+                if (setOf("7z", "zip", "rar", "ace", "jar", "tar", "gz", "bz2").contains(ext)) {
+                    Texture("images/icons/file-rom-archive.png")
+                } else {
+                    Texture("images/icons/file-rom-file.png")
+                }
+            }
+        }
+
+        private fun textOf(item: ListItem): String {
+            return if (item.folder != null) {
+                item.folder.name
+            } else {
+                item.game!!.path.name
+            }
+        }
+    }
+
+    private fun buildGameListView(gameListView: TextList, listItems: List<ListItem>): GameList {
+
+        return GameList(com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle().apply {
+            fontColorUnselected = getColor(gameListView.primaryColor)
+            fontColorSelected = getColor(gameListView.selectedColor)
+            font = getFont(getFontPath(gameListView), getFontSize(gameListView.fontSize))
+
+            val selectorTexture = createColorTexture(Integer.parseInt(gameListView.selectorColor + "FF", 16))
             selection = TextureRegionDrawable(TextureRegion(selectorTexture))
 
         }).apply {
-            setSize(gamelistView)
+            setSize(gameListView)
 
-            selectedListItems.forEach { game ->
-                items.add(game.displayName)
+            listItems.forEach { listItem ->
+                items.add(listItem)
             }
         }
     }
@@ -766,10 +835,12 @@ class GameListScreen(
         logger.debug { if (selectedListItem != null) { "updateGameSelected [${selectedListItem.displayName}] [${selectedListItem.getPath().name}]" } else { "no game" } }
 
         if (isBasicViewOnly()) {
+            logger.trace { "basic view only, ignore update game selected" }
             return
         }
 
-        if (selectedListItem == null) {
+        if (selectedListItem == null || selectedListItem.isFolder()) {
+            logger.trace { "no selected list item, clearing info" }
             clearDetailedView()
             return
         }
@@ -972,7 +1043,21 @@ class GameListScreen(
         if (selectedListItem.isFolder()) {
             val selectedFolder = selectedListItem.getPath()
             folderStack.push(selectedFolder.parentFile)
+
+            val found = findGames(emulio) { game ->
+                game.path.parentFile == selectedFolder
+            }
+
+            val hasSubFolders = selectedFolder.listFiles()!!.any { it.isDirectory }
+
+            if (found.isEmpty() && !hasSubFolders) {
+                showInfoDialog("No games found in this folder.")
+                folderStack.pop()
+                return
+            }
+
             reloadGameListOnFolder(selectedFolder)
+
             listView.selectedIndex = 0
             this.selectedListItem = listItems[0]
         } else {
@@ -982,7 +1067,6 @@ class GameListScreen(
 
     private fun reloadGameListOnFolder(folder: File) {
         prepareGamesList(emulio, findGames(emulio), false, folder)
-        initGUI()
     }
 
 
@@ -996,9 +1080,9 @@ class GameListScreen(
             val lastOpenedFolder = lastOpenedFolder
             reloadGameListOnFolder(folderStack.pop())
 
-            val index = listItems.indexOf(
+            val index = 0.coerceAtLeast(listItems.indexOf(
                     listItems.filter { it.isFolder() }
-                            .find { it.getPath().absolutePath == lastOpenedFolder.absolutePath})
+                            .find { it.getPath().absolutePath == lastOpenedFolder.absolutePath }))
 
             listView.selectedIndex = index
             selectedListItem = listItems[index]
@@ -1126,7 +1210,6 @@ class GameListScreen(
         if (gamesFound.isNotEmpty()) {
             stage.actors.clear()
             prepareGamesList(emulio, gamesFound)
-            initGUI()
             selectNext(1)
         } else {
             Gdx.app.postRunnable {
