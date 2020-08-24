@@ -23,6 +23,8 @@ Initially this is focused on Windows, Linux and MAC platforms, but in the long t
 A preview on the latest build:
 
 [![Click to see in action](http://img.youtube.com/vi/Pxyf4JIO8aU/0.jpg)](https://www.youtube.com/watch?v=Pxyf4JIO8aU "Emulio latest snapshot")
+[![Click to see in action](http://img.youtube.com/vi/jpUtXDbrYS8/0.jpg)](https://www.youtube.com/watch?v=jpUtXDbrYS8 "Emulio latest snapshot 2")
+[![Click to see in action](http://img.youtube.com/vi/EqYgBcdB3Gg/0.jpg)](https://www.youtube.com/watch?v=EqYgBcdB3Gg "Emulio latest snapshot 3")
 
 
 ## Documentation
@@ -87,10 +89,8 @@ You can check more documentation in the libgdx official documentation page:
 
 ### Java and other dev dependencies
 
-I have plans to migrate to the newer versions of Java, but for the moment, I prefer to invest my time fixing the issues and implementing emulio itself. I tried to upgrade to a new version and suffered a little bit with it. For the moment the current version that you **need** (doesn't work with newer version) is:
-
-- Java 1.8 
-- Gradle 5.6.3 (you can use the gradlew included in this project of course.)
+- Java 14
+- Gradle 6.6 (you can use the gradlew included in this project of course.)
 
 No more dependencies so far. 
 
