@@ -1,6 +1,6 @@
 package com.github.emulio.scrapers
 
-import com.github.emulio.scrapers.tgdb.*
+import com.github.emulio.scrapers.tgdb.model.*
 import org.json.JSONObject
 
 interface Scrapper {

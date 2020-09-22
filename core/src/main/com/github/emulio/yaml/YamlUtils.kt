@@ -2,6 +2,8 @@ package com.github.emulio.yaml
 
 import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
+import com.github.emulio.model.RomsMode
+import com.github.emulio.model.RomsNaming
 import mu.KotlinLogging
 import org.yaml.snakeyaml.Yaml
 import java.io.File
@@ -45,10 +47,12 @@ object YamlUtils {
 		for ((platformName, platform) in systems) {
             val romsExtensions = expandList(platform["roms.extensions"])
 			val romsPath = File(platform["roms.path"] as String)
+			val romsMode = RomsMode.valueOf((platform["roms.mode"] as String? ?: "normal").toUpperCase())
+			val romsNaming = RomsNaming.valueOf((platform["roms.naming"] as String? ?: "normal").toUpperCase())
 			val runCommand = expandList(platform["run.command"])
-            val name = (platform["platform.name"] as String?) ?: platformName
-			
-			platforms += Platform(romsPath, runCommand, romsExtensions, platformName, name)
+			val name = (platform["platform.name"] as String?) ?: platformName
+
+			platforms += Platform(romsPath, runCommand, romsMode, romsNaming, romsExtensions, platformName, name)
 		}
 
 		logger.info { "Platform configuration file read in ${System.currentTimeMillis() - start}ms" }

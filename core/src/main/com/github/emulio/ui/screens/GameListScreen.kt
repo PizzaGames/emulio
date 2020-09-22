@@ -24,10 +24,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
-import com.github.emulio.model.Game
-import com.github.emulio.model.InputConfig
-import com.github.emulio.model.Platform
+import com.github.emulio.model.*
 import com.github.emulio.model.theme.*
 import com.github.emulio.process.ProcessException
 import com.github.emulio.process.ProcessLauncher
@@ -93,6 +90,60 @@ class GameListScreen(
 
         logger.info { "Preparing game list. (emulio instance: $emulio, games size: ${games.size}, folder: $rootFolder, override: $overrideFolder)" }
 
+        if (platform.romsMode == RomsMode.NORMAL) {
+            prepareGameListExpanded(games, rootFolder, overrideFolder)
+        } else if (platform.romsMode == RomsMode.FLAT) {
+            prepareGameListFlat(games)
+        }
+
+        initGUI()
+
+        selectedListItem = items.first()
+        updateGameSelected()
+    }
+
+    private fun prepareGameListFlat(games: List<Game>) {
+        games.forEach {
+            it.displayName = fetchGameName(it)
+        }
+
+        val sorted = games.sortedBy {
+            it.displayName!!.toLowerCase()
+        }
+
+        this.items = sorted.map {
+            GameItem(it)
+        }
+    }
+
+    private fun fetchGameName(it: Game): String {
+        if (it.displayName != null) {
+            return it.displayName!!
+        }
+
+        if (platform.romsNaming == RomsNaming.FOLDER) {
+            return it.path.parentFile.name
+        }
+
+        if (platform.romsNaming == RomsNaming.FIRST_FOLDER) {
+            val root = platform.romsPath
+            val path = findFirstPath(root, it.path)
+
+            return path.name
+        }
+
+        return it.displayName ?: it.name ?: it.path.name
+    }
+
+    private fun findFirstPath(rootFolder: File, path: File): File {
+        if (path.parentFile == rootFolder) {
+            return path
+        }
+
+        return findFirstPath(rootFolder, path.parentFile)
+    }
+
+    private fun prepareGameListExpanded(games: List<Game>, rootFolder: Boolean, overrideFolder: File?) {
         logger.debug { "getting all absolute paths" }
         val absolutePaths = games.map { it.path.parentFile.absoluteFile }
                 .toSortedSet(Comparator { file1, file2 -> file1.absolutePath.compareTo(file2.absolutePath) })
@@ -175,16 +226,14 @@ class GameListScreen(
             listOf(PathUpItem) + items
         }
 
-        this.items = folders + gamesMap.values.sortedBy {
+        this.items = folders + gamesMap.values.map {
+            it.displayName = fetchGameName(it)
+            it
+        }.sortedBy {
             it.displayName!!.toLowerCase()
         }.map {
             GameItem(it)
         }
-
-        initGUI()
-
-        selectedListItem = items.first()
-        updateGameSelected()
     }
 
     private fun findGames(emulio: Emulio, customFilter: ((Game) -> Boolean)? = null): List<Game> {
@@ -616,7 +665,12 @@ class GameListScreen(
             }
         }
 
-        private fun textOf(item: Item) = item.displayName
+        private fun textOf(item: Item): String {
+            if (items.filter { it.displayName == item.displayName }.size > 1) {
+                return item.path.name
+            }
+            return item.displayName
+        }
     }
 
     private fun buildGameListView(gameListView: TextList, listItems: List<Item>): GameList {
@@ -1181,7 +1235,7 @@ class GameListScreen(
 
 
 	}
-    
+
 	override fun onOptionsButton(input: InputConfig) {
         updateHelp()
 
@@ -1299,26 +1353,6 @@ class ScrollByAction(private val endScrollX: Float, private val endScrollY: Floa
 
 
 open class Item(val displayName: String, val path: File)
-class GameItem(val game: Game) : Item(game.path.name, game.path)
+class GameItem(val game: Game) : Item(game.displayName ?: game.name ?: game.path.name, game.path)
 open class PathItem(displayName: String, path: File) : Item(displayName, path)
 object PathUpItem : PathItem("..", File("up file"))
-
-/*
-
-data class ListItem(
-        val game: Game?,
-        val displayName: String,
-        val folder: File? = null
-) {
-    fun isFolder() = folder != null && game == null
-    fun isGame() = game != null && folder == null
-
-    fun getPath(): File {
-        return if (isFolder()) {
-            folder!!.absoluteFile
-        } else {
-            game!!.path
-        }
-    }
-}
- */

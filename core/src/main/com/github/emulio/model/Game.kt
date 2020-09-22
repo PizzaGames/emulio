@@ -17,6 +17,7 @@ data class Game(
 		val players: String?,
         val rating: Float?,
 		val platform: Platform,
+
         var displayName: String? = null
 
 ) {

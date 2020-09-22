@@ -6,7 +6,7 @@ import com.github.emulio.scrapers.Game
 import com.github.emulio.scrapers.Genre
 import com.github.emulio.scrapers.Platform
 import com.github.emulio.scrapers.Publisher
-import com.github.emulio.scrapers.tgdb.*
+import com.github.emulio.scrapers.tgdb.model.*
 
 object IGDBScrapper : Scrapper {
 

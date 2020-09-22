@@ -195,7 +195,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		logo.zIndex = 10
 		groupCount.zIndex = 9
 
-        updateHelpHuds(systemView)
+        updateHelpHud(systemView)
 	}
 
     private fun loadingString(): String {
@@ -206,7 +206,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
         }
     }
 
-    private fun updateHelpHuds(systemView: View) {
+    private fun updateHelpHud(systemView: View) {
 
         val helpSystemView = systemView.findViewItem("help") as HelpSystem?
 
@@ -237,7 +237,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		var currentX = 0f
 
-		currentX += initPlatform(emulio.platforms[Math.max(emulio.platforms.size - 2, 0)], widthPerPlatform, paddingWidth, currentX)
+		currentX += initPlatform(emulio.platforms[(emulio.platforms.size - 2).coerceAtLeast(0)], widthPerPlatform, paddingWidth, currentX)
 		currentX += initPlatform(emulio.platforms.last(), widthPerPlatform, paddingWidth, currentX)
 
 		emulio.platforms.forEach { platform ->
@@ -366,7 +366,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 	override fun render(delta: Float) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-		stage.act(Math.min(Gdx.graphics.deltaTime, 1 / 30f))
+		stage.act(Gdx.graphics.deltaTime.coerceAtMost(1 / 30f))
 		stage.draw()
 
 		inputController.update(delta)

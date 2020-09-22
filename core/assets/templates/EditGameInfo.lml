@@ -1,0 +1,87 @@
+<verticalGroup padding="10">
+
+<!--
+val id: String?,
+val source: String?,
+val path: File,
+val name: String?,
+val description: String?,
+val image: File?,
+val releaseDate: Date?,
+val developer: String?,
+val publisher: String?,
+val genre: String?,
+val players: String?,
+val rating: Float?,
+val platform: Platform,
+var displayName: String? = null
+-->
+    <verticalGroup padding="5">
+        <horizontalGroup space="5">
+            <label>Name</label>
+            <container width="700">
+                <textField id="txtName"/>
+            </container>
+        </horizontalGroup>
+    </verticalGroup>
+    <verticalGroup padding="5">
+        <horizontalGroup space="5">
+            <label>Developer</label>
+            <container width="300">
+                <textField id="txtDeveloper"/>
+            </container>
+            <label>Publisher</label>
+            <container width="300">
+                <textField id="txtPublisher"/>
+            </container>
+        </horizontalGroup>
+    </verticalGroup>
+    <verticalGroup padding="5">
+        <horizontalGroup space="5">
+            <label>Genre</label>
+            <container width="350">
+                <textField id="txtGenre"/>
+            </container>
+            <label>Release Date</label>
+            <container width="200">
+                <textField id="txtReleaseDate"/>
+            </container>
+        </horizontalGroup>
+    </verticalGroup>
+
+    <verticalGroup padding="5">
+        <horizontalGroup space="5">
+            <label>Players</label>
+            <container width="300">
+                <textField id="txtPlayers"/>
+            </container>
+            <label>Rating</label>
+            <container width="300">
+                <textField id="txtRating"/>
+            </container>
+        </horizontalGroup>
+    </verticalGroup>
+
+    <verticalGroup padding="5">
+        <container width="750">
+            <label>Description</label>
+        </container>
+        <container width="750" height="100">
+            <textArea id="text" />
+        </container>
+    </verticalGroup>
+
+    <verticalGroup padding="5">
+            <container height="150">
+                <!-- <image scaling="fill" /> -->
+            </container>
+            <container height="50">
+                <textButton style="TextButtonBlue" id="btChooseImage">Choose Image</textButton>
+            </container>
+    </verticalGroup>
+
+    <horizontalGroup space="5" align="right">
+        <container height="64" width="120"><textButton  id="confirm" style="TextButtonGreen">Confirm</textButton></container>
+        <container height="64" width="120"><textButton id="cancel" style="TextButtonRed">Cancel</textButton></container>
+    </horizontalGroup>
+</verticalGroup>

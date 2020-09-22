@@ -15,6 +15,7 @@ import com.github.emulio.Emulio
 import com.github.emulio.model.InputConfig
 import com.github.emulio.ui.screens.*
 import com.github.emulio.ui.screens.keyboard.VirtualKeyboardDialog
+import com.github.emulio.ui.screens.scraper.EditGameInfoDialog
 import com.github.emulio.utils.translate
 
 class OptionsMenuDialog(
@@ -36,7 +37,7 @@ class OptionsMenuDialog(
             "Search Game" to {
                 closeDialog(true)
 
-                VirtualKeyboardDialog("Search", "Message", emulio, stg) { text ->
+                VirtualKeyboardDialog("Search".translate(), "Search terms".translate(), emulio, stg) { text ->
                     backCallback(OptionsMenuResponse(searchDialogText = text))
                 }.show(stg)
             },
@@ -47,17 +48,17 @@ class OptionsMenuDialog(
                     backCallback(OptionsMenuResponse(jumpToLetter = it))
                 }.show(stg)
             },
-            "Sort games" to {
+            "Filter Favorites" to {
                 closeDialog(true)
-                //screen.switchScreen(ScraperScreen(emulio, backCallback))
+
+                InfoDialog("Not yet implemented".translate(), "Not yet implemented".translate(), emulio).show(stg)
             },
-            "Switch grouping arrangement" to {
+            "Edit this game metadata (Scraper)" to {
                 closeDialog(true)
-                //screen.switchScreen(ScraperScreen(emulio, backCallback))
-            },
-            "Edit this game metadata" to {
-                closeDialog(true)
-                //screen.switchScreen(ScraperScreen(emulio, backCallback))
+
+                EditGameInfoDialog(emulio, stg) {
+                    logger.debug { "back callback! $it" }
+                }.show(stg)
             }
     )
 

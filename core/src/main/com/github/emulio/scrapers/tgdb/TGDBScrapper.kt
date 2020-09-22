@@ -1,19 +1,18 @@
 package com.github.emulio.scrapers.tgdb
 
 import com.github.emulio.exceptions.ScrapperException
+import com.github.emulio.scrapers.tgdb.model.*
 import khttp.get
 import khttp.responses.Response
 import mu.KotlinLogging
 import org.json.JSONArray
 import org.json.JSONObject
-import java.lang.Exception
-import java.lang.StringBuilder
 import java.nio.charset.Charset
 import java.util.*
 
 object TGDBScrapper {
 
-    private const val baseUrl = "https://api.thegamesdb.net"
+    private const val baseUrl = "https://api.thegamesdb.net/v1"
 
     val logger = KotlinLogging.logger { }
 
@@ -36,7 +35,7 @@ object TGDBScrapper {
         }
 
         return tgdbGet(
-                url = "$baseUrl/Games/ByGameId",
+                url = "$baseUrl/Games/ByGameID",
                 params = params,
                 filterName = "games",
                 converter = ::gameConverter
@@ -58,12 +57,12 @@ object TGDBScrapper {
         )
     }
 
-    fun getGamesByPlatformId(platformId: Int,
-                     fields: GameFields = GameFields(),
-                     include: GameInclude = GameInclude(),
-                     page: Int = 0): List<Game> {
+    fun getGamesByPlatformID(platformId: Int,
+                             fields: GameFields = GameFields(),
+                             include: GameInclude = GameInclude(),
+                             page: Int = 0): List<Game> {
         return tgdbGet(
-                url = "$baseUrl/Games/ByPlatformId",
+                url = "$baseUrl/Games/ByPlatformID",
                 params = mapOf(
                         "apikey" to key,
                         "id" to platformId.toString(),
@@ -76,10 +75,10 @@ object TGDBScrapper {
     }
 
     fun getGamesByName(name: String,
-                     fields: GameFields = GameFields(),
-                     include: GameInclude = GameInclude(),
-                     filterPlatformIds: List<Int> = emptyList(),
-                     page: Int): List<Game> {
+                       fields: GameFields = GameFields(),
+                       include: GameInclude = GameInclude(),
+                       filterPlatformIds: List<Int> = emptyList(),
+                       page: Int): List<Game> {
         return tgdbGet(
                 url = "$baseUrl/Games/ByGameName",
                 params = mapOf(
@@ -94,12 +93,12 @@ object TGDBScrapper {
         )
     }
 
-    fun getGamesById(gameId: Int,
+    fun getGamesByID(gameId: Int,
                      fields: GameFields = GameFields(),
                      include: GameInclude = GameInclude(),
                      page: Int): List<Game> {
         return tgdbGet(
-                url = "$baseUrl/Games/ByGameId",
+                url = "$baseUrl/Games/ByGameID",
                 params = mapOf(
                         "apikey" to key,
                         "id" to gameId.toString(),
@@ -137,10 +136,10 @@ object TGDBScrapper {
         )
     }
 
-    fun getPlatformsById(platformId: Int,
+    fun getPlatformsByID(platformId: Int,
                          fields: PlatformFields = PlatformFields()): List<Platform> {
         return tgdbGet(
-                url = "$baseUrl/Platforms/ByPlatformId",
+                url = "$baseUrl/Platforms/ByPlatformID",
                 params = mapOf(
                         "apikey" to key,
                         "id" to platformId.toString(),
@@ -298,207 +297,23 @@ object TGDBScrapper {
 
     private val key =
             String(Base64.getDecoder().decode("==QZmNWZyIDM1kjMkZzM4IGMzQWYlNzM0UTNiNDZyUjNhVzN2YTMxkDOlhDMhNTM5MGZ1IzYkZWZxMjZmNDN0gDZ".reversed()), Charset.forName("UTF-8"))
+}
 
-    @JvmStatic
-    fun main(args: Array<String>) {
+fun main() {
 //        println(key)
 //        println(getPublishers())
 //        println(getDevelopers())
 //        println(getGenres())
 //        println(getPlatforms().map { it.id to it.name })
-//        println(getPlatformsById(-1))
-//        println(getPlatformsById(4970))
-//        println(getPlatformsById(4970, PlatformFields(youtube = true, console = true)))
-//        println(getPlatformsById(4971, PlatformFields(icon = true, console = true)))
+//        println(getPlatformsByID(-1))
+//        println(getPlatformsByID(4970))
+//        println(getPlatformsByID(4970, PlatformFields(youtube = true, console = true)))
+//        println(getPlatformsByID(4971, PlatformFields(icon = true, console = true)))
 //        println(getPlatformsByName("Nintendo Switch"))
 //        println(getPlatformsByName("Switch"))
 //        println(getPlatformsByName("A"))
 //        println(getPlatformsByName("Takeda"))
-
-        println(getPlatforms())
-        println(getGamesByPlatformId(10))
-    }
+    println(TGDBScrapper.getPlatforms())
+    println(TGDBScrapper.getGamesByPlatformID(20, page = 20))
 }
 
-class GameInclude(private val boxart: Boolean = false,
-                  private val publishers: Boolean = false) {
-    fun fields(): String {
-        return StringBuilder().apply {
-            append(if (boxart) "icon," else "")
-            append(if (publishers) "console," else "")
-            if (length > 0) {
-                setLength(length - 1)
-            }
-
-        }.toString()
-    }
-}
-
-class GameFields(private val players: Boolean = false,
-                 private val publishers: Boolean = false,
-                 private val genres: Boolean = false,
-                 private val last_updated: Boolean = false,
-                 private val rating: Boolean = false,
-                 private val platform: Boolean = false,
-                 private val coop: Boolean = false,
-                 private val os: Boolean = false,
-                 private val processor: Boolean = false,
-                 private val ram: Boolean = false,
-                 private val hdd: Boolean = false,
-                 private val video: Boolean = false,
-                 private val sound: Boolean = false,
-                 private val overview: Boolean = false,
-                 private val youtube: Boolean = false) {
-    fun fields(): String {
-        return StringBuilder().apply {
-            append(if (players) "icon," else "")
-            append(if (publishers) "console," else "")
-            append(if (genres) "controller," else "")
-            append(if (last_updated) "developer," else "")
-            append(if (rating) "manufacturer," else "")
-            append(if (platform) "media," else "")
-            append(if (coop) "cpu," else "")
-            append(if (os) "memory," else "")
-            append(if (processor) "graphics," else "")
-            append(if (ram) "sound," else "")
-            append(if (hdd) "maxcontrollers," else "")
-            append(if (video) "display," else "")
-            append(if (sound) "display," else "")
-            append(if (overview) "overview," else "")
-            append(if (youtube) "youtube," else "")
-            if (length > 0) {
-                setLength(length - 1)
-            }
-
-        }.toString()
-    }
-}
-
-class GameImageFields(private val fanart: Boolean = false,
-                      private val banner: Boolean = false,
-                      private val boxart: Boolean = false,
-                      private val screenshot: Boolean = false,
-                      private val clearlogo: Boolean = false) {
-    fun fields(): String {
-        return StringBuilder().apply {
-            append(if (fanart) "icon," else "")
-            append(if (banner) "console," else "")
-            append(if (boxart) "controller," else "")
-            append(if (screenshot) "developer," else "")
-            append(if (clearlogo) "manufacturer," else "")
-            if (length > 0) {
-                setLength(length - 1)
-            }
-
-        }.toString()
-    }
-}
-
-class PlatformImageFields(
-        private val fanart: Boolean = false,
-        private val banner: Boolean = false,
-        private val boxart: Boolean = false) {
-    fun fields(): String {
-        return StringBuilder().apply {
-            append(if (fanart) "fanart," else "")
-            append(if (banner) "banner," else "")
-            append(if (boxart) "boxart," else "")
-            if (length > 0) {
-                setLength(length - 1)
-            }
-
-        }.toString()
-    }
-}
-
-class PlatformFields(private val icon: Boolean = false,
-                     private val console: Boolean = false,
-                     private val controller: Boolean = false,
-                     private val developer: Boolean = false,
-                     private val manufacturer: Boolean = false,
-                     private val media: Boolean = false,
-                     private val cpu: Boolean = false,
-                     private val memory: Boolean = false,
-                     private val graphics: Boolean = false,
-                     private val sound: Boolean = false,
-                     private val maxcontrollers: Boolean = false,
-                     private val display: Boolean = false,
-                     private val overview: Boolean = false,
-                     private val youtube: Boolean = false) {
-    fun fields(): String {
-        return StringBuilder().apply {
-            append(if (icon) "icon," else "")
-            append(if (console) "console," else "")
-            append(if (controller) "controller," else "")
-            append(if (developer) "developer," else "")
-            append(if (manufacturer) "manufacturer," else "")
-            append(if (media) "media," else "")
-            append(if (cpu) "cpu," else "")
-            append(if (memory) "memory," else "")
-            append(if (graphics) "graphics," else "")
-            append(if (sound) "sound," else "")
-            append(if (maxcontrollers) "maxcontrollers," else "")
-            append(if (display) "display," else "")
-            append(if (overview) "overview," else "")
-            append(if (youtube) "youtube," else "")
-            if (length > 0) {
-                setLength(length - 1)
-            }
-
-        }.toString()
-    }
-}
-
-data class Game(
-        val id: Int,
-        val players: Int? = null,
-        val publishers: String? = null,
-        val genres: String? = null,
-        val last_updated: String? = null,
-        val rating: String? = null,
-        val platform: String? = null,
-        val coop: String? = null,
-        val os: String? = null,
-        val processor: String? = null,
-        val ram: String? = null,
-        val hdd: String? = null,
-        val video: String? = null,
-        val sound: String? = null,
-        val overview: String? = null,
-        val youtube: String? = null
-)
-
-data class Platform(
-        val id: Int ,
-        val name: String,
-        val alias: String?,
-        val icon: String?,
-        val console: String?,
-        val controller: String?,
-        val developer: String?,
-        val manufacturer: String?,
-        val media: String?,
-        val cpu: String?,
-        val memory: String?,
-        val graphics: String?,
-        val sound: String?,
-        val maxcontrollers: Int?,
-        val display: String?,
-        val overview: String?,
-        val youtube: String?
-)
-
-data class Genre(
-        val id: Int,
-        val name: String
-)
-
-data class Developer(
-        val id: Int,
-        val name: String
-)
-
-data class Publisher(
-        val name: String,
-        val id: Int
-)

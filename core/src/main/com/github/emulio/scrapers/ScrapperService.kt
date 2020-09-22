@@ -3,6 +3,7 @@ package com.github.emulio.scrapers
 import com.github.emulio.scrapers.igdb.IGDBScrapper
 import com.github.emulio.scrapers.rawg.RAWGScrapper
 import com.github.emulio.scrapers.tgdb.*
+import com.github.emulio.scrapers.tgdb.model.*
 
 object ScrapperService : Scrapper {
 
