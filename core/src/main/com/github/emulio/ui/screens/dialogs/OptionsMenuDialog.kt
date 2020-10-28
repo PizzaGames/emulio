@@ -12,8 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
-import com.github.emulio.model.InputConfig
-import com.github.emulio.ui.screens.*
+import com.github.emulio.model.config.InputConfig
+import com.github.emulio.ui.screens.EmulioDialog
+import com.github.emulio.ui.screens.EmulioScreen
+import com.github.emulio.ui.screens.createColorTexture
 import com.github.emulio.ui.screens.keyboard.VirtualKeyboardDialog
 import com.github.emulio.ui.screens.scraper.EditGameInfoDialog
 import com.github.emulio.utils.translate

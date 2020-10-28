@@ -4,7 +4,9 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+// FIXME this class needs to die
 object DateHelper {
+
     const val DF_SIMPLE_STRING = "yyyy-MM-dd"
     @JvmField val DF_SIMPLE_FORMAT = object : ThreadLocal<DateFormat>() {
         override fun initialValue(): DateFormat {

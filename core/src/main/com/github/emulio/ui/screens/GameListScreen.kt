@@ -24,9 +24,14 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
-import com.github.emulio.model.*
+import com.github.emulio.exceptions.ProcessCreationException
+import com.github.emulio.model.Game
+import com.github.emulio.model.Platform
+import com.github.emulio.model.RomsMode
+import com.github.emulio.model.RomsNaming
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.model.theme.*
-import com.github.emulio.process.ProcessException
 import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
@@ -293,7 +298,7 @@ class GameListScreen(
                 val newIndex = listView.selectedIndex
 
                 if (lastSelectedIndex == newIndex) {
-                    onConfirmButton(AnyInputConfig)
+                    onConfirmButton(DummyInputConfig)
                     return
                 }
 
@@ -626,6 +631,18 @@ class GameListScreen(
     class GameList(style: ListStyle?) : com.badlogic.gdx.scenes.scene2d.ui.List<Item>(style) {
 
         override fun drawItem(batch: Batch, font: BitmapFont, index: Int, item: Item, x1: Float, y: Float, width: Float): GlyphLayout {
+            return drawText(item, x1, font, batch, y, width)
+        }
+
+        private fun drawText(item: Item, x1: Float, font: BitmapFont, batch: Batch, y: Float, width: Float): GlyphLayout {
+            val text = textOf(item)
+
+            val x = x1 + 5
+
+            return font.draw(batch, text, x, y, 0, text.length, width, Align.left, false, "...")
+        }
+
+        private fun drawWithIcon(item: Item, x1: Float, font: BitmapFont, batch: Batch, y: Float, width: Float): GlyphLayout {
             val text = textOf(item)
             val image = iconOf(item)
 
@@ -865,7 +882,7 @@ class GameListScreen(
         emulio.options.minimizeApplication()
         try {
             ProcessLauncher.executeProcess(command.toTypedArray())
-        } catch (ex: ProcessException) {
+        } catch (ex: ProcessCreationException) {
             showErrorDialog("There was a problem launching this game. Check your config".translate())
         }
 

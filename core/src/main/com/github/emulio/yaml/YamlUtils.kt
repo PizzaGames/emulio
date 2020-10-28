@@ -1,13 +1,13 @@
 package com.github.emulio.yaml
 
-import com.github.emulio.model.EmulioConfig
 import com.github.emulio.model.Platform
 import com.github.emulio.model.RomsMode
 import com.github.emulio.model.RomsNaming
+import com.github.emulio.model.config.EmulioConfig
 import mu.KotlinLogging
+import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
-import org.yaml.snakeyaml.DumperOptions
 import java.io.FileInputStream
 import java.io.InputStream
 

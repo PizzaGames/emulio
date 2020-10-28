@@ -10,7 +10,7 @@ import com.github.emulio.Emulio
 import mu.KotlinLogging
 import kotlin.math.min
 
-class DevSplashScreen(emulio:Emulio) : EmulioScreen(emulio) {
+class SplashScreen(emulio:Emulio) : EmulioScreen(emulio) {
     val logger = KotlinLogging.logger { }
 
     init {
@@ -22,13 +22,13 @@ class DevSplashScreen(emulio:Emulio) : EmulioScreen(emulio) {
             y = (screenHeight - height) / 2
 
             addAction(SequenceAction(
-                    Actions.delay(1f),
-                    Actions.fadeIn(0.250f),
-                    Actions.delay(1f),
-                    Actions.fadeOut(0.250f),
-                    Actions.run {
-                        onCompleteAnimation()
-                    }
+                Actions.delay(1f),
+                Actions.fadeIn(0.250f),
+                Actions.delay(1f),
+                Actions.fadeOut(0.250f),
+                Actions.run {
+                    onCompleteAnimation()
+                }
             ))
         })
 

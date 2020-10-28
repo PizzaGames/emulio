@@ -23,13 +23,11 @@ public final class YamlReaderHelper {
 			 final FileOutputStream fos = new FileOutputStream(esconfig)) {
 
 			final byte[] buff = new byte[4096]; // 4kb
-			int bytesRead = 0;
-			while ((bytesRead = esTemplateStream.read(buff)) != -1) {
-				fos.write(buff, 0, bytesRead);
-			}
+			int bytesRead;
+			while ((bytesRead = esTemplateStream.read(buff)) != -1) fos.write(buff, 0, bytesRead);
 
 			fos.flush();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -37,9 +35,7 @@ public final class YamlReaderHelper {
 	}
 
 	public static Map<Object, Object> parse(final File configFile) {
-		if (!configFile.exists()) {
-			createConfigFromClasspath(configFile);
-		}
+		if (!configFile.exists()) createConfigFromClasspath(configFile);
 
 //		System.out.printf("Reading configuration file [%s]\n", configFile.getAbsolutePath());
 
@@ -48,27 +44,23 @@ public final class YamlReaderHelper {
 		try (final FileInputStream fis = new FileInputStream(configFile)) {
 			esConfig = (Map<Object, Object>) yaml.load(fis);
 //			System.out.println("Config file loaded");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
-		YamlReaderHelper.prepareConfig(esConfig, configFile);
+		YamlReaderHelper.prepareConfig(esConfig);
 
 		return esConfig;
 	}
 
-	public static void prepareConfig(final Map<Object, Object> esConfig, final File configFile) {
+	public static void prepareConfig(final Map<Object, Object> esConfig) {
 		if (!esConfig.containsKey("esrunner.home")) {
 
 			//String esRunnerHome = configFile.getParentFile().getAbsolutePath();
 
 			final String classPathProperty = System.getProperty("java.class.path");
 			final String[] paths = classPathProperty.split(File.pathSeparator);
-			for (String path : paths) {
-				if (path.contains("esrunner")) {
-					esConfig.put("esrunner.home", path);
-				}
-			}
+			for (final String path : paths) if (path.contains("esrunner")) esConfig.put("esrunner.home", path);
 		}
 
 		esConfig.put("rom.raw", "\"%ROM_RAW%\"");
@@ -79,7 +71,7 @@ public final class YamlReaderHelper {
 		YamlReaderHelper.expandVars(esConfig);
 	}
 
-	public static void expandVars(Map<Object, Object> esConfig) {
+	public static void expandVars(final Map<Object, Object> esConfig) {
 		final HashMap<String, Object> flatenedConfig = new HashMap<>();
 		flattenProperties(esConfig, flatenedConfig, null);
 		expand(flatenedConfig);
@@ -87,58 +79,44 @@ public final class YamlReaderHelper {
 	}
 
 	private static void expand(final HashMap<String, Object> flatenedConfig) {
-		PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper("${", "}");
+		final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper("${", "}");
 		final Set<Entry<String, Object>> entrySet = flatenedConfig.entrySet();
-		for (Entry<String, Object> entry : entrySet) {
-			Object value = entry.getValue();
-			if (value instanceof String) {
-				entry.setValue(helper.replacePlaceholders((String) value, flatenedConfig));
-			} else if (value instanceof List) {
-				@SuppressWarnings("unchecked")
+		for (final Entry<String, Object> entry : entrySet) {
+			final Object value = entry.getValue();
+			if (value instanceof String) entry.setValue(helper.replacePlaceholders((String) value, flatenedConfig));
+			else if (value instanceof List) {
 				final List<String> list = (List<String>) value;
-				for (int i = 0; i < list.size(); i++) {
+				for (int i = 0; i < list.size(); i++)
 					list.set(i, helper.replacePlaceholders(list.get(i), flatenedConfig));
-				}
 			}
 		}
 	}
 
-	private static void flattenProperties(Map<Object, Object> esConfig, HashMap<String, Object> flatenedConfig,
+	private static void flattenProperties(final Map<Object, Object> esConfig, final HashMap<String, Object> flatenedConfig,
 										  final String prefix) {
 		final Set<Entry<Object, Object>> entries = esConfig.entrySet();
-		for (Entry<Object, Object> entry : entries) {
-			String key = (String) entry.getKey();
+		for (final Entry<Object, Object> entry : entries) {
+			final String key = (String) entry.getKey();
 			final Object value = entry.getValue();
-			if (value instanceof Map) {
-				flattenProperties(((Map<Object, Object>) value), flatenedConfig, key);
-			} else {
-				if (prefix != null) {
-					flatenedConfig.put(prefix + "." + key, value);
-				} else {
-					flatenedConfig.put(key, value);
-				}
-			}
+			if (value instanceof Map) flattenProperties(((Map<Object, Object>) value), flatenedConfig, key);
+			else if (prefix != null) flatenedConfig.put(prefix + "." + key, value);
+			else
+				flatenedConfig.put(key, value);
 		}
 	}
 
-	private static void deflatenProperties(Map<Object, Object> esConfig, HashMap<String, Object> flatenedConfig,
-			final String prefix) {
+	private static void deflatenProperties(final Map<Object, Object> esConfig, final HashMap<String, Object> flatenedConfig,
+										   final String prefix) {
 
 		final Set<Entry<Object, Object>> entries = esConfig.entrySet();
-		for (Entry<Object, Object> entry : entries) {
-			String key = (String) entry.getKey();
+		for (final Entry<Object, Object> entry : entries) {
+			final String key = (String) entry.getKey();
 			final Object value = entry.getValue();
 
-			if (value instanceof Map) {
-				deflatenProperties((Map<Object, Object>) value, flatenedConfig, key);
-			} else {
-				if (prefix != null) {
-					entry.setValue(flatenedConfig.get(prefix + "." + key));
-				} else {
-					entry.setValue(flatenedConfig.get(key));
-				}
-
-			}
+			if (value instanceof Map) deflatenProperties((Map<Object, Object>) value, flatenedConfig, key);
+			else if (prefix != null) entry.setValue(flatenedConfig.get(prefix + "." + key));
+			else
+				entry.setValue(flatenedConfig.get(key));
 		}
 	}
 }

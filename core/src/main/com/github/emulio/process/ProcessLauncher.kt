@@ -1,5 +1,6 @@
 package com.github.emulio.process
 
+import com.github.emulio.exceptions.ProcessCreationException
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
@@ -15,25 +16,39 @@ object ProcessLauncher {
 		val command = commandArray.joinToString(" ")
 
 		logger.info { "executing process: [$command]" }
-        val runtime = Runtime.getRuntime()
-        val process = runtime.exec(command)
-
-        //TODO avoid creation of new threads. Emulio will preferably have only 4 threads (UI, FileFinder, ExecutionProcess, ProcessStreamPipe)
-
-		Flowable.fromCallable {
-			InputStreamConsumer(process.inputStream)
-			InputStreamConsumer(process.errorStream)
-		}.subscribeOn(Schedulers.newThread())
-
-        val exitCode = process.waitFor() //blocks this thread waiting for execution to terminate
+		val exitCode = execute(command)
 		logger.info { "process ended, returning to emulio main interface :)" }
 
-		//TODO detect any return code problem here.
-
 		if (exitCode > 0) {
-			throw ProcessException("Error executing process [$command], the return code was: [$exitCode], check log for more information.")
+			throw ProcessCreationException("Error executing process [$command], the return code " +
+					"was: [$exitCode], check log for more information.")
 		}
     }
+
+	private fun execute(command: String): Int {
+		val runtime = Runtime.getRuntime()
+		val process = runtime.exec(command)
+
+		listenProcessStreams(process)
+
+		return process.waitFor()
+	}
+
+	private fun listenProcessStreams(process: Process) {
+		//TODO avoid creation of new threads. Emulio will preferably have only 4 threads (UI, FileFinder, ExecutionProcess, ProcessStreamPipe)
+		Flowable.fromCallable {
+			consumeProcessOutput(process)
+		}.subscribeOn(Schedulers.newThread())
+	}
+
+	private fun consumeProcessOutput(process: Process) {
+		InputStreamConsumerRunnable(process.inputStream) {
+			logger.info { "process output: $it" }
+		}
+		InputStreamConsumerRunnable(process.errorStream) {
+			logger.error { "process err output: $it" }
+		}
+	}
 
 	fun editFile(file: File) {
 		if (openOnCode(file)) return
@@ -57,9 +72,8 @@ object ProcessLauncher {
 				listOf("code", file.absolutePath)
 			}
 			executeProcess(args.toTypedArray())
-
 			true
-		} catch (e: ProcessException) {
+		} catch (e: ProcessCreationException) {
 			logger.trace(e) { "Unable to find vscode installed" }
 			false
 		}
@@ -67,6 +81,4 @@ object ProcessLauncher {
 
 	private fun isWindows() = System.getProperty("os.name").toLowerCase().contains("windows")
 }
-
-class ProcessException(message : String) : Exception(message)
 

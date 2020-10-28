@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
-import com.github.emulio.model.InputConfig
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.ui.screens.EmulioDialog
 import com.github.emulio.ui.screens.addClickListener
 import com.github.emulio.ui.screens.getButtonImagePath
@@ -40,7 +40,7 @@ class InfoDialog(title: String, private val dialogMessage: String, emulio: Emuli
                 add(Label("Ok".translate(), emulio.skin, "title-small"))
 
                 addClickListener {
-                    onConfirmButton(AnyInputConfig)
+                    onConfirmButton(DummyInputConfig)
                 }
             })
         }).expand().fill()

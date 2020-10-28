@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.github.emulio.Emulio
-import com.github.emulio.model.InputConfig
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.ui.screens.EmulioDialog
 import com.github.emulio.ui.screens.createColorTexture
 import com.github.emulio.utils.translate

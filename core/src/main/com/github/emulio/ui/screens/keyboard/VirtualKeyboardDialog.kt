@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Pools
 import com.github.czyzby.lml.parser.impl.AbstractLmlView
 import com.github.czyzby.lml.util.Lml
 import com.github.emulio.Emulio
-import com.github.emulio.model.InputConfig
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.ui.screens.EmulioDialog
 import com.github.emulio.ui.screens.addClickListener
 import mu.KotlinLogging

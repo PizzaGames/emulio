@@ -20,43 +20,35 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
-import com.github.emulio.model.InputConfig
-import com.github.emulio.model.Playstation
-import com.github.emulio.model.Xbox
-import com.github.emulio.process.ProcessException
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.InputConfig
+import com.github.emulio.model.config.controller.PlaystationController
+import com.github.emulio.model.config.controller.XboxController
 import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.ui.screens.dialogs.*
+import com.github.emulio.ui.screens.util.ColorCache
+import com.github.emulio.ui.screens.util.FontCache
+import com.github.emulio.ui.screens.util.FontCache.freeTypeFontGenerator
 import com.github.emulio.utils.translate
 import mu.KotlinLogging
 import java.io.File
-import java.math.BigInteger
 import kotlin.system.exitProcess
-
 
 abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
     private val logger = KotlinLogging.logger { }
 
-	val stage: Stage = Stage()
-
-	val screenWidth = Gdx.graphics.width.toFloat()
-	val screenHeight = Gdx.graphics.height.toFloat()
-
-	private val freeFontGeneratorCache = mutableMapOf<FileHandle, FreeTypeFontGenerator>()
-	private val fontCache = mutableMapOf<Triple<FileHandle, Int, Color?>, BitmapFont>()
-
-	val freeTypeFontGenerator = getFreeTypeFontGenerator(Gdx.files.internal("fonts/RopaSans-Regular.ttf"))
+    val stage: Stage = Stage()
+    val screenWidth = Gdx.graphics.width.toFloat()
+    val screenHeight = Gdx.graphics.height.toFloat()
 
     var fadeAnimation = true
 
-	fun getColor(rgba: String?): Color = when {
-//        // TODO: Color are resources? we need to cache they like in SWT/Swing lib?
-        rgba == null -> Color.BLACK
-        rgba.length == 6 -> Color(BigInteger(rgba.toUpperCase() + "FF", 16).toInt())
-        rgba.length == 8 -> Color(BigInteger(rgba.toUpperCase(), 16).toInt())
-        else -> Color.BLACK
-    }
+    fun getFont(fileHandle: FileHandle,
+                fontSize: Int,
+                fontColor: Color? = null) = FontCache.getFont(fileHandle, fontSize, fontColor)
+
+	fun getColor(rgba: String?): Color = ColorCache.getColor(rgba)
 
     fun buildText(text: String, txtFont: BitmapFont, x: Float, y: Float): Label {
         return Label(text, Label.LabelStyle().apply {
@@ -77,41 +69,6 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         return imgButtonStart
     }
 
-	fun getFont(fileHandle: FileHandle, fontSize: Int, fontColor: Color? = null): BitmapFont {
-		val triple = Triple(fileHandle, fontSize, fontColor)
-
-        return if (fontCache.containsKey(triple)) {
-            fontCache[triple]!!
-        } else {
-            val parameter = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-                size = fontSize
-
-                if (fontColor != null) {
-                    color = fontColor
-                    borderWidth = 0.4f
-                    borderColor = fontColor
-                }
-
-                shadowColor = Color(0.2f, 0.2f, 0.2f, 0.2f)
-                shadowOffsetX = 1
-                shadowOffsetY = 1
-            }
-
-            getFreeTypeFontGenerator(fileHandle).generateFont(parameter).apply {
-                fontCache[triple] = this
-            }
-        }
-
-	}
-
-	private fun getFreeTypeFontGenerator(fileHandle: FileHandle): FreeTypeFontGenerator {
-        return if (freeFontGeneratorCache.containsKey(fileHandle)) {
-            freeFontGeneratorCache[fileHandle]!!
-        } else {
-            FreeTypeFontGenerator(fileHandle).apply { freeFontGeneratorCache[fileHandle] = this  }
-        }
-	}
-
 	override fun show() {
         logger.debug { "show" }
         stage.root.actions.forEach { it.reset() }
@@ -130,20 +87,16 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         }
 	}
 
-    open fun onScreenLoad() {
-
-    }
-
+    open fun onScreenLoad() {}
     abstract fun release()
-
 
 	override fun dispose() {
         logger.trace { "dispose: ${javaClass.name} " }
 		stage.dispose()
 	}
 
-    public fun restart() {
-        switchScreen(DevSplashScreen(emulio))
+    fun restart() {
+        switchScreen(SplashScreen(emulio))
     }
 
 	fun switchScreen(newScreen: Screen) {
@@ -210,21 +163,18 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
         
         logger.debug { "initHelpHuds: ${initialInputConfig.name}" }
 
-        val helpFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+        val helpFont = freeTypeFontGenerator().generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
             size = calculatedHeight.toInt()
             color = Color.WHITE
             color.a = 1f
         })
 
-        // Calculate the size according resolution???
-        val imgWidth = calculatedHeight
-        val imgHeight = calculatedHeight
         val padding = 5f
 
         val lineHeight = helpFont.lineHeight
 
         val y = initialY - 2f + ((height - lineHeight) / 2)
-        val imageY = (initialY - 2f + ((height - imgHeight) / 2)) + 2f
+        val imageY = (initialY - 2f + ((height - calculatedHeight) / 2)) + 2f
 
         var x = 10f
 
@@ -233,7 +183,11 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
 
             val action = initialInputConfig.confirm
             if (txtConfirm != null) {
-                buildHud(action, txtConfirm, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(action,
+                        txtConfirm,
+                        initialInputConfig,
+                        calculatedHeight,
+                        calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgConfirmButton = first
                     txtConfirmButton = second
                     x = third
@@ -241,7 +195,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtCancel != null) {
-                buildHud(initialInputConfig.cancel, txtCancel, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(initialInputConfig.cancel, txtCancel, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgCancelButton = first
                     txtCancelButton = second
                     x = third
@@ -249,7 +203,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtFind != null) {
-                buildHud(initialInputConfig.find, txtFind, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(initialInputConfig.find, txtFind, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgFindButton = first
                     txtFindButton = second
                     x = third
@@ -257,7 +211,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtOptions != null) {
-                buildHud(initialInputConfig.options, txtOptions, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(initialInputConfig.options, txtOptions, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgOptionsButton = first
                     txtOptionsButton = second
                     x = third
@@ -265,7 +219,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtSelect != null) {
-                buildHud(initialInputConfig.select, txtSelect, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(initialInputConfig.select, txtSelect, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgSelectButton = first
                     txtSelectButton = second
                     x = third
@@ -273,7 +227,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtPageUp != null) {
-                buildHud(initialInputConfig.pageUp, txtPageUp, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(initialInputConfig.pageUp, txtPageUp, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgPageUpButton = first
                     txtPageUpButton = second
                     x = third
@@ -281,7 +235,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtPageDown != null) {
-                buildHud(initialInputConfig.pageDown, txtPageDown, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(initialInputConfig.pageDown, txtPageDown, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgPageDownButton = first
                     txtPageDownButton = second
                     x = third
@@ -289,7 +243,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtUpDown != null) {
-                buildHud(HELP_HUD_UPDOWN, txtUpDown, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(HELP_HUD_UPDOWN, txtUpDown, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgUpDownButton = first
                     txtUpDownButton = second
                     x = third
@@ -297,7 +251,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtLeftRight != null) {
-                buildHud(HELP_HUD_LEFTRIGHT, txtLeftRight, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(HELP_HUD_LEFTRIGHT, txtLeftRight, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgLeftRightButton = first
                     txtLeftRightButton = second
                     x = third
@@ -305,7 +259,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
             }
 
             if (txtAllDirection != null) {
-                buildHud(HELP_HUD_ALL, txtAllDirection, initialInputConfig, imgWidth, imgHeight, x, imageY, padding, helpFont, y).apply {
+                buildHud(HELP_HUD_ALL, txtAllDirection, initialInputConfig, calculatedHeight, calculatedHeight, x, imageY, padding, helpFont, y).apply {
                     imgAllDirectionButtons = first
                     txtAllDirectionButtons = second
                     x = third
@@ -395,7 +349,7 @@ abstract class EmulioScreen(open val emulio: Emulio) : Screen {
     fun updateHelp(config: InputConfig = emulio.data["lastInput"] as InputConfig) {
         val help = this.helpItems ?: return
 
-        if (config == AnyInputConfig) {
+        if (config == DummyInputConfig) {
             return
         }
 
@@ -472,23 +426,23 @@ fun isKeyboard(controllerName: String): Boolean {
 }
 
 fun isXboxController(controllerName: String): Boolean {
-    return Xbox.isXboxController(controllerName)
+    return XboxController.isXboxController(controllerName)
 }
 
 fun isPlaystationController(controllerName: String): Boolean {
-    return Playstation.isPlaystationController(controllerName)
+    return PlaystationController.isPlaystationController(controllerName)
 }
 
 fun getXboxImagePath(button: Int): String {
     return when (button) {
-        Xbox.A -> "images/help/xbox/360_A.png"
-        Xbox.B -> "images/help/xbox/360_B.png"
-        Xbox.X -> "images/help/xbox/360_X.png"
-        Xbox.Y -> "images/help/xbox/360_Y.png"
-        Xbox.BACK -> "images/help/xbox/360_Back.png"
-        Xbox.START -> "images/help/xbox/360_Start.png"
-        Xbox.L_BUMPER -> "images/help/xbox/360_LB.png"
-        Xbox.R_BUMPER -> "images/help/xbox/360_RB.png"
+        XboxController.A -> "images/help/xbox/360_A.png"
+        XboxController.B -> "images/help/xbox/360_B.png"
+        XboxController.X -> "images/help/xbox/360_X.png"
+        XboxController.Y -> "images/help/xbox/360_Y.png"
+        XboxController.BACK -> "images/help/xbox/360_Back.png"
+        XboxController.START -> "images/help/xbox/360_Start.png"
+        XboxController.L_BUMPER -> "images/help/xbox/360_LB.png"
+        XboxController.R_BUMPER -> "images/help/xbox/360_RB.png"
         HELP_HUD_ALL -> "images/help/xbox/360_Dpad.png"
         HELP_HUD_UPDOWN -> "images/help/xbox/360_Dpad_UpDown.png"
         HELP_HUD_LEFTRIGHT -> "images/help/xbox/360_Dpad_LeftRight.png"
@@ -498,16 +452,16 @@ fun getXboxImagePath(button: Int): String {
 
 fun getPlaystationImagePath(button: Int): String {
     return when (button) {
-        Playstation.CIRCLE -> "images/help/playstation/circle.png"
-        Playstation.CROSS -> "images/help/playstation/cross.png"
-        Playstation.TRIANGLE -> "images/help/playstation/triangle.png"
-        Playstation.SQUARE -> "images/help/playstation/square.png"
-        Playstation.START -> "images/help/playstation/start.png"
-        Playstation.SELECT -> "images/help/playstation/select.png"
-        Playstation.L1 -> "images/help/playstation/l1.png"
-        Playstation.L2 -> "images/help/playstation/l2.png"
-        Playstation.R1 -> "images/help/playstation/r1.png"
-        Playstation.R2 -> "images/help/playstation/r2.png"
+        PlaystationController.CIRCLE -> "images/help/playstation/circle.png"
+        PlaystationController.CROSS -> "images/help/playstation/cross.png"
+        PlaystationController.TRIANGLE -> "images/help/playstation/triangle.png"
+        PlaystationController.SQUARE -> "images/help/playstation/square.png"
+        PlaystationController.START -> "images/help/playstation/start.png"
+        PlaystationController.SELECT -> "images/help/playstation/select.png"
+        PlaystationController.L1 -> "images/help/playstation/l1.png"
+        PlaystationController.L2 -> "images/help/playstation/l2.png"
+        PlaystationController.R1 -> "images/help/playstation/r1.png"
+        PlaystationController.R2 -> "images/help/playstation/r2.png"
         HELP_HUD_ALL -> "images/help/playstation/all.png"
         HELP_HUD_UPDOWN -> "images/help/playstation/updown.png"
         HELP_HUD_LEFTRIGHT -> "images/help/playstation/leftright.png"
@@ -666,44 +620,3 @@ fun Button.addClickListener(clickListener: () -> Unit) {
         }
     })
 }
-
-
-const val HELP_HUD_UPDOWN: Int = -10
-const val HELP_HUD_LEFTRIGHT: Int = -11
-const val HELP_HUD_ALL: Int = -12
-
-data class HelpItems(
-    val txtConfirm: String? = null,
-    var imgConfirmButton: Image? = null,
-    var txtConfirmButton: Label? = null,
-    val txtCancel: String? = null,
-    var imgCancelButton: Image? = null,
-    var txtCancelButton: Label? = null,
-    val txtUpDown: String? = null,
-    var imgUpDownButton: Image? = null,
-    var txtUpDownButton: Label? = null,
-    val txtLeftRight: String? = null,
-    var imgLeftRightButton: Image? = null,
-    var txtLeftRightButton: Label? = null,
-    val txtAllDirection: String? = null,
-    var imgAllDirectionButtons: Image? = null,
-    var txtAllDirectionButtons: Label? = null,
-    val txtFind: String? = null,
-    var imgFindButton: Image? = null,
-    var txtFindButton: Label? = null,
-    val txtOptions: String? = null,
-    var imgOptionsButton: Image? = null,
-    var txtOptionsButton: Label? = null,
-    val txtSelect: String? = null,
-    var imgSelectButton: Image? = null,
-    var txtSelectButton: Label? = null,
-    val txtPageUp: String? = null,
-    var imgPageUpButton: Image? = null,
-    var txtPageUpButton: Label? = null,
-    val txtPageDown: String? = null,
-    var imgPageDownButton: Image? = null,
-    var txtPageDownButton: Label? = null,
-    var lastInputLoaded: InputConfig? = null,
-    var alpha: Float = 0.8f,
-    var txtColor: Color = Color.WHITE
-)

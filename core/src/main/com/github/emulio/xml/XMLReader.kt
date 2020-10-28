@@ -15,8 +15,8 @@ import javax.xml.parsers.SAXParserFactory
 
 
 class XMLReader {
+
     fun parseGameList(xmlFile: File, baseDir: File, pathSet: MutableSet<String>, platform: Platform): Flowable<Game> {
-        
         return Flowable.create({ emitter ->
             val factory = SAXParserFactory.newInstance()
             val saxParser = factory.newSAXParser()

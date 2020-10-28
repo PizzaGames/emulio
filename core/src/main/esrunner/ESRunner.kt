@@ -1,14 +1,14 @@
 package esrunner
 
 import com.github.emulio.yaml.YamlReaderHelper
+import mu.KotlinLogging
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
 
 /**
- * This is an utilitary class used in the past on a smaller project
- * that manages all the bad configs in the xmls from EmulationStation
+ * This is an util class used in the past on a smaller project
+ * that manages all the bad configs in the xml files from EmulationStation
  *
  * This was used in another script/project to make EmulationStation usage
  * much more easy to configure and now part of this implementation is used
@@ -17,57 +17,60 @@ import java.util.*
  * A lot of code here can be changed and upgraded and we can break compatibility
  * in complete with EmulationStation for now.
  */
-class ESRunner {
+class ESRunner : Runnable {
+
+    val logger = KotlinLogging.logger { }
 
     init {
-        println("Initializing ESRunner.")
-
-        printProperties("System", System.getProperties())
-
-        println("   _____ ____  ____                                \n"
-                + "  | ____/ ___||  _ \\ _   _ _ __  _ __   ___ _ __   \n"
-                + "  |  _| \\___ \\| |_) | | | | '_ \\| '_ \\ / _ \\ '__|  \n"
-                + "  | |___ ___) |  _ <| |_| | | | | | | |  __/ |     \n"
-                + "  |_____|____/|_| \\_\\\\__,_|_| |_|_| |_|\\___|_|     \n")
-
+        logger.info { "Initializing ESRunner." }
+        printProperties()
+        printMotd()
     }
 
-    private fun printProperties(name: String, properties: Properties) {
-        println("===========================================")
-        println(name + " Properties: ")
-        println("===========================================")
-        for ((key, value) in properties) {
-            System.out.printf("%s: %s\n", key, value)
+    private fun printMotd() {
+        logger.info {
+            """
+             _______  _______  ______    __   __  __    _  __    _  _______  ______   
+            |       ||       ||    _ |  |  | |  ||  |  | ||  |  | ||       ||    _ |  
+            |    ___||  _____||   | ||  |  | |  ||   |_| ||   |_| ||    ___||   | ||  
+            |   |___ | |_____ |   |_||_ |  |_|  ||       ||       ||   |___ |   |_||_ 
+            |    ___||_____  ||    __  ||       ||  _    ||  _    ||    ___||    __  |
+            |   |___  _____| ||   |  | ||       || | |   || | |   ||   |___ |   |  | |
+            |_______||_______||___|  |_||_______||_|  |__||_|  |__||_______||___|  |_|
+            
+            """.trimIndent()
         }
-        println("===========================================")
     }
 
-    private fun run() {
+    private fun printProperties() {
+        logger.info { "===========================================" }
+        logger.info { "System Properties: " }
+        logger.info { "===========================================" }
+        System.getProperties().forEach { key, value ->
+            logger.info { "$key: $value" }
+        }
+        logger.info { "===========================================" }
+    }
 
+    override fun run() {
         try {
-            val esConfig = readConfig()
-            overrideEmulationStationFile(esConfig)
-
+            overrideEmulationStationFile(readConfig())
         } catch (t: Throwable) {
-            if (t.message != null) {
-                println("\n\n[ERROR] " + t.message)
-            }
-
-            println("\n\n\n==========================================================")
-            t.printStackTrace(System.out)
+            handleThrowable(t)
         }
+    }
 
+    private fun handleThrowable(t: Throwable) {
+        logger.error(t) { "Internal error ocurred" }
     }
 
     private fun readConfig(): Map<Any, Any> {
         val esRunnerYaml = File("esrunner.yaml")
-
         return YamlReaderHelper.parse(esRunnerYaml)
     }
 
-
     private fun overrideEmulationStationFile(esConfig: Map<Any, Any>) {
-        println("Overriding EmulationStation config files")
+        logger.info { "Overriding EmulationStation config files" }
 
         validateConfig(esConfig)
 
@@ -86,92 +89,140 @@ class ESRunner {
         val esProcessBuilder: ProcessBuilder
 
         esProcessBuilder = if (esCommandObject is List<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val command = esCommandObject as List<String>
-            ProcessBuilder(*command.toTypedArray())
+            getListProcessBuilder(esCommandObject)
         } else {
-            ProcessBuilder(esCommandObject as String)
+            getProcessBuilder(esCommandObject)
         }
 
-        println("Preparing to start EmulationStation")
+        logger.info { "Preparing to start EmulationStation" }
 
         val environment = esProcessBuilder.environment()
-        environment.put("HOME", esRunnerHome)
+        environment["HOME"] = esRunnerHome
 
-        println("Executing EmulationStation.. ")
+        logger.info { "Executing EmulationStation.. " }
         try {
-            /*val process = */esProcessBuilder.start()
-            //TODO Control the process in someway??
+            esProcessBuilder.start()
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
 
     }
 
-    private fun generateESSystems(esConfig: Map<Any, Any>): String {
-        val sb = StringBuilder()
-        sb.append("<systemList>\n")
+    private fun getProcessBuilder(esCommandObject: Any?) = ProcessBuilder(esCommandObject as String)
 
+    private fun getListProcessBuilder(esCommandObject: Any?): ProcessBuilder {
         @Suppress("UNCHECKED_CAST")
-        val systems = esConfig["systems"] as Map<String, Any>
-        for ((systemName, value) in systems) {
+        val command = esCommandObject as List<String>
+        return ProcessBuilder(*command.toTypedArray())
+    }
 
-            println("Generating config for: " + systemName)
+    private fun generateESSystems(esConfig: Map<Any, Any>): String {
+        return StringBuilder()
+            .append("<systemList>\n")
+            .appendSystems(esConfig)
+            .append("</systemList>").toString()
+    }
 
-            @Suppress("UNCHECKED_CAST")
-            val systemMap = value as Map<String, Any>
-
-            sb.append("\t<system>\n")
-            sb.append(String.format("\t\t<name>%s</name>\n", systemName))
-            sb.append(String.format("\t\t<platform>%s</platform>\n", systemName))
-            sb.append(String.format("\t\t<theme>%s</theme>\n", systemName))
-
-            val platformName = systemMap["platform.name"] as String
-            sb.append(String.format("\t\t<fullname>%s</fullname>\n", platformName))
-
-            val romsExtensionsObject = systemMap["roms.extensions"]
-            sb.append(String.format("\t\t<extension>"))
-            if (romsExtensionsObject is List<*>) {
-                @Suppress("UNCHECKED_CAST")
-                val romsExtensions = romsExtensionsObject as List<String>
-
-                for (extension in romsExtensions) {
-                    sb.append(extension.toLowerCase()).append(" ").append(extension.toUpperCase()).append(" ")
-                }
-                sb.setLength(sb.length - 1)
-            } else {
-                val extension = romsExtensionsObject as String
-                sb.append(extension.toLowerCase()).append(" ").append(extension.toUpperCase())
-            }
-            sb.append("</extension>\n")
-
-            val romsPath = systemMap["roms.path"] as String
-            sb.append(String.format("\t\t<path>%s</path>\n", romsPath))
-
-            val runCommandObject = systemMap["run.command"]
-            sb.append(String.format("\t\t<command>"))
-            if (runCommandObject is List<*>) {
-                @Suppress("UNCHECKED_CAST")
-                val runCommands = runCommandObject as List<String>
-
-                for (command in runCommands) {
-                    if (command.indexOf(' ') != -1) {
-                        sb.append("\"").append(command).append("\" ")
-                    } else {
-                        sb.append(command).append(" ")
-                    }
-                }
-                sb.setLength(sb.length - 1)
-            } else {
-                sb.append(runCommandObject as String)
-            }
-            sb.append("</command>\n")
-            sb.append("\t</system>\n")
+    private fun StringBuilder.appendSystems(esConfig: Map<Any, Any>): StringBuilder {
+        getSystems(esConfig).forEach { (systemName, value) ->
+            this.appendSystem(systemName, value)
         }
-        sb.append("</systemList>")
+        return this
+    }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun getSystems(esConfig: Map<Any, Any>) =
+            esConfig["systems"] as Map<String, Any>
 
-        return sb.toString()
+    private fun StringBuilder.appendSystem(systemName: String, value: Any) {
+        logger.info { "Generating config for: $systemName" }
+
+        val systemMap = getSystemMap(value)
+
+        this.append("\t<system>\n")
+                .appendName(systemName)
+                .appendPlatform(systemName)
+                .appendTheme(systemName)
+                .appendPlatformName(systemMap)
+                .appendExtension(systemMap)
+                .appendPath(systemMap)
+                .appendCommand(systemMap)
+            .append("\t</system>\n")
+    }
+
+    private fun StringBuilder.appendCommand(systemMap: Map<String, Any>): StringBuilder {
+        val runCommandObject = systemMap["run.command"]
+        this.append(String.format("\t\t<command>"))
+        if (runCommandObject is List<*>) {
+            @Suppress("UNCHECKED_CAST")
+            val runCommands = runCommandObject as List<String>
+
+            for (command in runCommands) {
+                if (command.indexOf(' ') != -1) {
+                    this.append("\"").append(command).append("\" ")
+                } else {
+                    this.append(command).append(" ")
+                }
+            }
+            this.setLength(this.length - 1)
+        } else {
+            this.append(runCommandObject as String)
+        }
+        this.append("</command>\n")
+
+        return this
+    }
+
+    private fun StringBuilder.appendPath(systemMap: Map<String, Any>): StringBuilder {
+        return this.append(String.format("\t\t<path>%s</path>\n", systemMap["roms.path"] as String))
+    }
+
+    private fun StringBuilder.appendExtension(systemMap: Map<String, Any>): StringBuilder {
+        val romsExtensionsObject = systemMap["roms.extensions"]
+        this.append(String.format("\t\t<extension>"))
+        if (romsExtensionsObject is List<*>) {
+            this.appendExtensionsList(romsExtensionsObject)
+        } else {
+            this.appendExtension(romsExtensionsObject)
+        }
+        this.append("</extension>\n")
+
+        return this
+    }
+
+    private fun StringBuilder.appendExtension(romsExtensionsObject: Any?) {
+        val extension = romsExtensionsObject as String
+        this.append(extension.toLowerCase()).append(" ").append(extension.toUpperCase())
+    }
+
+    private fun StringBuilder.appendExtensionsList(romsExtensionsObject: Any?) {
+        @Suppress("UNCHECKED_CAST")
+        val romsExtensions = romsExtensionsObject as List<String>
+        romsExtensions.forEach { extension ->
+            this.append(extension.toLowerCase()).append(" ").append(extension.toUpperCase()).append(" ")
+        }
+        this.setLength(this.length - 1)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getSystemMap(value: Any): Map<String, Any> {
+        return value as Map<String, Any>
+    }
+
+    private fun StringBuilder.appendPlatformName(systemMap: Map<String, Any>): StringBuilder {
+        return this.append(String.format("\t\t<fullname>%s</fullname>\n", systemMap["platform.name"] as String))
+    }
+
+    private fun StringBuilder.appendTheme(systemName: String): StringBuilder {
+        return this.append(String.format("\t\t<theme>%s</theme>\n", systemName))
+    }
+
+    private fun StringBuilder.appendPlatform(systemName: String): StringBuilder {
+        return this.append(String.format("\t\t<platform>%s</platform>\n", systemName))
+    }
+
+    private fun StringBuilder.appendName(systemName: String): StringBuilder {
+        return this.append(String.format("\t\t<name>%s</name>\n", systemName))
     }
 
     private fun validateConfig(esConfig: Map<Any, Any>) {
@@ -181,34 +232,28 @@ class ESRunner {
         checkValue("You need to specify at least a system.", esConfig["systems"])
     }
 
-
     private fun checkValue(message: String, value: Any?) {
         if (value == null) {
             throw RuntimeException(message)
         }
     }
 
-    companion object {
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            ESRunner().run()
-        }
-
-        private fun writeFile(content: String, file: File) {
-            System.out.printf("Writing file: [%s] \n", file.absolutePath)
-            try {
-                FileOutputStream(file).use { fos ->
-                    fos.write(content.toByteArray())
-                    fos.flush()
-                }
-            } catch (e: IOException) {
-                throw RuntimeException(e)
+    private fun writeFile(content: String, file: File) {
+        System.out.printf("Writing file: [%s] \n", file.absolutePath)
+        try {
+            FileOutputStream(file).use { fos ->
+                fos.write(content.toByteArray())
+                fos.flush()
             }
-
-            println("Writing done")
+        } catch (e: IOException) {
+            throw RuntimeException(e)
         }
+
+        logger.info { "Writing done" }
     }
 
+}
 
+fun main() {
+    ESRunner().run { }
 }

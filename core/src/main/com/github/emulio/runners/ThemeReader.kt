@@ -5,6 +5,7 @@ import com.github.emulio.Emulio
 import com.github.emulio.model.Platform
 import com.github.emulio.model.theme.Theme
 import com.github.emulio.model.theme.ViewImage
+import com.github.emulio.utils.ImageConverter
 import com.github.emulio.xml.XMLReader
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -29,7 +30,7 @@ object ThemeReader {
 
 	private val logger = KotlinLogging.logger {}
 
-    fun extractSimpleTheme(themeDir: File, themeName: String, emulio: Emulio): Flowable<Pair<Float, File>> {
+    fun extractSimpleTheme(themeDir: File): Flowable<Pair<Float, File>> {
         return Flowable.create({ emitter ->
 
             val start = System.currentTimeMillis()
@@ -126,7 +127,7 @@ object ThemeReader {
 		}
 	}
 
-	private val pngConverter = PNGConverter()
+	private val pngConverter = ImageConverter()
 
 	private fun convertImage(viewImage: ViewImage) {
 		val imgFile = viewImage.path ?: return
@@ -211,7 +212,7 @@ object ThemeReader {
 
             if (!pngFile.exists() || FORCE_PNG_CONVERSION) {
 				logger.debug { "convertImage: Converting ${imgFile.name} image into ${pngFile.name}" }
-				pngConverter.convertFromSVG(imgFile, pngFile, width.toFloat(), height.toFloat())
+				pngConverter.convertPngToSvg(imgFile, pngFile, width.toFloat(), height.toFloat())
 				viewImage.path = pngFile
 			} else {
 				viewImage.path = pngFile

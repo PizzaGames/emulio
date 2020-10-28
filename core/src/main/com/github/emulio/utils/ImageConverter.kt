@@ -1,4 +1,4 @@
-package com.github.emulio.runners
+package com.github.emulio.utils
 
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
@@ -7,11 +7,11 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-class PNGConverter {
-	
-	val pngTranscoder = PNGTranscoder()
+class ImageConverter {
 
-	fun convertFromSVG(svgFile: File, pngFile: File, width: Float?, height: Float?) {
+	fun convertPngToSvg(svgFile: File, pngFile: File, width: Float?, height: Float?) {
+		val pngTranscoder = PNGTranscoder()
+
 		if (width != null) {
 			pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, width)
 		}
@@ -19,15 +19,21 @@ class PNGConverter {
 			pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, height)
 		}
 
-		val input = TranscoderInput(svgFile.toURI().toString())
+		convertPngToSvg(svgFile, pngFile, pngTranscoder)
+	}
 
+	private fun convertPngToSvg(svgFile: File, pngFile: File, pngTranscoder: PNGTranscoder) {
 		FileOutputStream(pngFile).use { outputStream ->
-			val output = TranscoderOutput(outputStream)
-			pngTranscoder.transcode(input, output)
-			outputStream.flush()
+			transcodeImage(svgFile, outputStream, pngTranscoder)
 		}
 	}
 
+	private fun transcodeImage(svgFile: File, outputStream: FileOutputStream, pngTranscoder: PNGTranscoder) {
+		val input = TranscoderInput(svgFile.toURI().toString())
+		val output = TranscoderOutput(outputStream)
+		pngTranscoder.transcode(input, output)
+		outputStream.flush()
+	}
 
 }
 

@@ -3,90 +3,66 @@ package com.github.emulio
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.github.emulio.model.EmulioConfig
+import com.github.emulio.model.EmulioOptions
 import com.github.emulio.model.Platform
+import com.github.emulio.model.config.EmulioConfig
 import com.github.emulio.model.theme.Theme
-import java.io.File
-import java.io.InputStream
+import com.github.emulio.ui.screens.SplashScreen
 import mu.KotlinLogging
-import com.badlogic.gdx.graphics.Pixmap
-import com.github.emulio.ui.screens.DevSplashScreen
+import java.io.InputStream
 
 class Emulio(val options: EmulioOptions) : Game() {
 
     val logger = KotlinLogging.logger { }
 
-	override fun create() {
-
-        logger.info { """
-                                      ___                  
-                                     /\_ \    __           
-               __    ___ ___   __  __\//\ \  /\_\    ___   
-             /'__`\/' __` __`\/\ \/\ \ \ \ \ \/\ \  / __`\ 
-            /\  __//\ \/\ \/\ \ \ \_\ \ \_\ \_\ \ \/\ \L\ \
-            \ \____\ \_\ \_\ \_\ \____/ /\____\\ \_\ \____/
-             \/____/\/_/\/_/\/_/\/___/  \/____/ \/_/\/___/ 
-
-             - Welcome to the next level, starting emulio.
-             - Remember to check the log files once in a while.
-             - Be sure to have a emulio-platforms.yaml file on
-               the workdir '${options.workdir.canonicalPath}'
-
-             - Enjoy!
-        """ }
-
-		screen = DevSplashScreen(this)
-
-        //changeDefaultCursor()
-
-    }
-
-    private fun changeDefaultCursor() {
-        //Gdx.input.isCursorCatched = true
-
-        val cursorPixmap = Pixmap(Gdx.files.internal("images/cursor.png"))
-        val xHotspot = cursorPixmap.width / 2
-        val yHotspot = cursorPixmap.height / 2
-        val cursor = Gdx.graphics.newCursor(cursorPixmap, xHotspot, yHotspot)
-
-        Gdx.graphics.setCursor(cursor)
-
-        cursorPixmap.dispose()
-    }
-
-
     val workdir = options.workdir
-
-	var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
-
-	lateinit var theme: MutableMap<Platform, Theme>
-	lateinit var platforms: List<Platform>
-	lateinit var config: EmulioConfig
-
+    val data: MutableMap<String, Any> = mutableMapOf()
     val skin: Skin by lazy {
         Skin(Gdx.files.internal("skin/emulio-skin.json"))
+    }
+
+    var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
+
+    lateinit var theme: MutableMap<Platform, Theme>
+    lateinit var platforms: List<Platform>
+    lateinit var config: EmulioConfig
+
+	override fun create() {
+        showMotd()
+		screen = SplashScreen(this)
+    }
+
+    private fun showMotd() {
+        logger.info {
+            """
+                                          ___                  
+                                         /\_ \    __           
+                   __    ___ ___   __  __\//\ \  /\_\    ___   
+                 /'__`\/' __` __`\/\ \/\ \ \ \ \ \/\ \  / __`\ 
+                /\  __//\ \/\ \/\ \ \ \_\ \ \_\ \_\ \ \/\ \L\ \
+                \ \____\ \_\ \_\ \_\ \____/ /\____\\ \_\ \____/
+                 \/____/\/_/\/_/\/_/\/___/  \/____/ \/_/\/___/ 
+    
+                 - Welcome to the next level, starting emulio.
+                 - Remember to check the log files once in a while.
+                 - Be sure to have a emulio-platforms.yaml file on
+                   the workdir '${options.workdir.canonicalPath}'
+    
+                 - Enjoy!
+            """
+        }
     }
 
     fun listGames(platform: Platform): List<com.github.emulio.model.Game> {
         return games!![platform]?.toList() ?: emptyList()
     }
 
-    fun getLanguageStream(): InputStream {
+    fun languageStream(): InputStream {
         val languageStream = Emulio::class.java.getResourceAsStream(config.languagePath)
-
         check(languageStream != null) {"Unable to find language file. ${config.languagePath}"}
+
         return languageStream
     }
-
-    val data: MutableMap<String, Any> = mutableMapOf()
 }
 
 
-data class EmulioOptions(
-        val workdir: File,
-        val minimizeApplication: () -> Unit,
-        val restoreApplication: () -> Unit,
-        val screenSize: Pair<Int, Int>?,
-        val fullscreen: Boolean,
-        val platformsFile: File = File(workdir, "emulio-platforms.yaml")
-)

@@ -8,9 +8,9 @@ import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
-import com.github.emulio.model.EmulioConfig
-import com.github.emulio.model.InputConfig
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.EmulioConfig
+import com.github.emulio.model.config.InputConfig
 import mu.KotlinLogging
 
 const val DEADZONE: Float = 0.35f
@@ -145,7 +145,8 @@ class InputManager(private val listener: InputListener,
 					}
 					elapsedPov += delta
 				}
-            }
+				else -> error("Illegal state")
+			}
 
 
 		}
@@ -460,7 +461,7 @@ class InputManager(private val listener: InputListener,
 	}
 
     private fun updateLastInput(controllerCfg: InputConfig) {
-        if (controllerCfg != AnyInputConfig) {
+        if (controllerCfg != DummyInputConfig) {
             emulio.data["lastInput"] = controllerCfg
         }
     }
@@ -604,7 +605,8 @@ class InputManager(private val listener: InputListener,
                     PovDirection.south -> listener.onDownButton(controllerConfig)
                     PovDirection.west -> listener.onLeftButton(controllerConfig)
                     PovDirection.east -> listener.onRightButton(controllerConfig)
-                }
+					else -> error("Illegal state")
+				}
             }
 		}
 		return true

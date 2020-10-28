@@ -10,14 +10,16 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
-import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Platform
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.ui.input.*
 import com.github.emulio.ui.screens.EmulioScreen
 import com.github.emulio.ui.screens.HelpItems
@@ -159,7 +161,7 @@ class PlatformWizardScreen(emulio: Emulio, private val backCallback: () -> Emuli
 
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    onLeftButton(AnyInputConfig)
+                    onLeftButton(DummyInputConfig)
                 }
             })
         }
@@ -180,7 +182,7 @@ class PlatformWizardScreen(emulio: Emulio, private val backCallback: () -> Emuli
 
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    onRightButton(AnyInputConfig)
+                    onRightButton(DummyInputConfig)
                 }
             })
         }

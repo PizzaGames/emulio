@@ -7,8 +7,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
 import com.badlogic.gdx.graphics.Color
 import com.github.emulio.Emulio
-import com.github.emulio.EmulioOptions
-import com.github.emulio.model.GraphicsConfig
+import com.github.emulio.model.EmulioOptions
+import com.github.emulio.model.config.GraphicsConfig
 import com.github.emulio.yaml.YamlUtils
 import mu.KotlinLogging
 import org.apache.commons.cli.DefaultParser

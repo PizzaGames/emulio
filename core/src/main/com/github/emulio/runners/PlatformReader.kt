@@ -1,15 +1,14 @@
 package com.github.emulio.runners
 
-
 import com.github.emulio.Emulio
-import com.github.emulio.exceptions.PlatformConfigNotFoundException
+import com.github.emulio.exceptions.ConfigNotFoundException
 import com.github.emulio.model.Platform
 import com.github.emulio.yaml.YamlUtils
 import mu.KotlinLogging
 import java.io.*
 
-
 class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
+
     val logger = KotlinLogging.logger { }
 
 	override fun invoke(): List<Platform> {
@@ -45,7 +44,7 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
             error("Error writing ${templateFile.absolutePath}. Check your permissions in this folder.")
         }
 
-        throw PlatformConfigNotFoundException("${platformsFile.canonicalPath} not found, a template ('${templateFile.name}') \n " +
+        throw ConfigNotFoundException("${platformsFile.canonicalPath} not found, a template ('${templateFile.name}') \n " +
                 "file was created so you can change and rename it.")
     }
 }

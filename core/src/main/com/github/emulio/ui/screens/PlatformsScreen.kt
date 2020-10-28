@@ -17,8 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Scaling
 import com.github.emulio.Emulio
 import com.github.emulio.model.Game
-import com.github.emulio.model.InputConfig
 import com.github.emulio.model.Platform
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.model.theme.HelpSystem
 import com.github.emulio.model.theme.View
 import com.github.emulio.model.theme.ViewImage
@@ -26,6 +26,7 @@ import com.github.emulio.runners.GameScanner
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.ui.reactive.GdxScheduler
+import com.github.emulio.ui.screens.util.FontCache.freeTypeFontGenerator
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.translate
 import io.reactivex.schedulers.Schedulers
@@ -87,13 +88,13 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 		whiteTexture = createColorTexture(0xFFFFFFDD.toInt())
 		grayTexture = createColorTexture(0xCCCCCCDD.toInt())
 
-		loadingFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+		loadingFont = freeTypeFontGenerator().generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 16
 			color = Color.WHITE
 			color.a = 0.5f
 		})
 
-		gameCountFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+		gameCountFont = freeTypeFontGenerator().generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 26
 			color = Color.DARK_GRAY
             color.a = 0.8f
@@ -394,6 +395,7 @@ class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platfor
 
 		val gamesMap = mutableMapOf<Platform, MutableList<Game>>()
 		emulio.games = gamesMap
+
 
 		GameScanner(platforms)
 				.fullScan()

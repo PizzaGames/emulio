@@ -1,6 +1,6 @@
 package com.github.emulio.ui.input
 
-import com.github.emulio.model.InputConfig
+import com.github.emulio.model.config.InputConfig
 
 interface InputListener {
 	

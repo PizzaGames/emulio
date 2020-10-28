@@ -27,8 +27,8 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
-import com.github.emulio.model.AnyInputConfig
-import com.github.emulio.model.InputConfig
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.InputConfig
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.translate
@@ -188,7 +188,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    onLeftButton(AnyInputConfig)
+                    onLeftButton(DummyInputConfig)
                 }
             })
         }
@@ -209,7 +209,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                    onRightButton(AnyInputConfig)
+                    onRightButton(DummyInputConfig)
                 }
             })
         }

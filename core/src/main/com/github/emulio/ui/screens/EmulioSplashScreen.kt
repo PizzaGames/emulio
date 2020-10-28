@@ -12,17 +12,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Timer
 import com.github.emulio.Emulio
-import com.github.emulio.exceptions.PlatformConfigNotFoundException
-import com.github.emulio.model.EmulioConfig
+import com.github.emulio.exceptions.ConfigNotFoundException
 import com.github.emulio.model.Platform
+import com.github.emulio.model.config.EmulioConfig
 import com.github.emulio.model.theme.Theme
-import com.github.emulio.process.ProcessException
-import com.github.emulio.process.ProcessLauncher
 import com.github.emulio.runners.PlatformReader
 import com.github.emulio.runners.ThemeReader
 import com.github.emulio.ui.reactive.GdxScheduler
 import com.github.emulio.ui.screens.dialogs.InfoDialog
 import com.github.emulio.ui.screens.dialogs.YesNoDialog
+import com.github.emulio.ui.screens.util.FontCache.freeTypeFontGenerator
 import com.github.emulio.ui.screens.wizard.PlatformWizardScreen
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.translate
@@ -32,7 +31,6 @@ import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 import java.io.File
 import kotlin.math.min
-import kotlin.system.exitProcess
 
 
 class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
@@ -112,7 +110,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 			})
 		)
 
-		val mainFont = freeTypeFontGenerator.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+		val mainFont = freeTypeFontGenerator().generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply {
 			size = 20
 			color = Color(0x37424AFF)
 		})
@@ -181,7 +179,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 				.subscribe({
 					onPlatformsLoaded(it)
 				}, {
-					if (it is PlatformConfigNotFoundException) {
+					if (it is ConfigNotFoundException) {
 						askForPlatformWizard()
 					} else {
 						onError(it)
@@ -209,7 +207,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 			InfoDialog("Restart required".translate(), """
 				To continue, will be necessary to restart Emulio.
 			""".trimIndent().translate(), emulio).show(this.stage)
-			DevSplashScreen(emulio)
+			SplashScreen(emulio)
 		}))
 	}
 
@@ -256,7 +254,7 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
         if (themeName == "simple" && !themeFolder.isDirectory) {
             ThemeReader
-                .extractSimpleTheme(themeFolder, themeName, emulio)
+                .extractSimpleTheme(themeFolder)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(GdxScheduler)
                     .Subscribe(

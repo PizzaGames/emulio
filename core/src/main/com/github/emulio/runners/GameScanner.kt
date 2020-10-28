@@ -3,25 +3,23 @@ package com.github.emulio.runners
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import com.github.emulio.xml.XMLReader
-import io.reactivex.*
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.FlowableEmitter
 import mu.KotlinLogging
-import org.apache.commons.io.FilenameUtils
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
-class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Game>> {
+class GameScanner(private val platforms: List<Platform>) {
+
 	val logger = KotlinLogging.logger { }
 	
-	fun fullScan() : Flowable<Game> = invoke()
-	
-	override fun invoke(): Flowable<Game> {
-		
+	fun fullScan() : Flowable<Game> {
 		var games = Flowable.empty<Game>()
-		
+
 		platforms.forEach { platform ->
 			logger.info { "Scanning games for platform ${platform.platformName}" }
-
 			val xmlReader = XMLReader()
 
 			val romsPath = platform.romsPath
@@ -30,13 +28,9 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 				val pathSet = mutableSetOf<String>()
 
 				val listGamesFlowable = if (gameList.isFile) {
-					logger.info { "reading [${gameList.absolutePath}]" }
-					val gamesObservable = xmlReader.parseGameList(gameList, romsPath, pathSet, platform)
-					
-					logger.debug { "Game list read, scanning for new games"  }
-					gamesObservable
+					readGameList(gameList, xmlReader, romsPath, pathSet, platform)
 				} else {
-					Flowable.empty<Game>()
+					Flowable.empty()
 				}
 
 				val filesObservable: Flowable<Game> = Flowable.create({ emitter ->
@@ -47,10 +41,18 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 				games = games.concatWith(listGamesFlowable).concatWith(filesObservable)
 			}
 		}
-		
+
 		return games
 	}
-	
+
+	private fun readGameList(gameList: File, xmlReader: XMLReader, romsPath: File, pathSet: MutableSet<String>, platform: Platform): Flowable<Game> {
+		logger.info { "reading [${gameList.absolutePath}]" }
+		val gamesObservable = xmlReader.parseGameList(gameList, romsPath, pathSet, platform)
+
+		logger.debug { "Game list read, scanning for new games" }
+		return gamesObservable
+	}
+
 
 	private fun scanFiles(root: File, observableEmitter: FlowableEmitter<Game>, pathSet: MutableSet<String>, platform: Platform) {
 		val extensions = platform.romsExtensions.toSet()
@@ -62,14 +64,15 @@ class GameScanner(private val platforms: List<Platform>) : Function0<Flowable<Ga
 		}
 	}
 
+	private val Path.extension: String
+		get() {
+			val name = fileName?.toString() ?: return ""
+			val idx = name.lastIndexOf(".")
+			if (idx == -1) {
+				return ""
+			}
+			return name.substring(idx)
+		}
 }
 
-private val Path.extension: String
-	get() {
-		val name = fileName?.toString() ?: return ""
-		val idx = name.lastIndexOf(".")
-		if (idx == -1) {
-			return ""
-		}
-		return name.substring(idx)
-	}
+

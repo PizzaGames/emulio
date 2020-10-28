@@ -1,10 +1,9 @@
 package com.github.emulio.xml
 
+import com.github.emulio.exceptions.XMLParseException
 import com.github.emulio.model.Game
 import com.github.emulio.model.Platform
 import io.reactivex.FlowableEmitter
-import io.reactivex.ObservableEmitter
-import mu.KotlinLogging
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.File
@@ -12,63 +11,7 @@ import java.util.*
 
 class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, val pathSet: MutableSet<String>, val platform: Platform) : DefaultHandler() {
 
-	val logger = KotlinLogging.logger { }
-
-	enum class Tag(val value: String) {
-		GAME_LIST("gamelist"),
-		GAME("game"),
-		PATH("path"),
-		NAME("name"),
-		IMAGE("image"),
-		RELEASE_DATE("releasedate"),
-		DEVELOPER("developer"),
-		GENRE("genre"),
-		PLAYERS("players"),
-        RATING("rating"),
-        PUBLISHER("publisher"),
-        DESC("desc"),
-		NO_STATE(""),
-	}
-
-	var tag: Tag = Tag.NO_STATE
-
-	override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes) {
-
-		if (qName.equals(Tag.GAME_LIST.value, true)) {
-			tag = Tag.GAME_LIST
-		} else if (qName.equals(Tag.GAME.value, true)) {
-			tag = Tag.GAME
-
-			for (i in 0..attributes.length) {
-				if (attributes.getQName(i).equals("id", true)) {
-					id = attributes.getValue(i)
-				} else if (attributes.getQName(i).equals("source", true)) {
-					source = attributes.getValue(i)
-				}
-			}
-
-		} else if (qName.equals(Tag.PATH.value, true)) {
-			tag = Tag.PATH
-		} else if (qName.equals(Tag.NAME.value, true)) {
-			tag = Tag.NAME
-		} else if (qName.equals(Tag.IMAGE.value, true)) {
-			tag = Tag.IMAGE
-		} else if (qName.equals(Tag.RELEASE_DATE.value, true)) {
-			tag = Tag.RELEASE_DATE
-		} else if (qName.equals(Tag.DEVELOPER.value, true)) {
-			tag = Tag.DEVELOPER
-		} else if (qName.equals(Tag.PUBLISHER.value, true)) {
-			tag = Tag.PUBLISHER
-		} else if (qName.equals(Tag.DESC.value, true)) {
-			tag = Tag.DESC
-		} else if (qName.equals(Tag.GENRE.value, true)) {
-			tag = Tag.GENRE
-		} else if (qName.equals(Tag.PLAYERS.value, true)) {
-			tag = Tag.PLAYERS
-        } else if (qName.equals(Tag.RATING.value, true)) {
-            tag = Tag.RATING
-        }
-	}
+	private var tag: Tag = Tag.NO_STATE
 
 	var id: String? = null
 	var source: String? = null
@@ -81,7 +24,34 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 	var publisher: String? = null
 	var genre: String? = null
 	var players: String? = null
-    var rating: Float? = null
+	var rating: Float? = null
+
+	override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes) {
+
+		when (qName.toLowerCase()) {
+			Tag.GAME_LIST.value -> tag = Tag.GAME_LIST
+			Tag.GAME.value -> {
+				tag = Tag.GAME
+				for (i in 0..attributes.length) {
+					if (attributes.getQName(i).equals("id", true)) {
+						id = attributes.getValue(i)
+					} else if (attributes.getQName(i).equals("source", true)) {
+						source = attributes.getValue(i)
+					}
+				}
+			}
+			Tag.PATH.value -> tag = Tag.PATH
+			Tag.NAME.value -> tag = Tag.NAME
+			Tag.IMAGE.value -> tag = Tag.IMAGE
+			Tag.RELEASE_DATE.value -> tag = Tag.RELEASE_DATE
+			Tag.DEVELOPER.value -> tag = Tag.DEVELOPER
+			Tag.PUBLISHER.value -> tag = Tag.PUBLISHER
+			Tag.DESC.value -> tag = Tag.DESC
+			Tag.GENRE.value -> tag = Tag.GENRE
+			Tag.PLAYERS.value -> tag = Tag.PLAYERS
+			Tag.RATING.value -> tag = Tag.RATING
+		}
+	}
 
 	override fun endElement(uri: String?, localName: String?, qName: String?) {
 		if (qName.equals(Tag.GAME.value, true)) {
@@ -93,7 +63,7 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 //					logger.error { "There was a problem parsing game after the ${emitter[emitter.size - 1].name}"  }
 //				}
 
-				throw XMLInvalidException("Error processing XML File. Incorrect '$qName' tag/structure ")
+				throw XMLParseException("Error processing XML File. Incorrect '$qName' tag/structure ")
 			}
 			
 			
@@ -118,8 +88,6 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
             genre = null
             players = null
             rating = null
-
-
             description = null
 		}
 		
@@ -157,7 +125,7 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
                 }
             }
 			Tag.IMAGE -> {image = String(ch, start, length).trim()}
-			Tag.RELEASE_DATE -> {releaseDate = convertDate(ch, start, length)}
+			Tag.RELEASE_DATE -> {releaseDate = convertDate(ch, start)}
 			Tag.DEVELOPER -> {developer = String(ch, start, length).trim()}
 			Tag.PUBLISHER -> {publisher = String(ch, start, length).trim()}
 			Tag.DESC -> {
@@ -173,21 +141,22 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 //            Tag.GAME_LIST -> TODO()
 //            Tag.GAME -> TODO()
 //            Tag.NO_STATE -> TODO()
-        }
+		}
 	}
 
     private fun readFloat(value: String): Float {
         return value.toFloat()
     }
 
-    fun convertDate(ch: CharArray, start: Int, length: Int): Date {
+    private fun convertDate(ch: CharArray, start: Int): Date {
 		val calendar = GregorianCalendar.getInstance()
 
 		var currentOffset = start
 		calendar.set(Calendar.YEAR, Integer.parseInt(String(ch, currentOffset, 4)))
 		currentOffset += 4
 
-		calendar.set(Calendar.MONTH, Integer.parseInt(String(ch, currentOffset, 2)) - 1) //months starts with 0
+		//months starts with 0
+		calendar.set(Calendar.MONTH, Integer.parseInt(String(ch, currentOffset, 2)) - 1)
 		currentOffset += 2
 
 		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(String(ch, currentOffset, 2)))
@@ -204,7 +173,6 @@ class GameInfoSAXHandler(val emitter: FlowableEmitter<Game>, val baseDir: File, 
 		currentOffset += 2
 
 		return calendar.time
-
 	}
 
 }
