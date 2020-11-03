@@ -3,7 +3,7 @@ package com.github.emulio.runners
 import com.github.emulio.Emulio
 import com.github.emulio.exceptions.ConfigNotFoundException
 import com.github.emulio.model.Platform
-import com.github.emulio.yaml.YamlUtils
+import com.github.emulio.yaml.PlatformConfigYaml
 import mu.KotlinLogging
 import java.io.*
 
@@ -21,7 +21,7 @@ class PlatformReader(val emulio: Emulio) : Function0<List<Platform>> {
             return emptyList()
         }
 
-        return YamlUtils.parsePlatforms(platformsFile)
+        return PlatformConfigYaml.read(platformsFile)
     }
 
     private fun createTemplateFileWizard(platformsFile: File) {

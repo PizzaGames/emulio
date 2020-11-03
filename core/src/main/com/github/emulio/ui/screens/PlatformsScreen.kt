@@ -33,7 +33,8 @@ import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
 
 
-class PlatformsScreen(emulio: Emulio, initialPlatform: Platform = emulio.platforms[0]): EmulioScreen(emulio), InputListener {
+class PlatformsScreen(emulio: Emulio,
+					  initialPlatform: Platform): EmulioScreen(emulio), InputListener {
 
 	private val logger = KotlinLogging.logger { }
 

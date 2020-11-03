@@ -25,7 +25,7 @@ import com.github.emulio.ui.screens.util.FontCache.freeTypeFontGenerator
 import com.github.emulio.ui.screens.wizard.PlatformWizardScreen
 import com.github.emulio.utils.gdxutils.Subscribe
 import com.github.emulio.utils.translate
-import com.github.emulio.yaml.YamlUtils
+import com.github.emulio.yaml.EmulioConfigYaml
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import mu.KotlinLogging
@@ -133,10 +133,10 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 			val createConfig = !configFile.exists()
 			if (createConfig) {
 				logger.info { "Configuration file not found, creating a default" }
-				YamlUtils.saveEmulioConfig(configFile, initializeEmulioConfig())
+				EmulioConfigYaml.save(initializeEmulioConfig(), configFile)
 			}
 
-			subscriber.onNext(Pair(YamlUtils.parseEmulioConfig(configFile), createConfig))
+			subscriber.onNext(Pair(EmulioConfigYaml.read(configFile), createConfig))
 			subscriber.onComplete()
 		}
 
@@ -307,15 +307,24 @@ class EmulioSplashScreen(emulio: Emulio) : EmulioScreen(emulio) {
 
                             Timer.schedule(object : Timer.Task() {
                                 override fun run() {
-                                    switchScreen(PlatformsScreen(emulio))
+                                    switchScreen(PlatformsScreen(emulio, getPlatform()))
                                 }
                             }, 2f)
 
                         })
     }
 
+	private fun getPlatform(): Platform {
+		check(emulio.platforms.isNotEmpty()) { """
+			Please check your settings, at least one platform must be filled in the platforms section. (check your
+			emulio-platforms.yaml file)
+		""".trimIndent()}
 
-    override fun render(delta: Float) {
+		return emulio.platforms[0]
+	}
+
+
+	override fun render(delta: Float) {
 		//Gdx.gl.glClearColor(0x6F, 0xBB, 0xDB, 0xFF)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 		stage.act(min(Gdx.graphics.deltaTime, 1 / 30f))

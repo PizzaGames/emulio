@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Color
 import com.github.emulio.Emulio
 import com.github.emulio.model.EmulioOptions
 import com.github.emulio.model.config.GraphicsConfig
-import com.github.emulio.yaml.YamlUtils
+import com.github.emulio.yaml.EmulioConfigYaml
 import mu.KotlinLogging
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -26,7 +26,7 @@ object DesktopLauncher {
         val configFile = File(options.workdir, "emulio-config.yaml")
 
         val graphicsConfig = if (configFile.exists()) {
-            YamlUtils.parseEmulioConfig(configFile).graphicsConfig
+            EmulioConfigYaml.read(configFile).graphicsConfig
         } else {
             GraphicsConfig().apply {
                 screenWidth = 1280
