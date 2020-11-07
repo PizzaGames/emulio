@@ -29,8 +29,6 @@ object PlatformConfigYaml {
 			getSystems(yaml).map { (platformName, platform) ->
 				readPlatformFromYaml(platformName, platform)
 			}
-
-			emptyList()
 		}
 	}
 
@@ -53,68 +51,88 @@ object PlatformConfigYaml {
 	private fun readConfigYamlFile(from: File) = loadYaml(from).preparePlatformYaml()
 
 	private fun Map<String, Any?>.preparePlatformYaml(): Map<String, Any?> {
-		val preparedYaml = this.toMutableMap()
-		preparedYaml["rom.raw"] = "\"%ROM_RAW%\""
-		preparedYaml["rom.file"] = "\"%ROM_RAW%\""
-		preparedYaml["rom"] = "\"%ROM%\""
-		preparedYaml["basename"] = "\"%BASENAME%\""
+		val preparedYaml = this.toMutableMap().apply {
+			this["rom.raw"] = "\"%ROM_RAW%\""
+			this["rom.file"] = "\"%ROM_RAW%\""
+			this["rom"] = "\"%ROM%\""
+			this["basename"] = "\"%BASENAME%\""
+		}
 
 		val properties = preparedYaml.toProperties()
-
 		val propertyPlaceholder = PropertyPlaceholderHelper("\${", "}")
 		properties.entries.forEach { entry ->
 			val value = entry.value
 			check(value is String)
 			entry.setValue(propertyPlaceholder.replacePlaceholders(value, properties))
 		}
-
-		val yamlMap = properties.toYamlMap()
-		return yamlMap
+		return properties.toYaml(preparedYaml)
 	}
 
-	private fun Map<String, Any?>.toYamlMap(prefix: String? = null): MutableMap<String, Any?> {
-		return this.entries
-			.map { entry ->
-				val (key, value) = entry
+	private fun Map<String, Any?>.toYaml(referenceYaml: Map<String, Any?>,
+										 prefix: String? = null): MutableMap<String, Any?> {
 
-				key to ""
+		return referenceYaml.entries.map { entry ->
+			val key = getPrefixedKey(entry.key, prefix)
+			val value = translateValue(entry.value, key)
+
+			entry.key to value
+		}.toMap().toMutableMap()
+	}
+
+	private fun Map<String, Any?>.translateValue(referenceValue: Any?, key: String): Any? {
+		return when (referenceValue) {
+			is String -> {
+				this[key]
 			}
-			.toMap()
-			.toMutableMap()
+			is List<*> -> {
+				translateList(key, referenceValue)
+			}
+			is Map<*, *> -> {
+				translateMap(key, referenceValue)
+			}
+			else -> {
+				error("Illegal state")
+			}
+		}
+	}
 
-		//		this.entries.forEach { entry ->
-//			val key = entry.key
-//			val value = entry.value
-//			when {
-//				value is Map<*, *> -> {
-//					value.toMutableMap().deflaten(flatened, key)
-//				}
-//				prefix != null -> {
-//					entry.setValue(flatened["$prefix.$key"])
-//				}
-//				else -> {
-//					entry.setValue(flatened[key])
-//				}
-//			}
-//		}
+	private fun Map<String, Any?>.translateMap(key: String, referenceValue: Map<*, *>): MutableMap<String, Any?> {
+		val filtered = this.filter {
+			it.key.startsWith(key)
+		}
+		return filtered.toYaml(referenceValue.asMap(), key)
+	}
+
+	private fun Map<String, Any?>.translateList(key: String, referenceValue: List<*>): List<Any?> {
+		val filtered = this.filter { it.key.startsWith("$key[") }
+
+		return referenceValue.mapIndexed { index, _ ->
+			filtered["$key[$index]"]
+		}
+	}
+
+	private fun getPrefixedKey(key: String, prefix: String?): String {
+		if (prefix == null) {
+			return key
+		}
+		return "$prefix.$key"
 	}
 
 	private fun Map<String, Any?>.toProperties(prefix: String? = null): MutableMap<String, Any?> {
 		val properties = mutableMapOf<String, Any?>()
 
 		this.forEach { (key, value) ->
-			val prefixedKey = getPrefixKey(prefix, key)
+			val prefixedKey = getPrefixedKey(key, prefix)
 
 			when (value) {
 				is Map<*, *> -> {
-					properties.putAll(value.asMap().toProperties(key))
+					flatenMap(value, key, prefix, properties)
 				}
 				is List<*> -> {
-					properties.putAll(listToProperties(value.asList(), prefixedKey))
+					flatenList(properties, value, prefixedKey)
 				}
 				else -> {
-					check(value is String) { "Only Map/List/String values are supported in yaml" }
-					properties[prefixedKey] = value
+					flatenString(value, properties, prefixedKey)
 				}
 			}
 		}
@@ -122,12 +140,24 @@ object PlatformConfigYaml {
 		return properties
 	}
 
-	private fun getPrefixKey(prefix: String?, key: String): String {
-		return if (prefix != null) {
-			"$prefix.$key"
-		} else {
-			key
-		}
+	private fun flatenString(value: Any?, properties: MutableMap<String, Any?>, prefixedKey: String) {
+		check(value is String) { "Only Map/List/String values are supported in yaml" }
+		properties[prefixedKey] = value
+	}
+
+	private fun flatenList(properties: MutableMap<String, Any?>, value: List<*>, prefixedKey: String) {
+		properties.putAll(listToProperties(value.asList(), prefixedKey))
+	}
+
+	private fun flatenMap(value: Map<*, *>, key: String, prefix: String?, properties: MutableMap<String, Any?>) {
+		val toProperties = value.asMap()
+				.toProperties(key)
+		val from = toProperties
+				.map {
+					getPrefixedKey(it.key, prefix) to it.value
+				}
+				.toMap()
+		properties.putAll(from)
 	}
 
 	private fun listToProperties(list: List<String>, key: String): Map<out String, Any?> {
@@ -211,11 +241,6 @@ object PlatformConfigYaml {
 			Yaml().load(it)
 		}.asMap()
 	}
-
-	@Suppress("UNCHECKED_CAST")
-	private fun Any.toMutableList() = this as MutableList<String>
-
-
 
 	private fun createPlatformConfig(platformsConfigFile: File) {
 		logger.info("Creating emulio-platforms.yaml blank file.")
