@@ -145,7 +145,7 @@ class InputManager(private val listener: InputListener,
 					}
 					elapsedPov += delta
 				}
-				else -> error("Illegal state")
+				else -> logger.trace { "direction not mapped in input manager" }
 			}
 
 
@@ -605,7 +605,7 @@ class InputManager(private val listener: InputListener,
                     PovDirection.south -> listener.onDownButton(controllerConfig)
                     PovDirection.west -> listener.onLeftButton(controllerConfig)
                     PovDirection.east -> listener.onRightButton(controllerConfig)
-					else -> error("Illegal state")
+					else -> logger.trace { "direction not mapped in input manager" }
 				}
             }
 		}

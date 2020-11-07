@@ -32,7 +32,7 @@ import com.github.emulio.model.config.InputConfig
 import com.github.emulio.ui.input.InputListener
 import com.github.emulio.ui.input.InputManager
 import com.github.emulio.utils.translate
-import com.github.emulio.yaml.YamlUtils
+import com.github.emulio.yaml.EmulioConfigYaml
 import mu.KotlinLogging
 import java.io.File
 
@@ -694,7 +694,7 @@ class InputConfigScreen(emulio: Emulio, private val backCallback: () -> EmulioSc
 
     private fun saveConfig() {
         val configFile = File(emulio.workdir, "emulio-config.yaml")
-        YamlUtils.saveEmulioConfig(configFile, emulio.config)
+        EmulioConfigYaml.save(emulio.config, configFile)
     }
 
     override fun onUpButton(input: InputConfig) {

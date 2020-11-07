@@ -2,7 +2,7 @@ package com.github.emulio.utils
 
 import com.badlogic.gdx.Gdx
 import com.github.emulio.Emulio
-import com.github.emulio.yaml.YamlUtils
+import com.github.emulio.yaml.ConfigYaml
 import mu.KotlinLogging
 
 object I18n {
@@ -11,7 +11,7 @@ object I18n {
 
     private val languageMap by lazy {
         val emulio = Gdx.app.applicationListener as Emulio
-        YamlUtils.parse(emulio.languageStream())
+        ConfigYaml.parse(emulio.languageStream())
     }
 
     fun translate(key: String): String {
