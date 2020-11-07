@@ -16,7 +16,6 @@ object ConfigYaml {
 			} else {
 				loaded as Map<*, *>
 			}
-
 		}
 	}
 

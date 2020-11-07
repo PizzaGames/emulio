@@ -1,4 +1,4 @@
-package com.github.emulio.scrapers.tgdb.model
+package com.github.emulio.gamelist.scrapers.tgdb.model
 
 class PlatformFields(private val icon: Boolean = false,
                      private val console: Boolean = false,

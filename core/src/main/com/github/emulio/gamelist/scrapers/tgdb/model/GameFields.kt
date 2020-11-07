@@ -1,4 +1,4 @@
-package com.github.emulio.scrapers.tgdb.model
+package com.github.emulio.gamelist.scrapers.tgdb.model
 
 class GameFields(private val players: Boolean = false,
                  private val publishers: Boolean = false,

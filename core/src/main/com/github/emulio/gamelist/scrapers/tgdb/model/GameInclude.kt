@@ -1,4 +1,4 @@
-package com.github.emulio.scrapers.tgdb.model
+package com.github.emulio.gamelist.scrapers.tgdb.model
 
 class GameInclude(private val boxart: Boolean = false,
                   private val publishers: Boolean = false) {

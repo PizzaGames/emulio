@@ -97,9 +97,7 @@ object PlatformConfigYaml {
 	}
 
 	private fun Map<String, Any?>.translateMap(key: String, referenceValue: Map<*, *>): MutableMap<String, Any?> {
-		val filtered = this.filter {
-			it.key.startsWith(key)
-		}
+		val filtered = this.filter { it.key.startsWith(key) }
 		return filtered.toYaml(referenceValue.asMap(), key)
 	}
 
@@ -166,76 +164,6 @@ object PlatformConfigYaml {
 		}.toMap()
 	}
 
-	@Suppress("UNCHECKED_CAST")
-	private fun Any.asMap(): Map<String, Any?> = this as Map<String, Any?>
-
-	@Suppress("UNCHECKED_CAST")
-	private fun Any.asList(): List<String> = this as List<String>
-
-//	private fun MutableMap<String, Any?>.expandVars() {
-//
-//		val flatened = mutableMapOf<String, Any?>()
-//		flatened.flaten(this)
-//		flatened.expand()
-//
-//		this.deflaten(flatened)
-//	}
-
-//	private fun MutableMap<String, Any?>.flaten(origin: MutableMap<String, Any?>, prefix: String? = null): MutableMap<String, Any?> {
-//		origin.entries.forEach { entry ->
-//			val (key, value) = entry
-//			when {
-//				value is Map<*, *> -> {
-//					entry.setValue(value.toMutableMap().flaten(this, key))
-//				}
-//				prefix != null -> {
-//					this["$prefix.$key"] = value
-//				}
-//				else -> {
-//					this[key] = value
-//				}
-//			}
-//		}
-//		return this
-//	}
-//
-//	private fun MutableMap<String, Any?>.expand(): MutableMap<String, Any?> {
-//		val helper = PropertyPlaceholderHelper("\${", "}")
-//
-//		this.entries.forEach { entry ->
-//			val value = entry.value
-//
-//			if (value is String) {
-//				entry.setValue(helper.replacePlaceholders(value, this))
-//			} else if (value is List<*>) {
-//				val list = value.toMutableList()
-//				for (i in list.indices) {
-//					list[i] = helper.replacePlaceholders(list[i], this)
-//				}
-//			}
-//		}
-//
-//		return this
-//	}
-//
-//	private fun MutableMap<String, Any?>.deflaten(flatened: MutableMap<String, Any?>, prefix: String? = null) {
-//		this.entries.forEach { entry ->
-//			val key = entry.key
-//			val value = entry.value
-//			when {
-//				value is Map<*, *> -> {
-//					value.toMutableMap().deflaten(flatened, key)
-//				}
-//				prefix != null -> {
-//					entry.setValue(flatened["$prefix.$key"])
-//				}
-//				else -> {
-//					entry.setValue(flatened[key])
-//				}
-//			}
-//		}
-//	}
-
 	private fun loadYaml(from: File): Map<String, Any?> {
 		return FileInputStream(from).use {
 			Yaml().load(it)
@@ -256,22 +184,25 @@ object PlatformConfigYaml {
 		}
 	}
 
-	@Suppress("UNCHECKED_CAST")
+
 	private fun expandList(any: Any?): List<String> {
 		if (any == null) {
 			return emptyList()
 		}
-
 		if (any is String) {
 			return listOf(any)
 		}
-
 		if (any is List<*>) {
-			return any as List<String>
+			return any.asList()
 		}
-
 		return emptyList()
 	}
+
+	@Suppress("UNCHECKED_CAST")
+	private fun Any.asMap(): Map<String, Any?> = this as Map<String, Any?>
+
+	@Suppress("UNCHECKED_CAST")
+	private fun Any.asList(): List<String> = this as List<String>
 }
 
 

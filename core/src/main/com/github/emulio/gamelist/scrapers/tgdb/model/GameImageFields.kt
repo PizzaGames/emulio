@@ -1,4 +1,4 @@
-package com.github.emulio.scrapers.tgdb.model
+package com.github.emulio.gamelist.scrapers.tgdb.model
 
 class GameImageFields(private val fanart: Boolean = false,
                       private val banner: Boolean = false,

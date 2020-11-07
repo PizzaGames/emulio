@@ -1,7 +1,7 @@
-package com.github.emulio.scrapers.tgdb
+package com.github.emulio.gamelist.scrapers.tgdb
 
 import com.github.emulio.exceptions.ScrapperException
-import com.github.emulio.scrapers.tgdb.model.*
+import com.github.emulio.gamelist.scrapers.tgdb.model.*
 import khttp.get
 import khttp.responses.Response
 import mu.KotlinLogging

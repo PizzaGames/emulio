@@ -24,6 +24,7 @@ object EmulioConfigYaml {
 	fun read(from: File): EmulioConfig {
 		return measure("read EmulioConfig from ${from.absolutePath}") {
 			val fileContent = from.readText()
+
 			yaml.load(fileContent) as EmulioConfig
 		}
 	}
@@ -31,6 +32,7 @@ object EmulioConfigYaml {
 	fun save(emulioConfig: EmulioConfig, to: File) {
 		measure("saving EmulioConfig to: ${to.absolutePath}") {
 			val yamlLoaded = yaml.dump(emulioConfig)
+
 			to.writeText(yamlLoaded)
 		}
 	}
