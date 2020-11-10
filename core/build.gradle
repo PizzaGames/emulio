@@ -4,6 +4,10 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlinVersion"
 }
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
@@ -40,7 +44,9 @@ dependencies {
     compile "khttp:khttp:1.0.0"
     compile 'com.amihaiemil.web:eo-yaml:5.1.6'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0"
+    implementation 'com.github.husnjak:IGDB-API-JVM:1.0.1'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
     testRuntime "org.junit.platform:junit-platform-runner:1.5.2"
 }
+

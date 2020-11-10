@@ -1,0 +1,87 @@
+package com.github.emulio.view.screens.dialogs
+
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Scaling
+import com.github.emulio.Emulio
+import com.github.emulio.model.config.DummyInputConfig
+import com.github.emulio.model.config.InputConfig
+import com.github.emulio.service.i18n.translate
+import com.github.emulio.view.screens.EmulioDialog
+import com.github.emulio.view.screens.addClickListener
+import com.github.emulio.view.screens.getButtonImagePath
+
+open class YesNoDialog(title: String,
+                       private val dialogMessage: String,
+                       emulio: Emulio,
+                       private val yesText: String = "Yes".translate(),
+                       private val noText: String = "No".translate(),
+                       private val cancelCallback: () -> Unit = {},
+                       private val confirmCallback: () -> Unit = {}) : EmulioDialog(title, emulio) {
+
+    init {
+        initGUI()
+    }
+
+    open fun onConfirmDialog() {
+        confirmCallback()
+    }
+    open fun onCancelDialog() {
+        cancelCallback()
+    }
+
+    private fun initGUI() {
+        contentTable.add(Table().apply {
+            add(Label(dialogMessage, emulio.skin)).align(Align.center).minHeight(100f).expandX()
+            row()
+
+            add(Button(emulio.skin).apply {
+                val lastConfig = emulio.data["lastInput"] as InputConfig
+                val imgSize = 25f
+                add(Image(Texture(Gdx.files.internal(getButtonImagePath(lastConfig.name, lastConfig.confirm)), true).apply {
+                    setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                }).apply {
+                    setScaling(Scaling.fit)
+                    setAlign(Align.center)
+                }).height(imgSize).width(imgSize)
+                add(Label(yesText, emulio.skin, "title-small"))
+
+                addClickListener {
+                    onConfirmButton(DummyInputConfig)
+                }
+            }).expandX().right()
+
+            add(Button(emulio.skin).apply {
+                val lastConfig = emulio.data["lastInput"] as InputConfig
+                val imgSize = 25f
+                add(Image(Texture(Gdx.files.internal(getButtonImagePath(lastConfig.name, lastConfig.cancel)), true).apply {
+                    setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.MipMap)
+                }).apply {
+                    setScaling(Scaling.fit)
+                    setAlign(Align.center)
+                }).height(imgSize).width(imgSize)
+                add(Label(noText, emulio.skin, "title-small"))
+
+                addClickListener {
+                    onCancelButton(DummyInputConfig)
+                }
+            }).expandX().left()
+
+        }).expand().fill()
+    }
+
+    override fun onConfirmButton(input: InputConfig) {
+        onConfirmDialog()
+        closeDialog()
+    }
+
+    override fun onCancelButton(input: InputConfig) {
+        onCancelDialog()
+        closeDialog()
+    }
+}

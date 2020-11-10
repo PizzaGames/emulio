@@ -7,25 +7,25 @@ import com.github.emulio.model.EmulioOptions
 import com.github.emulio.model.Platform
 import com.github.emulio.model.config.EmulioConfig
 import com.github.emulio.model.theme.Theme
-import com.github.emulio.ui.screens.SplashScreen
+import com.github.emulio.view.screens.SplashScreen
 import mu.KotlinLogging
 import java.io.InputStream
 
 class Emulio(val options: EmulioOptions) : Game() {
 
-    val logger = KotlinLogging.logger { }
+    private val logger = KotlinLogging.logger { }
 
     val workdir = options.workdir
     val data: MutableMap<String, Any> = mutableMapOf()
-    val skin: Skin by lazy {
-        Skin(Gdx.files.internal("skin/emulio-skin.json"))
-    }
-
     var games: MutableMap<Platform, MutableList<com.github.emulio.model.Game>>? = null
 
     lateinit var theme: MutableMap<Platform, Theme>
     lateinit var platforms: List<Platform>
     lateinit var config: EmulioConfig
+
+    val skin: Skin by lazy {
+        Skin(Gdx.files.internal("skin/emulio-skin.json"))
+    }
 
 	override fun create() {
         showMotd()
@@ -60,7 +60,6 @@ class Emulio(val options: EmulioOptions) : Game() {
     fun languageStream(): InputStream {
         val languageStream = Emulio::class.java.getResourceAsStream(config.languagePath)
         check(languageStream != null) {"Unable to find language file. ${config.languagePath}"}
-
         return languageStream
     }
 }

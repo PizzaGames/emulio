@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Color
 import com.github.emulio.Emulio
 import com.github.emulio.model.EmulioOptions
 import com.github.emulio.model.config.GraphicsConfig
-import com.github.emulio.yaml.EmulioConfigYaml
+import com.github.emulio.model.yaml.EmulioConfigYaml
 import mu.KotlinLogging
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
